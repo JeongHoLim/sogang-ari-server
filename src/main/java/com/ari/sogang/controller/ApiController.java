@@ -39,7 +39,7 @@ public class ApiController {
 
     /* 가입한 동아리 */
     @GetMapping("/user/joined/{student_id}")
-    public List<ClubDto> searchJoinedClub(@PathVariable("studen_id") String studentId) {
+    public List<ClubDto> searchJoinedClub(@PathVariable("student_id") String studentId) {
         return userService.findClub(studentId);
     }
 

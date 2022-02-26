@@ -43,14 +43,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         JWTCheckFilter checkFilter = new JWTCheckFilter(authenticationManager(),userService);
 
         http
-                .authorizeRequests(req ->
-                        req.anyRequest().permitAll())
                 .antMatcher("/api/**")
                 .csrf().disable()
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(checkFilter, BasicAuthenticationFilter.class)
+
+                .authorizeRequests()
+                .antMatchers("/api/user/**").hasAnyRole("ROLE_USER")
+                .antMatchers("/api/user_manager/**").hasAnyRole("ROLE_USER_MANAGER")
+                .antMatchers("/api/admin/**").hasAnyRole("ROLE_ADMIN")
+                .anyRequest().denyAll()
+                .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
