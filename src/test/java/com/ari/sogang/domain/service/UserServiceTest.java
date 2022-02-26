@@ -32,7 +32,7 @@ class UserServiceTest {
         userService.addAuthority(user.getId(),"ROLE_USER");
         System.out.println(userService.find("20171682").get());
 
-        userService.removeAuthority(user.getId(),"ROLE_USER");
+//        userService.removeAuthority(user.getId(),"ROLE_USER");
 //        System.out.println(userService.findAll());
         System.out.println(userService.find("20171682").get());
     }

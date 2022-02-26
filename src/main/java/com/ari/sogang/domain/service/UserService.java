@@ -55,25 +55,6 @@ public class UserService implements UserDetailsService {
         });
     }
 
-//    @Transactional(propagation = Propagation.REQUIRED)
-    @Transactional
-    public void removeAuthority(Long userId,String authority){
-
-        userRepository.findById(userId).ifPresent(user->{
-            if(user.getAuthorities() == null) return;
-            var targetAuthority = new UserAuthority(user.getId(),authority);
-            if(user.getAuthorities().contains(targetAuthority)) {
-                user.setAuthorities(
-                        user.getAuthorities().stream().filter(auth -> !auth.equals(targetAuthority))
-                                .collect(Collectors.toSet())
-                );
-                if(user.getAuthorities().size()==0)
-                    user.setAuthorities(null);
-                save(user);
-
-            }
-        });
-    }
 
     public Optional<User> find(String studentId) {
         return userRepository.findByStudentId(studentId);

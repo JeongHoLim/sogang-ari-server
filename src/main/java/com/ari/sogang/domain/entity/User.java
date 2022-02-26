@@ -42,7 +42,7 @@ public class User extends BaseEntity implements UserDetails {
     private List<UserWishList> userWishLists;
     
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "user_id")
     private Set<UserAuthority> authorities;
 
