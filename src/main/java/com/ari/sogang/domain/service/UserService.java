@@ -101,6 +101,7 @@ public class UserService implements UserDetailsService {
         });
     }
 
+<<<<<<< HEAD
     @Transactional
     public void removeAuthority(Long userId,String authority){
 
@@ -118,6 +119,8 @@ public class UserService implements UserDetailsService {
             }
         });
     }
+=======
+>>>>>>> 30da820ce1ee3fe8b58ff9e98ae26c25b77eb206
 
     public Optional<User> find(String studentId) {
         return userRepository.findByStudentId(studentId);
