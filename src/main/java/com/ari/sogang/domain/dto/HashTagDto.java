@@ -12,11 +12,5 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class HashTagDto {
-    private Long id;
-
     private String name;
-
-    private LocalDateTime createdDate;
-
-    private LocalDateTime modifiedDate;
 }
