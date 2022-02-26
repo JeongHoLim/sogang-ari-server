@@ -27,13 +27,15 @@ public class Club extends BaseEntity{
 
     private String url;
 
+    private String section;
+
     private boolean recruiting;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "club_id")
     List<UserClub> userClubs = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL) //FETCH = LAZY
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "club_id")
     List<ClubHashTag> clubHashTags = new ArrayList<>();
 

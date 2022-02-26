@@ -22,7 +22,7 @@ public class HashTag extends BaseEntity{
 
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL) //FETCH = LAZY
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "hash_tag_id")
     List<ClubHashTag> clubHashTags = new ArrayList<>();
 }

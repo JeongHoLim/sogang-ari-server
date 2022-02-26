@@ -22,6 +22,8 @@ public class ClubDto {
 
     private String url;
 
+    private String section;
+
     private boolean recruiting;
 
     private LocalDateTime createdDate;

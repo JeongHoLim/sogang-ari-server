@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -40,16 +41,14 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private List<UserWishList> userWishLists;
-    
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private List<UserClub> userClubs;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private Set<UserAuthority> authorities;
-
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name="user_id")
-    private List<UserClub> userClubs;
 
     @Override
     public String getUsername() {
@@ -71,4 +70,7 @@ public class User extends BaseEntity implements UserDetails {
         return enabled;
     }
 
+    public void addUserClub(UserClub userClub) {
+        this.userClubs.add(userClub);
+    }
 }
