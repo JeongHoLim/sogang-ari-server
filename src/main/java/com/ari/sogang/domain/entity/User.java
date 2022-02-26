@@ -40,12 +40,16 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private List<UserWishList> userWishLists;
-
-
+    
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private Set<UserAuthority> authorities;
+
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name="user_id")
+    private List<UserClub> userClubs;
 
     @Override
     public String getUsername() {

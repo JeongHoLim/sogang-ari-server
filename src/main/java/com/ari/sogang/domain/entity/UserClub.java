@@ -20,5 +20,5 @@ public class UserClub implements Serializable {
 
     @Id
     @Column(name = "user_id")
-    private Long useId;
+    private Long userId;
 }
