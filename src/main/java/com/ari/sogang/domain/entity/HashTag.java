@@ -12,6 +12,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Data
+@Table(name = "HASH_TAG")
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class HashTag extends BaseEntity{
@@ -21,7 +22,7 @@ public class HashTag extends BaseEntity{
 
     private String name;
 
-    @OneToMany //FETCH = LAZY
+    @OneToMany(cascade = CascadeType.ALL) //FETCH = LAZY
     @JoinColumn(name = "hash_tag_id")
     List<ClubHashTag> clubHashTags = new ArrayList<>();
 }

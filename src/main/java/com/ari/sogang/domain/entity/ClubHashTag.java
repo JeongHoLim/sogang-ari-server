@@ -7,8 +7,8 @@ import java.io.Serializable;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
+@Table(name = "CLUB_HASH_TAG")
 @EqualsAndHashCode
 @IdClass(value=ClubHashTag.class)
 public class ClubHashTag implements Serializable {

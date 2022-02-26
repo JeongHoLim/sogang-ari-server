@@ -11,6 +11,7 @@ import java.io.Serializable;
 @Entity
 @NoArgsConstructor
 @Data
+@Table(name = "USER_CLUB")
 @EqualsAndHashCode
 @IdClass(UserClub.class)
 public class UserClub implements Serializable {
@@ -20,5 +21,5 @@ public class UserClub implements Serializable {
 
     @Id
     @Column(name = "user_id")
-    private Long useId;
+    private Long userId;
 }
