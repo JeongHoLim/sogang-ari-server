@@ -32,12 +32,6 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final ClubRepository clubRepository;
-
-    private Club clubDtoToEntity(){
-        var entity = new Club();
-        return entity;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String studentId) throws UsernameNotFoundException {
@@ -45,30 +39,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(()->new UsernameNotFoundException(studentId));
     }
 
-    @Transactional
-    public List<UserWishListDto> getWishList(String studentId){
 
-    }
-
-    @Transactional
-    public List<ClubDto> findClub(String studentID){
-
-    }
-
-    @Transactional
-    public List<ClubDto> getClub(String clubName){
-
-    }
-
-    @Transactional
-    public List<HashTagDto> getHashTag(String clubName){
-
-    }
-
-    @Transactional
-    public List<ClubDto> findClubBySection(String section){
-
-    }
     @Transactional
     public ResponseEntity save(UserDto userDto){
 
