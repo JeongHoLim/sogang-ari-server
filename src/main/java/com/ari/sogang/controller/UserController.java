@@ -19,7 +19,7 @@ public class UserController {
     }
 
     /* 회원가입 탈퇴 */
-    @GetMapping("/secede/{student_id}")
+    @GetMapping("/sing_out/{student_id}")
     public void signOut(@PathVariable("student_id") String studentId){
 
     }

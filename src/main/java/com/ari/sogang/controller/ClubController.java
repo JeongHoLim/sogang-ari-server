@@ -42,9 +42,9 @@ public class ClubController {
     /* 동아리 정보 */
     @GetMapping("/info/{club_name}")
     public ClubDto getClub(@PathVariable("club_name") String clubName){
-        return clubService.getClub(clubName);
-    }
 
+    }
+    
     /* 동아리별 해시태그 조회 */
     @GetMapping("/hashtag/{club_name}")
     public List<HashTagDto> getHashTag(@PathVariable("club_name") String clubName){
