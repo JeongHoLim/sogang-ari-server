@@ -31,22 +31,16 @@ public class ApiController {
         return userService.findClubBySection(section);
     }
 
-    /* 회원가입 */
-    @PostMapping("/sign")
-    public ResponseEntity signUp(@RequestBody UserDto userDto){
-        return userService.save(userDto);
-    }
-
     /* 위시리스트 */
-    @GetMapping("/wish/{student_id}")
-    public List<UserWishListDto> getWishList(@PathVariable("student_id") String id){
-        return userService.getWishList(id);
+    @GetMapping("/user/wish/{student_id}")
+    public List<UserWishListDto> getWishList(@PathVariable("student_id") String studentId){
+        return userService.getWishList(studentId);
     }
 
     /* 가입한 동아리 */
-    @GetMapping("/joined/{student_id}")
-    public List<ClubDto> searchJoinedClub(@PathVariable("studen_id") String id) {
-        return userService.findClub(id);
+    @GetMapping("/user/joined/{student_id}")
+    public List<ClubDto> searchJoinedClub(@PathVariable("studen_id") String studentId) {
+        return userService.findClub(studentId);
     }
 
     /* 동아리 정보 */
@@ -55,9 +49,26 @@ public class ApiController {
         return userService.getClub(clubName);
     }
 
+    /* 동아리별 해시태그 조회 */
     @GetMapping("/hashtag/{club_name}")
     public List<HashTagDto> getHashTag(@PathVariable("club_name") String clubName){
         return userService.getHashTag(clubName);
     }
 
+    /* 관리자 사이트 */
+
+    /* 동아리장 사이트 */
+
+    /* 회원가입 */
+    @PostMapping("/sign")
+    public ResponseEntity signUp(@RequestBody UserDto userDto){
+        return userService.save(userDto);
+    }
+
+    /* 회원가입 탈퇴 */
+
+    /* 비밀번호 변경 */
+
+    /* 비밀번호 찾기 */
+    
 }
