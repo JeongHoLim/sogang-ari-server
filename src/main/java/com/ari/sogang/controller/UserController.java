@@ -43,8 +43,8 @@ public class UserController {
 
     /* 가입한 동아리 */
     @GetMapping("/joined/{student_id}")
-    public List<ClubDto> searchJoinedClub(@PathVariable("student_id") String studentId) {
-        return userService.findClub(studentId);
+    public List<ClubDto> getJoinedClub(@PathVariable("student_id") String studentId) {
+        return userService.getJoinedClub(studentId);
     }
 
     /* 동아리장 사이트 */
