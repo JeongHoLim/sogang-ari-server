@@ -7,7 +7,5 @@ import java.util.List;
 
 public interface HashTagRepository extends JpaRepository<HashTag,Long> {
 
-    HashTag findAllById(Long id);
-
     HashTag findByName(String name);
 }

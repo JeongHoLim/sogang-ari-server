@@ -26,11 +26,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
 
-    @Bean
-    PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService);
