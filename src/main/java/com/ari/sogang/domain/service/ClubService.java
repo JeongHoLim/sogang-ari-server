@@ -25,14 +25,19 @@ public class ClubService{
     // 해시태그 리스트를 받으면 해당되는 동아리 리스트 리턴
     public List<ClubDto> searchByHashTag(List<HashTagDto> hashTags){
 
-        var names = hashTags.stream().map(HashTagDto::getName).collect(Collectors.toList());
+        var hashList = hashTags.stream().map(HashTagDto::getName).collect(Collectors.toList());
+        List<Club> clubList = new ArrayList<>();
 
-        return clubRepository.findAllByName(names)
-                .stream().map(this::toDto).collect(Collectors.toList());
+        for(Club club : clubRepository.findAll()){
+
+        }
+
+//        return clubRepository.findAllByName(names)
+//                .stream().map(this::toDto).collect(Collectors.toList());
 
     }
 
-    // 분과에 해당하는 동아리 리스트 리턴
+    // 분과(체육 분과 등 총 6개)에 해당하는 동아리 리스트 리턴
     public List<ClubDto> searchBySection(String section){
         return clubRepository.findAllBySection(section).stream()
                 .map(this::toDto).collect(Collectors.toList());
