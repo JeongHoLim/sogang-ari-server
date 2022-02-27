@@ -23,19 +23,26 @@ public class ClubService{
     private final HashTagRepository hashTagRepository;
 
     // 해시태그 리스트를 받으면 해당되는 동아리 리스트 리턴
-//    public List<ClubDto> searchByHashTag(List<HashTagDto> hashTags){
-//
-//        var hashList = hashTags.stream().map(HashTagDto::getName).collect(Collectors.toList());
-//        List<Club> clubList = new ArrayList<>();
-//
-//        for(Club club : clubRepository.findAll()){
-//
-//        }
-//
-////        return clubRepository.findAllByName(names)
-////                .stream().map(this::toDto).collect(Collectors.toList());
-//
-//    }
+    public List<ClubDto> searchByHashTag(List<HashTagDto> hashTags){
+        /* HashTagDto의 name을 사용하여 HashTag Entity들을 hashList에 저장. */
+        var nameList = hashTags.stream().map(HashTagDto::getName).collect(Collectors.toList());
+        var hashList = hashTagRepository.findAllByName(nameList);
+        List<ClubDto> clubList = new ArrayList<>();
+
+        for(Club club : clubRepository.findAll()){
+            var hashTagIds = club.getClubHashTags().stream()
+                    .map(ClubHashTag::getHashTagId)
+                    .collect(Collectors.toList());
+            var hashTagList = hashTagRepository.findAllById(hashTagIds);
+            /* hashList와 비교해서, 해당 HashTag Entity들을 모두 포함하고 있는 club이면 추가.*/
+            if(hashTagList.containsAll(hashList)){
+                /* Dto로 변환 */
+                clubList.add(toDto(club));
+            }
+        }
+
+        return clubList;
+    }
 
     // 분과(체육 분과 등 총 6개)에 해당하는 동아리 리스트 리턴
     public List<ClubDto> searchBySection(String section){
@@ -52,11 +59,11 @@ public class ClubService{
     public List<HashTagDto> searchHashTagByName(String clubName){
         var clubHashTags =  clubRepository.findByName(clubName).getClubHashTags();
         var hashTagIds = clubHashTags.stream().map(ClubHashTag::getHashTagId).collect(Collectors.toList());
-        return hashTagRepository.findAllById(hashTagIds).stream().map(this::toHashTagDto).collect(Collectors.toList());
+        return hashTagRepository.findAllById(hashTagIds).stream().map(this::toDto).collect(Collectors.toList());
 
     }
 
-    private HashTagDto toHashTagDto(HashTag entity) {
+    private HashTagDto toDto(HashTag entity) {
         return HashTagDto.builder()
                 .name(entity.getName())
                 .build();
@@ -73,7 +80,4 @@ public class ClubService{
                 .build();
     }
 
-
-    public List<ClubDto> searchByHashTag(List<HashTagDto> hashTagDtos) {
-    }
 }

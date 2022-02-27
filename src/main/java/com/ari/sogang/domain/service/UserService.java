@@ -22,9 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import java.util.List;
@@ -82,7 +80,15 @@ public class UserService implements UserDetailsService {
                 .password(userDto.getPassword())
                 .email(userDto.getEmail())
                 .build();
+    }
+    @Transactional
+    public List<UserWishListDto> getWishList(String studentId){
+        return new ArrayList<UserWishListDto>();
+    }
 
+    @Transactional
+    public List<ClubDto> getJoinedClub(String studentId){
+        return new ArrayList<ClubDto>();
     }
 
 

@@ -24,16 +24,16 @@ public class UserController {
     }
 
     /* 위시리스트 */
-//    @GetMapping("/wish/{student_id}")
-//    public List<UserWishListDto> getWishList(@PathVariable("student_id") String studentId){
-//        return userService.getWishList(studentId);
-//    }
-//
-//    /* 가입한 동아리 */
-//    @GetMapping("/joined/{student_id}")
-//    public List<ClubDto> searchJoinedClub(@PathVariable("student_id") String studentId) {
-//        return userService.findClub(studentId);
-//    }
+    @GetMapping("/wish/{student_id}")
+    public List<UserWishListDto> getWishList(@PathVariable("student_id") String studentId){
+        return userService.getWishList(studentId);
+    }
+
+    /* 가입한 동아리 */
+    @GetMapping("/joined/{student_id}")
+    public List<ClubDto> getJoinedClub(@PathVariable("student_id") String studentId) {
+        return userService.getJoinedClub(studentId);
+    }
 
     /* 동아리장 사이트 */
     // 동아리 신청 인원 관리
