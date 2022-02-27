@@ -138,22 +138,22 @@ public class UserService implements UserDetailsService {
     public ResponseEntity<String> signOut(String studentId) {
 
         var found = userRepository.findByStudentId(studentId);
+
+        // 헤더 추가
+        var header = new HttpHeaders();
+        header.setContentType(MediaType.APPLICATION_JSON);
+
         if(found.isEmpty()){
-//            ResponseEntity.notFound()
-            // handle error
+            return ResponseEntity.badRequest().headers(header)
+                    .body("가입된 학번이 아닙니다.");
         }
         var target = found.get();
 
         userRepository.deleteById(target.getId());
 
-        // 헤더 추가
-        var header = new HttpHeaders();
-        header.setContentType(MediaType.APPLICATION_JSON);
-        String message = "탈퇴 완료";
-
         return ResponseEntity.ok()
                 .headers(header)
-                .body(message)
+                .body("탈퇴 완료 되었습니다.")
                 ;
     }
 

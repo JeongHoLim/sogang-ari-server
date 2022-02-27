@@ -2,6 +2,7 @@ package com.ari.sogang.domain.service;
 
 import com.ari.sogang.domain.dto.UserDto;
 import com.ari.sogang.domain.entity.User;
+import com.ari.sogang.domain.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,26 +23,30 @@ class UserServiceTest extends WebIntegrationTest{
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserRepository userRepository;
 
     @Transactional
     @Test
     @DisplayName("1. 유저 생성, 권한 부여, 삭제, 조회")
     void test_1(){
-//        var user = userService.save(User.builder()
-//                        .email("ijh9404@sogang.ac.kr")
-//                        .studentId("20171682")
-//                        .enabled(true)
-//                        .name("임정호")
-//                        .major("컴퓨터공학과")
-//                        .password("1111")
-//                .build());
-//        userService.save(user);
-//        userService.addAuthority(user.getId(),"ROLE_USER");
-//        System.out.println(userService.find("20171682").get());
-//
-////        userService.removeAuthority(user.getId(),"ROLE_USER");
-////        System.out.println(userService.findAll());
-//        System.out.println(userService.find("20171682").get());
+        var user = User.builder()
+                        .email("ijh9404@sogang.ac.kr")
+                        .studentId("20171682")
+                        .enabled(true)
+                        .name("임정호")
+                        .major("컴퓨터공학과")
+                        .password("1111")
+                .build();
+
+        userRepository.save(user);
+
+        userService.addAuthority(user.getId(),"ROLE_USER");
+        System.out.println(userService.find("20171682").get());
+
+        userService.removeAuthority(user.getId(),"ROLE_USER");
+        System.out.println(userService.findAll());
+        System.out.println(userService.find("20171682").get());
     }
 
     @Test
