@@ -20,14 +20,26 @@ public class UserController {
 
     }
 
-    /* 위시리스트 */
-    @GetMapping("/wish/{student_id}")
+    /* 위시리스트 저장*/
+    @PostMapping("/post-wish")
+    public void postWishList(@RequestBody List<ClubDto> clubDtos){
+        userService.postWishList(clubDtos);
+    }
+
+    /* 위시리스트 조회*/
+    @GetMapping("/get-wish/{student_id}")
     public List<ClubDto> getWishList(@PathVariable("student_id") String studentId){
         return userService.getWishList(studentId);
     }
 
-    /* 가입한 동아리 */
-    @GetMapping("/joined/{student_id}")
+    /* 가입한 동아리 저장 */
+    @PostMapping("/post-joined")
+    public void postJoinedClub(@RequestBody List<ClubDto> clubDtos){
+        userService.postJoinedClub(clubDtos);
+    }
+
+    /* 가입한 동아리 조회 */
+    @GetMapping("/get-joined/{student_id}")
     public List<ClubDto> getJoinedClub(@PathVariable("student_id") String studentId) {
         return userService.getJoinedClub(studentId);
     }

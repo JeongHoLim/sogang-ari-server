@@ -75,11 +75,20 @@ public class UserService implements UserDetailsService {
                 .build();
     }
     @Transactional
+    public void postWishList(List<ClubDto> clubDtos){
+
+    }
+
+    @Transactional
     public List<ClubDto> getWishList(String studentId){
 
         return new ArrayList<ClubDto>();
     }
 
+    @Transactional
+    public void postJoinedClub(List<ClubDto> clubDtos){
+
+    }
     @Transactional
     public List<ClubDto> getJoinedClub(String studentId){
         return new ArrayList<ClubDto>();

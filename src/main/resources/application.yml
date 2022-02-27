@@ -12,9 +12,9 @@ spring:
 #    username: sa
 #    password:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/sogang_ari
-    username: howoo
-    password: anjfkehgkwk
+    url: jdbc:mysql://localhost:3306/sogang_ari?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: nz1202nz
 #
 #
 #  jpa:
