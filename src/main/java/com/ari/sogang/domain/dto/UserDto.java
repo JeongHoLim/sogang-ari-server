@@ -15,9 +15,10 @@ import java.util.List;
 @Builder
 public class UserDto {
     private String studentId;
+    private String password;
     private String name;
     private String major;
     private String email;
-    private List<UserWishListDto> userWishLists;
-
+//    private List<UserWishListDto> userWishLists;
+//
 }
