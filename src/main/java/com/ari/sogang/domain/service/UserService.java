@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String studentId) throws UsernameNotFoundException {
@@ -48,7 +50,7 @@ public class UserService implements UserDetailsService {
 
         return ResponseEntity.ok()
                 .headers(header)
-                .body(userDto)
+                .body(savedDto)
                 ;
 
     }
@@ -70,7 +72,7 @@ public class UserService implements UserDetailsService {
                 .name(userDto.getName())
                 .major(userDto.getMajor())
                 .enabled(true)
-                .password(userDto.getPassword())
+                .password(passwordEncoder.encode(userDto.getPassword()))
                 .email(userDto.getEmail())
                 .build();
     }

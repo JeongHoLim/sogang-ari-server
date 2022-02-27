@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +55,9 @@ class UserServiceTest extends WebIntegrationTest{
                 .password("1111")
                 .build();
 
-        ResponseEntity<UserDto> response = client.getForEntity(uri("/sign-in"), UserDto.class);
+        var entity = new HttpEntity<UserDto>(newUser);
+        ResponseEntity<String> response = client.exchange(
+                uri("/sign-in"), HttpMethod.POST,entity,String.class);
 
 
         System.out.println(response.getBody());
