@@ -7,6 +7,7 @@ import java.io.Serializable;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Table(name = "CLUB_HASH_TAG")
 @EqualsAndHashCode

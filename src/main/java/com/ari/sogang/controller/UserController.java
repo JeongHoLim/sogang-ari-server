@@ -25,17 +25,13 @@ public class UserController {
         return userService.getWishList(studentId);
     }
 
-    /* 가입한 동아리 저장 */
-    @PostMapping("/post-joined/{club_name}")
-    public void postJoinedClub(@PathVariable("club_name") String clubName,@RequestBody List<ClubDto> clubDtos){
-        userService.postJoinedClub(clubName,clubDtos);
-    }
-
     /* 가입한 동아리 조회 */
     @GetMapping("/get-joined/{student_id}")
     public List<ClubDto> getJoinedClub(@PathVariable("student_id") String studentId) {
         return userService.getJoinedClub(studentId);
     }
+
+    /* 위시리스트 수정 ~ delete*/
 
     /* 비밀번호 변경 */
 

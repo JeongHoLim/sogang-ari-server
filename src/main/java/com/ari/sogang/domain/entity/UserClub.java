@@ -1,9 +1,6 @@
 package com.ari.sogang.domain.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,6 +9,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 @Table(name = "USER_CLUB")
+@AllArgsConstructor
 @EqualsAndHashCode
 @IdClass(UserClub.class)
 public class UserClub implements Serializable {

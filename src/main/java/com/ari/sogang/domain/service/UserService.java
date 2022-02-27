@@ -55,38 +55,47 @@ public class UserService implements UserDetailsService {
                 ;
 
     }
+    /* Wish List 저장 */
     @Transactional
     public void postWishList(String studentId, List<ClubDto> clubDtos){
         List<UserWishClub> userWishClubs = new ArrayList<>();
         User user = userRepository.findByStudentId(studentId).get();
-        Long entityId = user.getId();
+        Long userId = user.getId();
         /* 즐겨찾기 클럽 추가 */
-        for(ClubDto club : clubDtos) {
-            var clubId = clubRepository.findByName(club.getName()).getId();
-            userWishClubs.add(new UserWishClub(entityId, clubId));
+        for(ClubDto temp : clubDtos) {
+            var clubId = clubRepository.findByName(temp.getName()).getId();
+            userWishClubs.add(new UserWishClub(userId, clubId));
         }
         /* 영속성 전이 cacade에 의해 DB 저장 */
         user.setUserWishClubs(userWishClubs);
         userRepository.save(user);
     }
-
+    /* Wish List 조회 */
     @Transactional
     public List<ClubDto> getWishList(String studentId){
+        var user = userRepository.findByStudentId(studentId).get();
+        var wishList = user.getUserWishClubs();
+        List<ClubDto> clubList = new ArrayList<>();
 
-        return new ArrayList<ClubDto>();
+        for(UserWishClub temp : wishList){
+            var clubId = temp.getClubId();
+            clubList.add(dtoServiceHelper.toDto(clubRepository.findById(clubId).get()));
+        }
+        return clubList;
     }
 
-    @Transactional
-    public void postJoinedClub(String clubName, List<ClubDto> clubDtos){
-        List<UserClub> userClubs = new ArrayList<>();
-        Club club = clubRepository.findByName(clubName);
-        Long entityId = club.getId();
-        /* 동아리 장에 의해 가입된 동아리 추가*/
-
-    }
+    /* 가입 동아리 조회 */
     @Transactional
     public List<ClubDto> getJoinedClub(String studentId){
-        return new ArrayList<ClubDto>();
+        var user = userRepository.findByStudentId(studentId).get();
+        var userClubList = user.getUserClubs();
+        List<ClubDto> clubList = new ArrayList<>();
+
+        for(UserClub temp : userClubList){
+            var clubId = temp.getClubId();
+            clubList.add(dtoServiceHelper.toDto(clubRepository.findById(clubId).get()));
+        }
+        return clubList;
     }
 
 
