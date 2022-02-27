@@ -1,11 +1,8 @@
 package com.ari.sogang.controller;
 
 import com.ari.sogang.domain.dto.ClubDto;
-import com.ari.sogang.domain.dto.UserDto;
-import com.ari.sogang.domain.dto.UserWishListDto;
 import com.ari.sogang.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +22,7 @@ public class UserController {
 
     /* 위시리스트 */
     @GetMapping("/wish/{student_id}")
-    public List<UserWishListDto> getWishList(@PathVariable("student_id") String studentId){
+    public List<ClubDto> getWishList(@PathVariable("student_id") String studentId){
         return userService.getWishList(studentId);
     }
 

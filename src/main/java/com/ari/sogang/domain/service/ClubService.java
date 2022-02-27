@@ -29,7 +29,7 @@ public class ClubService{
 //        var hashList = hashTagRepository.findAllByName(nameList);
 
         var hashList = nameList.stream()
-                .map(hashTagRepository::findAllByName).collect(Collectors.toList());
+                .map(hashTagRepository::findByName).collect(Collectors.toList());
 
         List<ClubDto> clubList = new ArrayList<>();
 
@@ -37,7 +37,8 @@ public class ClubService{
             var hashTagIds = club.getClubHashTags().stream()
                     .map(ClubHashTag::getHashTagId)
                     .collect(Collectors.toList());
-            var hashTagList = hashTagRepository.findAllById(hashTagIds);
+            var hashTagList = hashTagIds.stream()
+                    .map(hashTagRepository::findAllById).collect(Collectors.toList());
             /* hashList와 비교해서, 해당 HashTag Entity들을 모두 포함하고 있는 club이면 추가.*/
             if(hashTagList.containsAll(hashList)){
                 /* Dto로 변환 */

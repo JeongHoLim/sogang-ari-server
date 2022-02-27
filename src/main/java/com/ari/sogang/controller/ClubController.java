@@ -2,8 +2,6 @@ package com.ari.sogang.controller;
 
 import com.ari.sogang.domain.dto.ClubDto;
 import com.ari.sogang.domain.dto.HashTagDto;
-import com.ari.sogang.domain.dto.UserWishListDto;
-import com.ari.sogang.domain.entity.HashTag;
 import com.ari.sogang.domain.service.ClubService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

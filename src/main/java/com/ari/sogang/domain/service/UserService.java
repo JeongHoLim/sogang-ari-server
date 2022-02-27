@@ -1,25 +1,18 @@
 package com.ari.sogang.domain.service;
 
 import com.ari.sogang.domain.dto.ClubDto;
-import com.ari.sogang.domain.dto.HashTagDto;
 import com.ari.sogang.domain.dto.UserDto;
-import com.ari.sogang.domain.dto.UserWishListDto;
-import com.ari.sogang.domain.entity.Club;
 import com.ari.sogang.domain.entity.User;
 import com.ari.sogang.domain.entity.UserAuthority;
-import com.ari.sogang.domain.entity.UserWishList;
-import com.ari.sogang.domain.repository.ClubRepository;
 import com.ari.sogang.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -82,8 +75,9 @@ public class UserService implements UserDetailsService {
                 .build();
     }
     @Transactional
-    public List<UserWishListDto> getWishList(String studentId){
-        return new ArrayList<UserWishListDto>();
+    public List<ClubDto> getWishList(String studentId){
+
+        return new ArrayList<ClubDto>();
     }
 
     @Transactional
