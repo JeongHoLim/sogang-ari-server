@@ -45,7 +45,6 @@ public class ClubService{
                 clubList.add(dtoServiceHelper.toDto(club));
             }
         }
-
         return clubList;
     }
 
