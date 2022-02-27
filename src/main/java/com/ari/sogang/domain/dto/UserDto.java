@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class UserDto {
+    private String studentId;
     private String name;
     private String major;
     private String email;

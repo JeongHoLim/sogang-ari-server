@@ -25,8 +25,25 @@ public class ClubController {
     /* 분과 검색 */
     @GetMapping("/search_section/{section}")
     public List<ClubDto> searchBySection(@PathVariable String section){
+<<<<<<< HEAD
         return clubService.searchBySection(section);
     }
+=======
+        return clubService.findClubBySection(section);
+    }
+
+//    /* 위시리스트 */
+//    @GetMapping("/wish/{student_id}")
+//    public List<UserWishListDto> getWishList(@PathVariable("student_id") String studentId){
+//        return clubService.getWishList(studentId);
+//    }
+//
+//    /* 가입한 동아리 */
+//    @GetMapping("/joined/{student_id}")
+//    public List<ClubDto> searchJoinedClub(@PathVariable("student_id") String studentId) {
+//        return clubService.findClub(studentId);
+//    }
+>>>>>>> bedf3e3efe1fc07d14e60b6dc34b394715dafea3
 
     /* 동아리 정보 */
     @GetMapping("/info/{club_name}")

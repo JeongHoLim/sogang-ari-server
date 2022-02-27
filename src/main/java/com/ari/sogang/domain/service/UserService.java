@@ -43,9 +43,9 @@ public class UserService implements UserDetailsService {
     @Transactional
     public ResponseEntity save(UserDto userDto){
 
+        
         userRepository.save();
         addAuthority();
-
 
         return new ResponseEntity(HttpStatus.OK);
     }
