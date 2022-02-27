@@ -55,44 +55,22 @@ public class UserService implements UserDetailsService {
                 ;
 
     }
-<<<<<<< HEAD
     /* Wish List 저장 */
     @Transactional
-    public void postWishList(String studentId, List<ClubDto> clubDtos){
+    public void postWishList(String studentId, List<ClubDto> clubDtos) {
         List<UserWishClub> userWishClubs = new ArrayList<>();
         User user = userRepository.findByStudentId(studentId).get();
         Long userId = user.getId();
         /* 즐겨찾기 클럽 추가 */
-        for(ClubDto temp : clubDtos) {
+        for (ClubDto temp : clubDtos) {
             var clubId = clubRepository.findByName(temp.getName()).getId();
             userWishClubs.add(new UserWishClub(userId, clubId));
         }
         /* 영속성 전이 cacade에 의해 DB 저장 */
         user.setUserWishClubs(userWishClubs);
         userRepository.save(user);
-=======
-
-    private UserDto toDto(User user) {
-        return UserDto.builder()
-                .email(user.getEmail())
-                .major(user.getMajor())
-                .name(user.getName())
-                .studentId(user.getStudentId())
-                .build();
-
     }
 
-    private User toEntity(UserDto userDto) {
-        return User.builder()
-                .studentId(userDto.getStudentId())
-                .name(userDto.getName())
-                .major(userDto.getMajor())
-                .enabled(true)
-                .password(passwordEncoder.encode(userDto.getPassword()))
-                .email(userDto.getEmail())
-                .build();
->>>>>>> 6304da71de26c6125c1b16c77f05e62fd35ef779
-    }
     /* Wish List 조회 */
     @Transactional
     public List<ClubDto> getWishList(String studentId){
@@ -159,14 +137,6 @@ public class UserService implements UserDetailsService {
                 userRepository.save(user);
             }
         });
-    }
-
-    public Optional<User> find(String studentId) {
-        return userRepository.findByStudentId(studentId);
-    }
-
-    public List<User> findAll() {
-        return userRepository.findAll();
     }
 
     // 회원 탈퇴
