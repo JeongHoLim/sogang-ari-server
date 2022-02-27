@@ -11,19 +11,12 @@ import java.util.List;
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController {
-
     private final UserService userService;
 
-    /* 관리자 사이트 */
-    @GetMapping("/admin/delete-all")
-    public void deleteAll(){
-
-    }
-
     /* 위시리스트 저장*/
-    @PostMapping("/post-wish")
-    public void postWishList(@RequestBody List<ClubDto> clubDtos){
-        userService.postWishList(clubDtos);
+    @PostMapping("/post-wish/{student_id}")
+    public void postWishList(@PathVariable("student_id") String studentId, @RequestBody List<ClubDto> clubDtos){
+        userService.postWishList(studentId,clubDtos);
     }
 
     /* 위시리스트 조회*/
@@ -33,9 +26,9 @@ public class UserController {
     }
 
     /* 가입한 동아리 저장 */
-    @PostMapping("/post-joined")
-    public void postJoinedClub(@RequestBody List<ClubDto> clubDtos){
-        userService.postJoinedClub(clubDtos);
+    @PostMapping("/post-joined/{club_name}")
+    public void postJoinedClub(@PathVariable("club_name") String clubName,@RequestBody List<ClubDto> clubDtos){
+        userService.postJoinedClub(clubName,clubDtos);
     }
 
     /* 가입한 동아리 조회 */
@@ -43,9 +36,6 @@ public class UserController {
     public List<ClubDto> getJoinedClub(@PathVariable("student_id") String studentId) {
         return userService.getJoinedClub(studentId);
     }
-
-    /* 동아리장 사이트 */
-    // 동아리 신청 인원 관리
 
     /* 비밀번호 변경 */
 

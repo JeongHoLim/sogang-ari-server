@@ -2,8 +2,8 @@ package com.ari.sogang.domain.service;
 
 import com.ari.sogang.domain.dto.ClubDto;
 import com.ari.sogang.domain.dto.UserDto;
-import com.ari.sogang.domain.entity.User;
-import com.ari.sogang.domain.entity.UserAuthority;
+import com.ari.sogang.domain.entity.*;
+import com.ari.sogang.domain.repository.ClubRepository;
 import com.ari.sogang.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +27,8 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final ClubRepository clubRepository;
+    private final DtoServiceHelper dtoServiceHelper;
 
     @Override
     public UserDetails loadUserByUsername(String studentId) throws UsernameNotFoundException {
@@ -38,7 +39,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public ResponseEntity<UserDto> save(UserDto userDto){
 
-        var user = toEntity(userDto);
+        var user = dtoServiceHelper.toEntity(userDto);
         userRepository.save(user);
         // 일단 회원 가입하면 유저 권한만 승인 -> 수정 필요
         addAuthority(user.getId(),"ROLE_USER");
@@ -46,7 +47,7 @@ public class UserService implements UserDetailsService {
         // 헤더 추가
         var header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
-        var savedDto = toDto(user);
+        var savedDto = dtoServiceHelper.toDto(user);
 
         return ResponseEntity.ok()
                 .headers(header)
@@ -54,31 +55,19 @@ public class UserService implements UserDetailsService {
                 ;
 
     }
-
-    private UserDto toDto(User user) {
-        return UserDto.builder()
-                .email(user.getEmail())
-                .major(user.getMajor())
-                .name(user.getName())
-                .studentId(user.getStudentId())
-                .build();
-
-        // userWishList는?
-    }
-
-    private User toEntity(UserDto userDto) {
-        return User.builder()
-                .studentId(userDto.getStudentId())
-                .name(userDto.getName())
-                .major(userDto.getMajor())
-                .enabled(true)
-                .password(passwordEncoder.encode(userDto.getPassword()))
-                .email(userDto.getEmail())
-                .build();
-    }
     @Transactional
-    public void postWishList(List<ClubDto> clubDtos){
-
+    public void postWishList(String studentId, List<ClubDto> clubDtos){
+        List<UserWishClub> userWishClubs = new ArrayList<>();
+        User user = userRepository.findByStudentId(studentId).get();
+        Long entityId = user.getId();
+        /* 즐겨찾기 클럽 추가 */
+        for(ClubDto club : clubDtos) {
+            var clubId = clubRepository.findByName(club.getName()).getId();
+            userWishClubs.add(new UserWishClub(entityId, clubId));
+        }
+        /* 영속성 전이 cacade에 의해 DB 저장 */
+        user.setUserWishClubs(userWishClubs);
+        userRepository.save(user);
     }
 
     @Transactional
@@ -88,7 +77,11 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void postJoinedClub(List<ClubDto> clubDtos){
+    public void postJoinedClub(String clubName, List<ClubDto> clubDtos){
+        List<UserClub> userClubs = new ArrayList<>();
+        Club club = clubRepository.findByName(clubName);
+        Long entityId = club.getId();
+        /* 동아리 장에 의해 가입된 동아리 추가*/
 
     }
     @Transactional

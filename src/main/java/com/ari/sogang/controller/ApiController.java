@@ -20,7 +20,7 @@ public class ApiController {
 
 
     /* 회원 탈퇴 */
-    @GetMapping("/sing-out/{student_id}")
+    @GetMapping("/sign-out/{student_id}")
     public ResponseEntity<String> signOut(@PathVariable("student_id") String studentId){
         return userService.signOut(studentId);
     }

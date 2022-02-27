@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ClubService{
-
     private final ClubRepository clubRepository;
     private final HashTagRepository hashTagRepository;
+    private final DtoServiceHelper dtoServiceHelper;
 
     // 해시태그 리스트를 받으면 해당되는 동아리 리스트 리턴
     public List<ClubDto> searchByHashTag(List<HashTagDto> hashTags){
@@ -42,7 +42,7 @@ public class ClubService{
             /* hashList와 비교해서, 해당 HashTag Entity들을 모두 포함하고 있는 club이면 추가.*/
             if(hashTagList.containsAll(hashList)){
                 /* Dto로 변환 */
-                clubList.add(toDto(club));
+                clubList.add(dtoServiceHelper.toDto(club));
             }
         }
 
@@ -52,37 +52,22 @@ public class ClubService{
     // 분과(체육 분과 등 총 6개)에 해당하는 동아리 리스트 리턴
     public List<ClubDto> searchBySection(String section){
         return clubRepository.findAllBySection(section).stream()
-                .map(this::toDto).collect(Collectors.toList());
+                .map(dtoServiceHelper::toDto).collect(Collectors.toList());
     }
 
     // 해당 이름의 동아리 정보 리턴
     public ClubDto searchClubByName(String clubName){
-        return toDto(clubRepository.findByName(clubName));
+        return dtoServiceHelper.toDto(clubRepository.findByName(clubName));
     }
 
     // 특정 동아리의 해시태그 정보 리턴
     public List<HashTagDto> searchHashTagByName(String clubName){
         var clubHashTags =  clubRepository.findByName(clubName).getClubHashTags();
         var hashTagIds = clubHashTags.stream().map(ClubHashTag::getHashTagId).collect(Collectors.toList());
-        return hashTagRepository.findAllById(hashTagIds).stream().map(this::toDto).collect(Collectors.toList());
+        return hashTagRepository.findAllById(hashTagIds).stream().map(dtoServiceHelper::toDto).collect(Collectors.toList());
 
     }
 
-    private HashTagDto toDto(HashTag entity) {
-        return HashTagDto.builder()
-                .name(entity.getName())
-                .build();
-    }
 
-
-    private ClubDto toDto(Club entity) {
-        return ClubDto.builder()
-                .name(entity.getName())
-                .section(entity.getSection())
-                .recruiting(entity.isRecruiting())
-                .url(entity.getUrl())
-                .introduction(entity.getIntroduction())
-                .build();
-    }
 
 }

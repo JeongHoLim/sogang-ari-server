@@ -1,13 +1,9 @@
 package com.ari.sogang.domain.dto;
 
-import com.ari.sogang.domain.entity.UserWishList;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
-import java.util.List;
 
 @Data
 @NoArgsConstructor

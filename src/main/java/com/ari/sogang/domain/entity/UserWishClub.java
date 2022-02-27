@@ -1,7 +1,6 @@
 package com.ari.sogang.domain.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,11 +9,11 @@ import java.io.Serializable;
 
 @Data
 @Entity
-@Table(name = "USER_WISH_LIST")
+@Table(name = "USER_WISH_CLUB")
 @NoArgsConstructor
 @AllArgsConstructor
-@IdClass(UserWishList.class)
-public class UserWishList implements Serializable {
+@IdClass(UserWishClub.class)
+public class UserWishClub implements Serializable {
 
     @Id
     @Column(name = "user_id")

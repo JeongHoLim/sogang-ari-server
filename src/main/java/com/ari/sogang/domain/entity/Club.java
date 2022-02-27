@@ -1,9 +1,6 @@
 package com.ari.sogang.domain.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,6 +10,8 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Data
+@Builder
+@AllArgsConstructor
 @Table(name = "CLUB")
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
@@ -41,7 +40,7 @@ public class Club extends BaseEntity{
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "club_id")
-    List<UserWishList> userWishLists = new ArrayList<>();
+    List<UserWishClub> userWishLists = new ArrayList<>();
 
     public void addClubHashTag(ClubHashTag... clubHashTags){
         Collections.addAll(this.clubHashTags, clubHashTags);
