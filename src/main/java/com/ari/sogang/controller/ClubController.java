@@ -27,17 +27,17 @@ public class ClubController {
         return clubService.findClubBySection(section);
     }
 
-    /* 위시리스트 */
-    @GetMapping("/wish/{student_id}")
-    public List<UserWishListDto> getWishList(@PathVariable("student_id") String studentId){
-        return clubService.getWishList(studentId);
-    }
-
-    /* 가입한 동아리 */
-    @GetMapping("/joined/{student_id}")
-    public List<ClubDto> searchJoinedClub(@PathVariable("student_id") String studentId) {
-        return clubService.findClub(studentId);
-    }
+//    /* 위시리스트 */
+//    @GetMapping("/wish/{student_id}")
+//    public List<UserWishListDto> getWishList(@PathVariable("student_id") String studentId){
+//        return clubService.getWishList(studentId);
+//    }
+//
+//    /* 가입한 동아리 */
+//    @GetMapping("/joined/{student_id}")
+//    public List<ClubDto> searchJoinedClub(@PathVariable("student_id") String studentId) {
+//        return clubService.findClub(studentId);
+//    }
 
     /* 동아리 정보 */
     @GetMapping("/info/{club_name}")

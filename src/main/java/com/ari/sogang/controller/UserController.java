@@ -10,21 +10,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController {
+
     private final UserService userService;
 
     /* 회원가입 */
-    @PostMapping("/sign")
+    @PostMapping("/sign-in")
     public ResponseEntity signUp(@RequestBody UserDto userDto){
+
         return userService.save(userDto);
     }
 
     /* 회원가입 탈퇴 */
-    @GetMapping("/sing_out/{student_id}")
+    @GetMapping("/sing-out/{student_id}")
     public void signOut(@PathVariable("student_id") String studentId){
 
     }
     /* 관리자 사이트 */
-    @GetMapping("/admin/delete_all")
+    @GetMapping("/admin/delete-all")
     public void deleteAll(){
 
     }
