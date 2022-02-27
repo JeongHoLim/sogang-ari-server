@@ -9,5 +9,5 @@ public interface HashTagRepository extends JpaRepository<HashTag,Long> {
 
     List<HashTag> findAllById(List<Long> ids);
 
-    List<HashTag> findAllByName(List<String> names);
+    HashTag findAllByName(String name);
 }
