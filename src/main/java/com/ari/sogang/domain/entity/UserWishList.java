@@ -17,11 +17,11 @@ import java.io.Serializable;
 public class UserWishList implements Serializable {
 
     @Id
-    @Column(name = "user_id")
+    @JoinColumn(name = "user_id")
     private Long userId;
 
     @Id
-    @Column(name="club_id")
+    @JoinColumn(name="club_id")
     private Long clubId;
 
 }

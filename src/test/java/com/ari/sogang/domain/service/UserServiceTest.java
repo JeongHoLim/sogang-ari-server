@@ -11,6 +11,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,12 +59,15 @@ class UserServiceTest extends WebIntegrationTest{
                 .build();
 
         var entity = new HttpEntity<UserDto>(newUser);
-        ResponseEntity<String> response = client.exchange(
+        ResponseEntity<String> response1 = client.exchange(
                 uri("/sign-in"), HttpMethod.POST,entity,String.class);
 
 
-        System.out.println(response.getBody());
+        System.out.println(response1.getBody());
 
+
+        ResponseEntity<String> response2 = client.getForEntity(uri("/sign-out","20171682"),String.class);
+        System.out.println(response2.getBody());
 
     }
 }

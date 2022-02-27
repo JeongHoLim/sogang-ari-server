@@ -38,16 +38,13 @@ public class User extends BaseEntity implements UserDetails {
     private String email;
 
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy = "userId",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<UserWishList> userWishLists;
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy = "userId",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<UserClub> userClubs;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy = "userId",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<UserAuthority> authorities;
 
     @Override

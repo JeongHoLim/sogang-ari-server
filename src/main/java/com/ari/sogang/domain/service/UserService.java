@@ -63,7 +63,6 @@ public class UserService implements UserDetailsService {
                 .studentId(user.getStudentId())
                 .build();
 
-        // userWishList는?
     }
 
     private User toEntity(UserDto userDto) {
@@ -135,7 +134,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-
+    // 회원 탈퇴
     public ResponseEntity<String> signOut(String studentId) {
 
         var found = userRepository.findByStudentId(studentId);
@@ -145,8 +144,7 @@ public class UserService implements UserDetailsService {
         }
         var target = found.get();
 
-        // enabled false 처리 -> admin 계정에서 일괄적으로 삭제
-        target.setEnabled(false);
+        userRepository.deleteById(target.getId());
 
         // 헤더 추가
         var header = new HttpHeaders();
@@ -157,6 +155,16 @@ public class UserService implements UserDetailsService {
                 .headers(header)
                 .body(message)
                 ;
-
     }
+
+    // 학번 중복 확인
+    public boolean checkStudentId(String studentId) {
+        return userRepository.findByStudentId(studentId).isEmpty();
+    }
+
+    // 이메일 중복 확인
+    public boolean checkEmail(String email) {
+        return userRepository.findByEmail(email).isEmpty();
+    }
+
 }

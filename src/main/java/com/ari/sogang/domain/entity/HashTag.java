@@ -22,7 +22,6 @@ public class HashTag extends BaseEntity{
 
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "hash_tag_id")
+    @OneToMany(mappedBy = "hashTagId",cascade = CascadeType.ALL)
     List<ClubHashTag> clubHashTags = new ArrayList<>();
 }
