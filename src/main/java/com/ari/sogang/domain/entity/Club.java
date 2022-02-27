@@ -30,17 +30,20 @@ public class Club extends BaseEntity{
 
     private boolean recruiting;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "club_id")
+    @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL)
     List<UserClub> userClubs = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "club_id")
+    @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL)
     List<ClubHashTag> clubHashTags = new ArrayList<>();
 
+<<<<<<< HEAD
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "club_id")
     List<UserWishClub> userWishLists = new ArrayList<>();
+=======
+    @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL)
+    List<UserWishList> userWishLists = new ArrayList<>();
+>>>>>>> 6304da71de26c6125c1b16c77f05e62fd35ef779
 
     public void addClubHashTag(ClubHashTag... clubHashTags){
         Collections.addAll(this.clubHashTags, clubHashTags);

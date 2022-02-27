@@ -55,6 +55,7 @@ public class UserService implements UserDetailsService {
                 ;
 
     }
+<<<<<<< HEAD
     /* Wish List 저장 */
     @Transactional
     public void postWishList(String studentId, List<ClubDto> clubDtos){
@@ -69,6 +70,28 @@ public class UserService implements UserDetailsService {
         /* 영속성 전이 cacade에 의해 DB 저장 */
         user.setUserWishClubs(userWishClubs);
         userRepository.save(user);
+=======
+
+    private UserDto toDto(User user) {
+        return UserDto.builder()
+                .email(user.getEmail())
+                .major(user.getMajor())
+                .name(user.getName())
+                .studentId(user.getStudentId())
+                .build();
+
+    }
+
+    private User toEntity(UserDto userDto) {
+        return User.builder()
+                .studentId(userDto.getStudentId())
+                .name(userDto.getName())
+                .major(userDto.getMajor())
+                .enabled(true)
+                .password(passwordEncoder.encode(userDto.getPassword()))
+                .email(userDto.getEmail())
+                .build();
+>>>>>>> 6304da71de26c6125c1b16c77f05e62fd35ef779
     }
     /* Wish List 조회 */
     @Transactional
@@ -146,28 +169,37 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-
+    // 회원 탈퇴
     public ResponseEntity<String> signOut(String studentId) {
 
         var found = userRepository.findByStudentId(studentId);
-        if(found.isEmpty()){
-//            ResponseEntity.notFound()
-            // handle error
-        }
-        var target = found.get();
-
-        // enabled false 처리 -> admin 계정에서 일괄적으로 삭제
-        target.setEnabled(false);
 
         // 헤더 추가
         var header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
-        String message = "탈퇴 완료";
+
+        if(found.isEmpty()){
+            return ResponseEntity.badRequest().headers(header)
+                    .body("가입된 학번이 아닙니다.");
+        }
+        var target = found.get();
+
+        userRepository.deleteById(target.getId());
 
         return ResponseEntity.ok()
                 .headers(header)
-                .body(message)
+                .body("탈퇴 완료 되었습니다.")
                 ;
-
     }
+
+    // 학번 중복 확인
+    public boolean checkStudentId(String studentId) {
+        return userRepository.findByStudentId(studentId).isEmpty();
+    }
+
+    // 이메일 중복 확인
+    public boolean checkEmail(String email) {
+        return userRepository.findByEmail(email).isEmpty();
+    }
+
 }

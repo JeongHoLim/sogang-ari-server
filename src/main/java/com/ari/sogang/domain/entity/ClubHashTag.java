@@ -14,10 +14,10 @@ import java.io.Serializable;
 @IdClass(value=ClubHashTag.class)
 public class ClubHashTag implements Serializable {
     @Id
-    @Column(name = "hash_tag_id")
+    @JoinColumn(name ="hash_tag_id")
     private Long hashTagId;
 
     @Id
-    @Column(name = "club_id")
+    @JoinColumn(name ="club_id")
     private Long clubId;
 }
