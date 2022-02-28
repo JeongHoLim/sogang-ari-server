@@ -20,7 +20,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +28,20 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final ClubRepository clubRepository;
     private final DtoServiceHelper dtoServiceHelper;
+    private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
+
+
+    private final char[] passwordTable =  { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+            'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+            'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+            'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+            'w', 'x', 'y', 'z', '!', '@', '#', '$', '%', '^', '&', '*',
+            '(', ')', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' };
+
+
+
+
 
     @Override
     public UserDetails loadUserByUsername(String studentId) throws UsernameNotFoundException {
@@ -37,7 +50,11 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public ResponseEntity<UserDto> save(UserDto userDto){
+    public ResponseEntity<?> save(UserDto userDto){
+
+        if(isValidStudentId(userDto.getStudentId()) || isValidEmail(userDto.getEmail())){
+            return ResponseEntity.status(400).body("해당 정보로 가입된 계정이 존재합니다.");
+        }
 
         var user = dtoServiceHelper.toEntity(userDto);
         userRepository.save(user);
@@ -140,6 +157,7 @@ public class UserService implements UserDetailsService {
     }
 
     // 회원 탈퇴
+    @Transactional
     public ResponseEntity<String> signOut(String studentId) {
 
         var found = userRepository.findByStudentId(studentId);
@@ -163,13 +181,54 @@ public class UserService implements UserDetailsService {
     }
 
     // 학번 중복 확인
-    public boolean checkStudentId(String studentId) {
+    public boolean isValidStudentId(String studentId) {
         return userRepository.findByStudentId(studentId).isEmpty();
     }
 
     // 이메일 중복 확인
-    public boolean checkEmail(String email) {
+    public boolean isValidEmail(String email) {
         return userRepository.findByEmail(email).isEmpty();
     }
+
+    // 비밀번호 리셋 후 전송
+    public ResponseEntity<String> resetPassword(String studentId) {
+
+        var user = userRepository.findByStudentId(studentId).get();
+        var newPassword = generatePassword();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        emailService.sendPassword(user,newPassword);
+
+        return ResponseEntity.ok()
+                .body("새로운 비밀번호로 변경하였습니다.");
+    }
+
+    @Transactional
+    public ResponseEntity<String> changePassword(String studentId,String newPassword) {
+        var user = userRepository.findByStudentId(studentId).get();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        return ResponseEntity.ok("비밀번호 변경이 완료되었습니다.");
+    }
+
+
+    // 임시 비밀번호 생성
+    private String generatePassword() {
+
+        Random random = new Random(System.currentTimeMillis());
+        int tableLength = passwordTable.length;
+        StringBuffer buf = new StringBuffer();
+
+        int PWDLENGTH = 8;
+        for(int i = 0; i < PWDLENGTH; i++) {
+            buf.append(passwordTable[random.nextInt(tableLength)]);
+        }
+
+        return buf.toString();
+
+    }
+
 
 }
