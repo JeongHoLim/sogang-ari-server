@@ -1,7 +1,6 @@
 package com.ari.sogang.domain.service;
 
 import com.ari.sogang.domain.dto.ClubDto;
-import com.ari.sogang.domain.dto.MailFormDto;
 import com.ari.sogang.domain.dto.UserDto;
 import com.ari.sogang.domain.entity.*;
 import com.ari.sogang.domain.repository.ClubRepository;
@@ -51,7 +50,11 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public ResponseEntity<UserDto> save(UserDto userDto){
+    public ResponseEntity<?> save(UserDto userDto){
+
+        if(isValidStudentId(userDto.getStudentId()) || isValidEmail(userDto.getEmail())){
+            return ResponseEntity.status(400).body("해당 정보로 가입된 계정이 존재합니다.");
+        }
 
         var user = dtoServiceHelper.toEntity(userDto);
         userRepository.save(user);
@@ -178,12 +181,12 @@ public class UserService implements UserDetailsService {
     }
 
     // 학번 중복 확인
-    public boolean checkStudentId(String studentId) {
+    public boolean isValidStudentId(String studentId) {
         return userRepository.findByStudentId(studentId).isEmpty();
     }
 
     // 이메일 중복 확인
-    public boolean checkEmail(String email) {
+    public boolean isValidEmail(String email) {
         return userRepository.findByEmail(email).isEmpty();
     }
 

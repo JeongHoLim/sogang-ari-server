@@ -15,7 +15,7 @@ public class ApiController {
 
     /* 회원가입 */
     @PostMapping("/sign-in")
-    public ResponseEntity<UserDto> signUp(@RequestBody UserDto userDto){
+    public ResponseEntity<?> signUp(@RequestBody UserDto userDto){
         return userService.save(userDto);
     }
 
@@ -29,13 +29,13 @@ public class ApiController {
     /* 중복된 학번 체크 */
     @GetMapping("/check-student-id/{student_id}")
     public boolean checkStudentId(@PathVariable("student_id") String studentId){
-        return userService.checkStudentId(studentId);
+        return userService.isValidStudentId(studentId);
     }
 
     /* 이메일로 가입된 계정이 있는지 체크 */
     @GetMapping("/check-email/{student_email}")
     public boolean checkEmail(@PathVariable("student_email")String email){
-        return userService.checkEmail(email);
+        return userService.isValidEmail(email);
     }
     /* 비밀번호 변경 */
     @PostMapping("/change-pwd/{student_id}")
