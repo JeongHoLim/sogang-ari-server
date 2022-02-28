@@ -30,23 +30,23 @@ class UserServiceTest extends WebIntegrationTest{
     @Test
     @DisplayName("1. 유저 생성, 권한 부여, 삭제, 조회")
     void test_1(){
-        var user = User.builder()
-                        .email("ijh9404@sogang.ac.kr")
-                        .studentId("20171682")
-                        .enabled(true)
-                        .name("임정호")
-                        .major("컴퓨터공학과")
-                        .password("1111")
-                .build();
-
-        userRepository.save(user);
-
-        userService.addAuthority(user.getId(),"ROLE_USER");
-        System.out.println(userRepository.findByStudentId("20171682").get());
-
-        userService.removeAuthority(user.getId(),"ROLE_USER");
-
-        System.out.println(userRepository.findByStudentId("20171682").get());
+//        var user = User.builder()
+//                        .email("ijh9404@sogang.ac.kr")
+//                        .studentId("20171682")
+//                        .enabled(true)
+//                        .name("임정호")
+//                        .major("컴퓨터공학과")
+//                        .password("1111")
+//                .build();
+//
+//        userRepository.save(user);
+//
+//        userService.addAuthority(user.getId(),"ROLE_USER");
+//        System.out.println(userRepository.findByStudentId("20171682").get());
+//
+//        userService.removeAuthority(user.getId(),"ROLE_USER");
+//
+//        System.out.println(userRepository.findByStudentId("20171682").get());
 
     }
 

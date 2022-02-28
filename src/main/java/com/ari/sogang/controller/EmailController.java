@@ -1,6 +1,7 @@
 package com.ari.sogang.controller;
 
 import com.ari.sogang.domain.dto.MailDto;
+import com.ari.sogang.domain.dto.MailFeedbackDto;
 import com.ari.sogang.domain.dto.MailFormDto;
 import com.ari.sogang.domain.service.EmailService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ public class EmailController {
 
     private final EmailService emailService;
 
-    @PostMapping("/send-mail")
+    @PostMapping("/send-code")
     public void sendMail(@RequestBody MailFormDto mailFormDto){
         emailService.sendConfirmToken(mailFormDto);
     }
@@ -34,4 +35,11 @@ public class EmailController {
         }
         return ResponseEntity.status(status).body(message);
     }
+
+    @PostMapping("/send-feedback")
+    public void sendFeedback(@RequestBody MailFeedbackDto mailFeedbackDto){
+        emailService.sendFeedback(mailFeedbackDto);
+    }
+
+
 }
