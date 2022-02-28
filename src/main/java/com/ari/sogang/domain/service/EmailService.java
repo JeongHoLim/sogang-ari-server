@@ -1,11 +1,13 @@
 package com.ari.sogang.domain.service;
 
 import com.ari.sogang.domain.dto.MailDto;
+import com.ari.sogang.domain.dto.MailFeedbackDto;
 import com.ari.sogang.domain.dto.MailFormDto;
 import com.ari.sogang.domain.entity.ConfirmToken;
 import com.ari.sogang.domain.entity.User;
 import com.ari.sogang.domain.repository.ConfirmTokenRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -21,6 +23,9 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
     private final ConfirmTokenRepository confirmTokenRepository;
+
+    @Value("${spring.mail.username}")
+    private String sogangAriEmail;
 
     // 유저가 입력한 코드가 보낸 코드와 일치하는지 검증
     // 발급한 시간이랑 지금 시간이랑 비교 && 발급해준 학번이랑 비교
@@ -92,4 +97,19 @@ public class EmailService {
         javaMailSender.send(message);
 
     }
+    @Transactional
+    public void sendFeedback(MailFeedbackDto mailFeedbackDto){
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setTo(sogangAriEmail + "@gmail.com");
+        message.setSubject(mailFeedbackDto.getTitle());
+        message.setText(mailFeedbackDto.getContent());
+
+        message.setText("From : " + mailFeedbackDto.getEmail());
+        // 인증 메일 발송
+        javaMailSender.send(message);
+
+    }
+
+
 }
