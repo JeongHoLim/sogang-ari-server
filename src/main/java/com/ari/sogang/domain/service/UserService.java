@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
@@ -40,9 +41,6 @@ public class UserService implements UserDetailsService {
             '(', ')', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' };
 
 
-
-
-
     @Override
     public UserDetails loadUserByUsername(String studentId) throws UsernameNotFoundException {
         return userRepository.findByStudentId(studentId)
@@ -52,7 +50,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public ResponseEntity<?> save(UserDto userDto){
 
-        if(isValidStudentId(userDto.getStudentId()) || isValidEmail(userDto.getEmail())){
+        if(!isValidStudentId(userDto.getStudentId()) || !isValidEmail(userDto.getEmail())){
             return ResponseEntity.status(400).body("해당 정보로 가입된 계정이 존재합니다.");
         }
 

@@ -4,6 +4,7 @@ import com.ari.sogang.config.jwt.JWTCheckFilter;
 import com.ari.sogang.config.jwt.JWTLoginFilter;
 import com.ari.sogang.config.jwt.JwtAccessDeniedHandler;
 import com.ari.sogang.config.jwt.JwtAuthenticationEntryPoint;
+import com.ari.sogang.domain.service.DtoServiceHelper;
 import com.ari.sogang.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userService;
+    private final DtoServiceHelper dtoServiceHelper;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
@@ -34,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        JWTLoginFilter loginFilter = new JWTLoginFilter(authenticationManager(),userService);
+        JWTLoginFilter loginFilter = new JWTLoginFilter(authenticationManager(),userService,dtoServiceHelper);
         JWTCheckFilter checkFilter = new JWTCheckFilter(authenticationManager(),userService);
 
         http

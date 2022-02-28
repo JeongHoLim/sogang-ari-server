@@ -15,6 +15,5 @@ public class UserDto {
     private String name;
     private String major;
     private String email;
-//    private List<UserWishListDto> userWishLists;
-//
+
 }

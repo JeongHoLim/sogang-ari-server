@@ -2,16 +2,20 @@ package com.ari.sogang.config.jwt;
 
 import com.ari.sogang.config.UserLoginForm;
 import com.ari.sogang.domain.entity.User;
+import com.ari.sogang.domain.service.DtoServiceHelper;
 import com.ari.sogang.domain.service.UserService;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.SneakyThrows;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 
 import javax.servlet.FilterChain;
@@ -24,11 +28,13 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private ObjectMapper objectMapper = new ObjectMapper();
     private UserService userService;
-
-    public JWTLoginFilter(AuthenticationManager authenticationManager, UserService userService) {
+    private DtoServiceHelper dtoServiceHelper;
+    DaoAuthenticationProvider s;
+    public JWTLoginFilter(AuthenticationManager authenticationManager, UserService userService,DtoServiceHelper dtoServiceHelper) {
         super(authenticationManager);
-        setFilterProcessesUrl("/api/user/login");
+        setFilterProcessesUrl("/api/login");
         this.userService = userService;
+        this.dtoServiceHelper = dtoServiceHelper;
     }
 
     @SneakyThrows
@@ -75,7 +81,7 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setHeader("refresh_token", JwtProvider.makeRefreshToken(user));
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getOutputStream().write(objectMapper.writeValueAsBytes(user));
+        response.getOutputStream().write(objectMapper.writeValueAsBytes(dtoServiceHelper.toDto(user)));
 
     }
 }
