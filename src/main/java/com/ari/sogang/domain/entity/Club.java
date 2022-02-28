@@ -24,9 +24,14 @@ public class Club extends BaseEntity{
 
     private String introduction;
 
+    @Column(length = 2000)
+    private String detail;
+
     private String url;
 
     private String section;
+
+    private String location;
 
     private boolean recruiting;
 

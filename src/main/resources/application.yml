@@ -14,13 +14,24 @@ spring:
         show_sql: true
     generate-ddl: true
     hibernate:
-      ddl-auto: update # Create -> Update
+      ddl-auto: none # Create -> Update
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/sogang_ari?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: nz1202nz
-    initialization-mode: always
+#    initialization-mode: always
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: sogangari
+    password: luwak-tjrkddkfl
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 #  sql:
 #    init:
 #      mode: always

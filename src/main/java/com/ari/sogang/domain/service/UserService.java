@@ -230,5 +230,23 @@ public class UserService implements UserDetailsService {
 
     }
 
+    // 위시 리스트 수정
+    public void updateWishList(String studentId, List<ClubDto> clubDtos) {
+        List<UserWishClub> userWishClubs = new ArrayList<>();
+        User user = userRepository.findByStudentId(studentId).get();
+        Long userId = user.getId();
 
+        /*해당되는 User_Wish_List entity 레코드 삭제*/
+        user.setUserWishClubs(userWishClubs);
+        userRepository.save(user);
+
+        /* 즐겨찾기 클럽 추가 */
+        for (ClubDto temp : clubDtos) {
+            var clubId = clubRepository.findByName(temp.getName()).getId();
+            userWishClubs.add(new UserWishClub(userId, clubId));
+        }
+        /* 영속성 전이 cacade에 의해 DB 저장 */
+        user.setUserWishClubs(userWishClubs);
+        userRepository.save(user);
+    }
 }

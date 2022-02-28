@@ -49,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/user/**").hasAnyRole("ROLE_USER")
                 .antMatchers("/api/user_manager/**").hasAnyRole("ROLE_USER_MANAGER")
                 .antMatchers("/api/admin/**").hasAnyRole("ROLE_ADMIN")
-                .anyRequest().denyAll()
+//                .anyRequest().denyAll()
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)

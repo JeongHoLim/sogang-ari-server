@@ -15,4 +15,6 @@ public class AdminController {
     public void deleteAll(){
 
     }
+    /* 동아리장 승인 */
+
 }

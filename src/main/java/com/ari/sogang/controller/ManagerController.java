@@ -19,6 +19,9 @@ public class ManagerController {
     public void postJoinedClub(@PathVariable("student_id") String studentId, @RequestBody List<ClubDto> clubDtos){
         managerService.postJoinedClub(studentId,clubDtos);
     }
-
     /*모집중 껐다 켰다*/
+    @GetMapping("/set-recruit/{club_name}")
+    public void setRecruiting(@PathVariable("club_name")String clubName,@RequestParam("recruit") String flag){
+        managerService.setRecruiting(clubName, flag);
+    }
 }

@@ -32,5 +32,8 @@ public class UserController {
     }
 
     /* 위시리스트 수정 ~ delete*/
-
+    @PutMapping("/update-wish/{student_id}")
+    public void updateWishList(@PathVariable("student_id")String studentId, @RequestBody List<ClubDto> clubDtos){
+        userService.updateWishList(studentId,clubDtos);
+    }
 }

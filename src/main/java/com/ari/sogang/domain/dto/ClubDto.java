@@ -18,6 +18,8 @@ public class ClubDto {
 
     private String introduction;
 
+    private String detail;
+
     private String url;
 
     private String section;

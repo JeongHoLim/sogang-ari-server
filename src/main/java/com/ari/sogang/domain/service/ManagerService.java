@@ -34,4 +34,14 @@ public class ManagerService {
         user.setUserClubs(userClubs);
         userRepository.save(user);
     }
+
+    @Transactional
+    public void setRecruiting(String clubName, String flag) {
+        Club club = clubRepository.findByName(clubName);
+        if(flag.equals("yes"))
+            club.setRecruiting(true);
+        else if(flag.equals("no"))
+            club.setRecruiting(false);
+        clubRepository.save(club);
+    }
 }

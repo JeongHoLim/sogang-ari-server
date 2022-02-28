@@ -42,7 +42,7 @@ class ClubServiceTest {
     void postJoinedTest(){
         System.out.println(">>>>>>>>>>>> Test Start.");
 
-        User user = userRepository.findByStudentId("20171500").get();
+        User user = userRepository.findByStudentId("20171700").get();
         List<ClubDto> wishClubs = new ArrayList<>();
         for(Club club : clubRepository.findAll()){
             if(club.getId() > 3)

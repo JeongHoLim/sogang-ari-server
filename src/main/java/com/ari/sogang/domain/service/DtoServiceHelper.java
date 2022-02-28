@@ -52,6 +52,7 @@ public class DtoServiceHelper {
         return Club.builder()
                 .name(clubDto.getName())
                 .introduction(clubDto.getIntroduction())
+                .detail(clubDto.getDetail())
                 .url(clubDto.getUrl())
                 .section(clubDto.getSection())
                 .recruiting(clubDto.isRecruiting())
