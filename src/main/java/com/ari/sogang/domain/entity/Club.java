@@ -39,7 +39,4 @@ public class Club extends BaseEntity{
     @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL)
     List<UserWishClub> userWishClubs = new ArrayList<>();
 
-    public void addClubHashTag(ClubHashTag... clubHashTags){
-        Collections.addAll(this.clubHashTags, clubHashTags);
-    }
 }

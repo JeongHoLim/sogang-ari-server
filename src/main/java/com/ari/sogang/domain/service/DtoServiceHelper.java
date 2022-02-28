@@ -21,7 +21,6 @@ public class DtoServiceHelper {
                 .build();
     }
 
-
     public ClubDto toDto(Club entity) {
         return ClubDto.builder()
                 .name(entity.getName())

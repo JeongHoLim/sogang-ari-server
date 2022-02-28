@@ -26,8 +26,6 @@ public class ClubService{
     public List<ClubDto> searchByHashTag(List<HashTagDto> hashTags){
         /* HashTagDto의 name을 사용하여 HashTag Entity들을 hashList에 저장. */
         var nameList = hashTags.stream().map(HashTagDto::getName).collect(Collectors.toList());
-//        var hashList = hashTagRepository.findAllByName(nameList);
-
         var hashList = nameList.stream()
                 .map(hashTagRepository::findByName).collect(Collectors.toList());
 
@@ -45,7 +43,6 @@ public class ClubService{
                 clubList.add(dtoServiceHelper.toDto(club));
             }
         }
-
         return clubList;
     }
 

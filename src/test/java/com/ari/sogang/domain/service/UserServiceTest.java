@@ -42,11 +42,12 @@ class UserServiceTest extends WebIntegrationTest{
         userRepository.save(user);
 
         userService.addAuthority(user.getId(),"ROLE_USER");
-        System.out.println(userService.find("20171682").get());
+        System.out.println(userRepository.findByStudentId("20171682").get());
 
         userService.removeAuthority(user.getId(),"ROLE_USER");
-        System.out.println(userService.findAll());
-        System.out.println(userService.find("20171682").get());
+
+        System.out.println(userRepository.findByStudentId("20171682").get());
+
     }
 
     @Test
@@ -67,9 +68,7 @@ class UserServiceTest extends WebIntegrationTest{
         ResponseEntity<String> response1 = client.exchange(
                 uri("/sign-in"), HttpMethod.POST,entity,String.class);
 
-
         System.out.println(response1.getBody());
-
 
         ResponseEntity<String> response2 = client.getForEntity(uri("/sign-out","20171682"),String.class);
         System.out.println(response2.getBody());
