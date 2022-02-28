@@ -26,6 +26,7 @@ public class DtoServiceHelper {
                 .name(entity.getName())
                 .section(entity.getSection())
                 .recruiting(entity.isRecruiting())
+                .detail(entity.getDetail())
                 .url(entity.getUrl())
                 .introduction(entity.getIntroduction())
                 .build();

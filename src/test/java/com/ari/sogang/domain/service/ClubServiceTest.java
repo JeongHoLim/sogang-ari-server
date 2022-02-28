@@ -38,6 +38,7 @@ class ClubServiceTest {
     DtoServiceHelper dtoServiceHelper;
 
     @Test
+    @Transactional
     @DisplayName("1. ManagerController : 가입한 동아리 추가(postJoinedClub)")
     void postJoinedTest(){
         System.out.println(">>>>>>>>>>>> Test Start.");
@@ -67,5 +68,48 @@ class ClubServiceTest {
         List<ClubDto> joinedClub = userService.getJoinedClub(user1.getStudentId());
         System.out.println("< "+user1.getName()+"'s joined CLub List" + " >");
         joinedClub.forEach(System.out::println);
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("3.Search By Section")
+    void searchBySection(){
+        System.out.println(">>>>>>>>>>>> Test Start.");
+
+
+    }
+    @Test
+    @Transactional
+    @DisplayName("4.동아리 정보 조회")
+    void getClub(){
+        System.out.println(">>>>>>>>>>>> Test Start.");
+        System.out.println("club : "+clubService.searchClubByName("서광"));
+    }
+    @Test
+    @Transactional
+    @DisplayName("5.동아리 해시태그 조회")
+    void getHashTag(){
+        System.out.println(">>>>>>>>>>>> Test Start.");
+        System.out.println("Hash Tag : "+ clubService.searchHashTagByName("HUG"));
+    }
+    @Test
+    @Transactional
+    @DisplayName("6.가입된 동아리 조회")
+    void getJoinedClub(){
+        System.out.println(">>>>>>>>>>>> Test Start.");
+        User user = userRepository.findByStudentId("20171700").get();
+        System.out.println(userRepository.findByStudentId("20171700").get().getId());
+        List<ClubDto> clubDtos = userService.getJoinedClub("20171700");
+        clubDtos.forEach(System.out::println);
+    }
+    @Test
+    @Transactional
+    @DisplayName("7.가입된 동아리 조회")
+    void getJoinedClub(){
+        System.out.println(">>>>>>>>>>>> Test Start.");
+        User user = userRepository.findByStudentId("20171700").get();
+        System.out.println(userRepository.findByStudentId("20171700").get().getId());
+        List<ClubDto> clubDtos = userService.getJoinedClub("20171700");
+        clubDtos.forEach(System.out::println);
     }
 }
