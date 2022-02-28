@@ -38,10 +38,11 @@ public class ApiController {
         return userService.checkEmail(email);
     }
     /* 비밀번호 변경 */
-//    @GetMapping("/change-pwd/{user_id}")
-//    public ResponseEntity<String> changePassword(@PathVariable(name = "user_id")String userId){
-////        return userService.changePassword
-//    }
+    @PostMapping("/change-pwd/{student_id}")
+    public ResponseEntity<String> changePassword(@PathVariable(name = "student_id")String studentId,
+        @RequestBody String password){
+        return userService.changePassword(studentId,password);
+    }
 
 
     /* 비밀번호 분실 */
