@@ -1,6 +1,7 @@
 package com.ari.sogang.domain.service;
 
 import com.ari.sogang.domain.dto.ClubDto;
+import com.ari.sogang.domain.dto.MailFormDto;
 import com.ari.sogang.domain.dto.UserDto;
 import com.ari.sogang.domain.entity.*;
 import com.ari.sogang.domain.repository.ClubRepository;
@@ -20,7 +21,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +29,21 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final ClubRepository clubRepository;
     private final DtoServiceHelper dtoServiceHelper;
+    private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
+
+
+    private final int PWDLENGTH = 8;
+    private final char[] passwordTable =  { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+            'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+            'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+            'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+            'w', 'x', 'y', 'z', '!', '@', '#', '$', '%', '^', '&', '*',
+            '(', ')', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' };
+
+
+
+
 
     @Override
     public UserDetails loadUserByUsername(String studentId) throws UsernameNotFoundException {
@@ -140,6 +155,7 @@ public class UserService implements UserDetailsService {
     }
 
     // 회원 탈퇴
+    @Transactional
     public ResponseEntity<String> signOut(String studentId) {
 
         var found = userRepository.findByStudentId(studentId);
@@ -172,4 +188,31 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email).isEmpty();
     }
 
+    // 비밀번호 리셋 후 전송
+    public ResponseEntity<String> resetPassword(String studentId) {
+
+        var user = userRepository.findByStudentId(studentId).get();
+        var newPassword = generatePassword();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        emailService.sendPassword(user,newPassword);
+
+        return ResponseEntity.ok()
+                .body("새로운 비밀번호로 변경하였습니다.");
+    }
+
+    private String generatePassword() {
+
+        Random random = new Random(System.currentTimeMillis());
+        int tableLength = passwordTable.length;
+        StringBuffer buf = new StringBuffer();
+
+        for(int i = 0; i < PWDLENGTH; i++) {
+            buf.append(passwordTable[random.nextInt(tableLength)]);
+        }
+
+        return buf.toString();
+
+    }
 }

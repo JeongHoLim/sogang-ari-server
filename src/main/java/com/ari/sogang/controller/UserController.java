@@ -33,7 +33,4 @@ public class UserController {
 
     /* 위시리스트 수정 ~ delete*/
 
-    /* 비밀번호 변경 */
-
-    /* 비밀번호 찾기 */
 }

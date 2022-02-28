@@ -37,4 +37,16 @@ public class ApiController {
     public boolean checkEmail(@PathVariable("student_email")String email){
         return userService.checkEmail(email);
     }
+    /* 비밀번호 변경 */
+//    @GetMapping("/change-pwd/{user_id}")
+//    public ResponseEntity<String> changePassword(@PathVariable(name = "user_id")String userId){
+////        return userService.changePassword
+//    }
+
+
+    /* 비밀번호 분실 */
+    @GetMapping("/lost-pwd/{student_id}")
+    public ResponseEntity<String> resetPassword(@PathVariable(name = "student_id")String studentId){
+        return userService.resetPassword(studentId);
+    }
 }

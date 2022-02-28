@@ -3,9 +3,9 @@ package com.ari.sogang.domain.service;
 import com.ari.sogang.domain.dto.MailDto;
 import com.ari.sogang.domain.dto.MailFormDto;
 import com.ari.sogang.domain.entity.ConfirmToken;
+import com.ari.sogang.domain.entity.User;
 import com.ari.sogang.domain.repository.ConfirmTokenRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -24,6 +24,7 @@ public class EmailService {
 
     // 유저가 입력한 코드가 보낸 코드와 일치하는지 검증
     // 발급한 시간이랑 지금 시간이랑 비교 && 발급해준 학번이랑 비교
+    @Transactional
     public boolean verify(MailDto mailDto) {
 
         var optionalToken = confirmTokenRepository.findByToken(mailDto.getToken());
@@ -32,7 +33,7 @@ public class EmailService {
         var foundToken = optionalToken.get();
 
         var ret = foundToken.getStudentId().equals(mailDto.getStudentId())
-                && foundToken.getCreatedAt().isBefore(LocalDateTime.now().minusMinutes(5));
+                && LocalDateTime.now().isBefore(foundToken.getCreatedAt().plusMinutes(5));
 
         confirmTokenRepository.deleteById(foundToken.getId());
 
@@ -42,7 +43,7 @@ public class EmailService {
     // 검증 코드 생성해서 해당 이메일로 보냄
     @Async
     @Transactional
-    public void send(MailFormDto mailFormDto) {
+    public void sendConfirmToken(MailFormDto mailFormDto) {
 
         SimpleMailMessage message = new SimpleMailMessage();
 
@@ -79,4 +80,16 @@ public class EmailService {
         return key.toString();
     }
 
+    @Transactional
+    public void sendPassword(User user,String newPassword) {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setTo(user.getEmail());
+        message.setSubject("서강아리 비밀번호 변경");
+        message.setText("변경된 비밀번호 : " + newPassword);
+
+        // 인증 메일 발송
+        javaMailSender.send(message);
+
+    }
 }
