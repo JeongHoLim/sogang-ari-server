@@ -48,9 +48,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterAt(checkFilter, BasicAuthenticationFilter.class)
 
                 .authorizeRequests()
-                .antMatchers("/api/user/**").hasAnyRole("ROLE_USER")
-                .antMatchers("/api/user_manager/**").hasAnyRole("ROLE_USER_MANAGER")
-                .antMatchers("/api/admin/**").hasAnyRole("ROLE_ADMIN")
+                .antMatchers("/api/user/**").hasAuthority("USER")
+                .antMatchers("/api/user_manager/**").hasAuthority("USER_MANAGER")
+                .antMatchers("/api/admin/**").hasAuthority("ADMIN")
 //                .anyRequest().denyAll()
                 .and()
                 .exceptionHandling()

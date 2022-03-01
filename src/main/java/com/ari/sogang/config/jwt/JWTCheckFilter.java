@@ -34,9 +34,9 @@ public class JWTCheckFilter extends BasicAuthenticationFilter {
 
         if(bearer == null || !bearer.startsWith("Bearer ")){
             chain.doFilter(request,response);
+            return;
         }
         String token = bearer.substring("Bearer ".length());
-
 
         VerifyResult verifyResult = JwtProvider.verfiy(token);
 
