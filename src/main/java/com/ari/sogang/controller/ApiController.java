@@ -33,8 +33,9 @@ public class ApiController {
     }
 
     /* 이메일로 가입된 계정이 있는지 체크 */
-    @GetMapping("/check-email/{student_email}")
-    public boolean checkEmail(@PathVariable("student_email")String email){
+    @PostMapping("/check-email")
+    public boolean checkEmail(@RequestBody UserDto userDto){
+        String email = userDto.getEmail();
         return userService.isValidEmail(email);
     }
     /* 비밀번호 변경 */

@@ -100,12 +100,10 @@ public class EmailService {
     @Transactional
     public void sendFeedback(MailFeedbackDto mailFeedbackDto){
         SimpleMailMessage message = new SimpleMailMessage();
-
         message.setTo(sogangAriEmail + "@gmail.com");
         message.setSubject(mailFeedbackDto.getTitle());
-        message.setText(mailFeedbackDto.getContent());
 
-        message.setText("From : " + mailFeedbackDto.getEmail());
+        message.setText("From : " + mailFeedbackDto.getEmail()+"\n메시지 : "+mailFeedbackDto.getContent());
         // 인증 메일 발송
         javaMailSender.send(message);
 

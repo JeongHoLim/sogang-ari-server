@@ -8,6 +8,8 @@ insert into user(`name`,`student_id`,`password`,`enabled`) values ('jooeon','201
 insert into user(`name`,`student_id`,`password`,`enabled`) values ('joohyung','20171703','45123',true);
 insert into user(`name`,`student_id`,`password`,`enabled`) values ('david','20171704','51235',true);
 insert into user(`name`,`student_id`,`password`,`enabled`) values ('jungho','20171705','521124235',true);
+insert into user(`name`,`student_id`,`password`,`enabled`,`email`)
+values ('jungho','20171705','521124235',true,'toa7506@gmail.com');
 
 -- insert into hash_tag(`name`) values('야외');
 -- insert into hash_tag(`name`) values('재밌는');
