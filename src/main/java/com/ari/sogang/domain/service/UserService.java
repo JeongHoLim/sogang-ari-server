@@ -1,6 +1,7 @@
 package com.ari.sogang.domain.service;
 
 import com.ari.sogang.domain.dto.ClubDto;
+import com.ari.sogang.domain.dto.PasswordDto;
 import com.ari.sogang.domain.dto.UserDto;
 import com.ari.sogang.domain.entity.*;
 import com.ari.sogang.domain.repository.ClubRepository;
@@ -189,6 +190,8 @@ public class UserService implements UserDetailsService {
     }
 
     // 비밀번호 리셋 후 전송
+    // client에서 기존 토큰 삭제해줘야 함
+    @Transactional
     public ResponseEntity<String> resetPassword(String studentId) {
 
         var user = userRepository.findByStudentId(studentId).get();
@@ -203,12 +206,19 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public ResponseEntity<String> changePassword(String studentId,String newPassword) {
+    public ResponseEntity<String> changePassword(String studentId, PasswordDto passwordDto) {
         var user = userRepository.findByStudentId(studentId).get();
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
 
-        return ResponseEntity.ok("비밀번호 변경이 완료되었습니다.");
+        if(passwordEncoder.matches(passwordDto.getOldPassword(),user.getPassword())
+                && passwordDto.getNewPassword().equals(passwordDto.getCheckPassword())){
+
+            user.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
+            userRepository.save(user);
+
+            return ResponseEntity.ok("비밀번호 변경이 완료되었습니다.");
+        }
+
+        return ResponseEntity.status(400).body("비밀번호 변경이 완료되지 않았습니다.");
     }
 
 

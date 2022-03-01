@@ -1,5 +1,6 @@
 package com.ari.sogang.controller;
 
+import com.ari.sogang.domain.dto.PasswordDto;
 import com.ari.sogang.domain.dto.UserDto;
 import com.ari.sogang.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -38,11 +39,12 @@ public class ApiController {
         String email = userDto.getEmail();
         return userService.isValidEmail(email);
     }
+
     /* 비밀번호 변경 */
     @PostMapping("/change-pwd/{student_id}")
     public ResponseEntity<String> changePassword(@PathVariable(name = "student_id")String studentId,
-        @RequestBody String password){
-        return userService.changePassword(studentId,password);
+                                                 @RequestBody PasswordDto passwordDto){
+        return userService.changePassword(studentId,passwordDto);
     }
 
 
