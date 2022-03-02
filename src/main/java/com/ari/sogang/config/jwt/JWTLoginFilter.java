@@ -1,12 +1,11 @@
 package com.ari.sogang.config.jwt;
 
-import com.ari.sogang.config.UserLoginForm;
+import com.ari.sogang.config.dto.UserLoginFormDto;
 import com.ari.sogang.domain.entity.User;
 import com.ari.sogang.domain.service.DtoServiceHelper;
 import com.ari.sogang.domain.service.UserService;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.SneakyThrows;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,7 +14,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 
 import javax.servlet.FilterChain;
@@ -47,7 +45,7 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         byte[] body = StreamUtils.copyToByteArray(wrapper.getInputStream());
 
-        UserLoginForm userLogin = objectMapper.readValue(body, UserLoginForm.class);
+        UserLoginFormDto userLogin = objectMapper.readValue(body, UserLoginFormDto.class);
         if (userLogin.getRefreshToken() == null) {
             UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                     userLogin.getStudentId(), userLogin.getPassword(), null

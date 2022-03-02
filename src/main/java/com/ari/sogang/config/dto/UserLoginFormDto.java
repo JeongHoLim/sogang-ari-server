@@ -1,4 +1,4 @@
-package com.ari.sogang.config;
+package com.ari.sogang.config.dto;
 
 
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserLoginForm {
+public class UserLoginFormDto {
 
     private String studentId;
     private String password;

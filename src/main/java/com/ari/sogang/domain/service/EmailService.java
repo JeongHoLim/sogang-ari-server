@@ -1,5 +1,6 @@
 package com.ari.sogang.domain.service;
 
+import com.ari.sogang.config.dto.ResponseDto;
 import com.ari.sogang.domain.dto.MailDto;
 import com.ari.sogang.domain.dto.MailFeedbackDto;
 import com.ari.sogang.domain.dto.MailFormDto;
@@ -8,6 +9,8 @@ import com.ari.sogang.domain.entity.User;
 import com.ari.sogang.domain.repository.ConfirmTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -23,6 +26,7 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
     private final ConfirmTokenRepository confirmTokenRepository;
+    private final ResponseDto response;
 
     @Value("${spring.mail.username}")
     private String sogangAriEmail;
@@ -30,7 +34,7 @@ public class EmailService {
     // 유저가 입력한 코드가 보낸 코드와 일치하는지 검증
     // 발급한 시간이랑 지금 시간이랑 비교 && 발급해준 학번이랑 비교
     @Transactional
-    public boolean verify(MailDto mailDto) {
+    protected boolean verify(MailDto mailDto) {
 
         var optionalToken = confirmTokenRepository.findByToken(mailDto.getToken());
         if(optionalToken.isEmpty()) return false;
@@ -48,7 +52,7 @@ public class EmailService {
     // 검증 코드 생성해서 해당 이메일로 보냄
     @Async
     @Transactional
-    public void sendConfirmToken(MailFormDto mailFormDto) {
+    public ResponseEntity<?> sendConfirmToken(MailFormDto mailFormDto) {
 
         SimpleMailMessage message = new SimpleMailMessage();
 
@@ -69,6 +73,8 @@ public class EmailService {
 
         // token 저장
         confirmTokenRepository.save(token);
+        // 인증 메일이 오지 않는다면? 사용자한테 이메일 다시 확인하라고 알려줘야 함
+        return response.success("인증 코드 전송 성공");
     }
 
     private String createCode() {
@@ -86,7 +92,7 @@ public class EmailService {
     }
 
     @Transactional
-    public void sendPassword(User user,String newPassword) {
+    public ResponseEntity<?> sendPassword(User user,String newPassword) {
         SimpleMailMessage message = new SimpleMailMessage();
 
         message.setTo(user.getEmail());
@@ -96,9 +102,12 @@ public class EmailService {
         // 인증 메일 발송
         javaMailSender.send(message);
 
+        return response.success("비밀번호 전송 성공");
     }
+
+
     @Transactional
-    public void sendFeedback(MailFeedbackDto mailFeedbackDto){
+    public ResponseEntity<?> sendFeedback(MailFeedbackDto mailFeedbackDto){
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(sogangAriEmail + "@gmail.com");
         message.setSubject(mailFeedbackDto.getTitle());
@@ -106,8 +115,15 @@ public class EmailService {
         message.setText("From : " + mailFeedbackDto.getEmail()+"\n메시지 : "+mailFeedbackDto.getContent());
         // 인증 메일 발송
         javaMailSender.send(message);
-
+        return response.success("피드백 전송 성공");
     }
 
 
+    public ResponseEntity<?> verfiyMailCode(MailDto mailDto) {
+
+        if(verify(mailDto))
+            return response.success("인증 코드 검사 성공");
+        else return response.fail("코드 불일치 혹은 인증 코드 만료", HttpStatus.BAD_REQUEST);
+
+    }
 }

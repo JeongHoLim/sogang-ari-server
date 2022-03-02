@@ -17,28 +17,19 @@ public class EmailController {
     private final EmailService emailService;
 
     @PostMapping("/send-code")
-    public void sendMail(@RequestBody MailFormDto mailFormDto){
-        emailService.sendConfirmToken(mailFormDto);
+    public ResponseEntity<?> sendMail(@RequestBody MailFormDto mailFormDto){
+        return emailService.sendConfirmToken(mailFormDto);
     }
 
     @PostMapping("/verfiy-code")
-    public ResponseEntity<String> verfiyMailCode(@RequestBody MailDto mailDto){
-        int status;
-        String message;
-        if(emailService.verify(mailDto)){
-            status = 200;
-            message = "회원 인증이 완료되었습니다.";
-        }
-        else{
-            status = 401;
-            message = "인증 코드가 올바르지 않습니다.";
-        }
-        return ResponseEntity.status(status).body(message);
+    public ResponseEntity<?> verfiyMailCode(@RequestBody MailDto mailDto){
+
+        return emailService.verfiyMailCode(mailDto);
     }
 
     @PostMapping("/send-feedback")
-    public void sendFeedback(@RequestBody MailFeedbackDto mailFeedbackDto){
-        emailService.sendFeedback(mailFeedbackDto);
+    public ResponseEntity<?> sendFeedback(@RequestBody MailFeedbackDto mailFeedbackDto){
+        return emailService.sendFeedback(mailFeedbackDto);
     }
 
 

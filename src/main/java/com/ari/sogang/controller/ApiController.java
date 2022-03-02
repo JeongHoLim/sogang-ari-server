@@ -23,26 +23,25 @@ public class ApiController {
 
     /* 회원 탈퇴 */
     @GetMapping("/sign-out/{student_id}")
-    public ResponseEntity<String> signOut(@PathVariable("student_id") String studentId){
+    public ResponseEntity<?> signOut(@PathVariable("student_id") String studentId){
         return userService.signOut(studentId);
     }
 
     /* 중복된 학번 체크 */
     @GetMapping("/check-student-id/{student_id}")
-    public boolean checkStudentId(@PathVariable("student_id") String studentId){
-        return userService.isValidStudentId(studentId);
+    public ResponseEntity<?> checkStudentId(@PathVariable("student_id") String studentId){
+        return userService.checkStudentId(studentId);
     }
 
     /* 이메일로 가입된 계정이 있는지 체크 */
-    @PostMapping("/check-email")
-    public boolean checkEmail(@RequestBody UserDto userDto){
-        String email = userDto.getEmail();
-        return userService.isValidEmail(email);
+    @GetMapping("/check-email/{student_email}")
+    public ResponseEntity<?> checkEmail(@PathVariable("student_email")String email){
+        return userService.checkEmail(email);
     }
 
     /* 비밀번호 변경 */
     @PostMapping("/change-pwd/{student_id}")
-    public ResponseEntity<String> changePassword(@PathVariable(name = "student_id")String studentId,
+    public ResponseEntity<?> changePassword(@PathVariable(name = "student_id")String studentId,
                                                  @RequestBody PasswordDto passwordDto){
         return userService.changePassword(studentId,passwordDto);
     }
@@ -50,7 +49,7 @@ public class ApiController {
 
     /* 비밀번호 분실 */
     @GetMapping("/lost-pwd/{student_id}")
-    public ResponseEntity<String> resetPassword(@PathVariable(name = "student_id")String studentId){
+    public ResponseEntity<?> resetPassword(@PathVariable(name = "student_id")String studentId){
         return userService.resetPassword(studentId);
     }
 }

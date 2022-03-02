@@ -24,6 +24,7 @@ public class JWTCheckFilter extends BasicAuthenticationFilter {
         this.userService = userService;
     }
 
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -31,7 +32,7 @@ public class JWTCheckFilter extends BasicAuthenticationFilter {
             FilterChain chain) throws IOException, ServletException
     {
         String bearer = request.getHeader(HttpHeaders.AUTHORIZATION);
-
+//        String
         if(bearer == null || !bearer.startsWith("Bearer ")){
             chain.doFilter(request,response);
             return;
