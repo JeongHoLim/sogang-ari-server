@@ -7,12 +7,11 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.io.UnsupportedEncodingException;
 import java.time.Instant;
 import java.util.Base64;
 
 @Component
-public class JwtProvider {
+public class JwtTokenProvider {
 
     private static String JWT_SECRET = "luwak";
 

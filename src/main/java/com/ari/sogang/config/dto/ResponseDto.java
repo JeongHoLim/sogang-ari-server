@@ -44,7 +44,7 @@ public class ResponseDto {
                 .result("success")
                 .error(Collections.emptyList())
                 .build();
-        return ResponseEntity.ok(body);
+        return ResponseEntity.status(status).body(body);
     }
     // message만 있는 성공 응답
     public ResponseEntity<?> success(String message){
@@ -69,7 +69,7 @@ public class ResponseDto {
                     .result("fail")
                     .error(Collections.emptyList())
                     .build();
-        return ResponseEntity.ok(body);
+        return ResponseEntity.status(status).body(body);
     }
 
     // 실패 응답
@@ -87,7 +87,7 @@ public class ResponseDto {
                 .message("")
                 .error(errors)
                 .build();
-        return ResponseEntity.ok(body);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
 }

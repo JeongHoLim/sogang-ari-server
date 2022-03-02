@@ -1,23 +1,36 @@
 package com.ari.sogang.controller;
 
+import com.ari.sogang.config.Helper;
+import com.ari.sogang.config.dto.ResponseDto;
+import com.ari.sogang.config.dto.UserLoginFormDto;
 import com.ari.sogang.domain.dto.PasswordDto;
 import com.ari.sogang.domain.dto.UserDto;
 import com.ari.sogang.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequiredArgsConstructor
 //@RequestMapping("/api")
 public class ApiController {
 
+    private final ResponseDto responseDto;
     private final UserService userService;
 
     /* 회원가입 */
     @PostMapping("/sign-in")
     public ResponseEntity<?> signUp(@RequestBody UserDto userDto){
         return userService.save(userDto);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserLoginFormDto userLoginFormDto,
+                                   HttpServletResponse response){
+        return userService.login(userLoginFormDto,response);
     }
 
 

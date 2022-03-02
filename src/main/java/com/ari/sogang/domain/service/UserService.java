@@ -1,6 +1,8 @@
 package com.ari.sogang.domain.service;
 
 import com.ari.sogang.config.dto.ResponseDto;
+import com.ari.sogang.config.dto.UserLoginFormDto;
+import com.ari.sogang.config.jwt.JwtTokenProvider;
 import com.ari.sogang.domain.dto.ClubDto;
 import com.ari.sogang.domain.dto.PasswordDto;
 import com.ari.sogang.domain.dto.UserDto;
@@ -8,10 +10,11 @@ import com.ari.sogang.domain.entity.*;
 import com.ari.sogang.domain.repository.ClubRepository;
 import com.ari.sogang.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,7 +38,9 @@ public class UserService implements UserDetailsService {
     private final DtoServiceHelper dtoServiceHelper;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
-    private final ResponseDto response;
+    private final ResponseDto responseDto;
+
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     private final char[] passwordTable =  { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
             'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
@@ -55,7 +61,7 @@ public class UserService implements UserDetailsService {
     public ResponseEntity<?> save(UserDto userDto){
 
         if(!isValidStudentId(userDto.getStudentId()) || !isValidEmail(userDto.getEmail())){
-            return response.fail("해당 정보로 가입된 계정이 존재합니다.",HttpStatus.CONFLICT);
+            return responseDto.fail("해당 정보로 가입된 계정이 존재합니다.",HttpStatus.CONFLICT);
         }
 
         var user = dtoServiceHelper.toEntity(userDto);
@@ -66,7 +72,7 @@ public class UserService implements UserDetailsService {
         // 헤더 추가
         var savedDto = dtoServiceHelper.toDto(user);
 
-        return response.success(savedDto,"회원 가입이 완료되었습니다.", HttpStatus.CREATED);
+        return responseDto.success(savedDto,"회원 가입이 완료되었습니다.", HttpStatus.CREATED);
 
     }
     /* Wish List 저장 */
@@ -75,7 +81,7 @@ public class UserService implements UserDetailsService {
         List<UserWishClub> userWishClubs = new ArrayList<>();
 
         var optionalUser = userRepository.findByStudentId(studentId);
-        if(optionalUser.isEmpty()) return response.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        if(optionalUser.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
 
         Long userId = user.getId();
@@ -88,14 +94,14 @@ public class UserService implements UserDetailsService {
         user.setUserWishClubs(userWishClubs);
         userRepository.save(user);
 
-        return response.success("담아 놓기 성공");
+        return responseDto.success("담아 놓기 성공");
     }
 
     /* Wish List 조회 */
     @Transactional
     public ResponseEntity<?> getWishList(String studentId){
         var optionalUser = userRepository.findByStudentId(studentId);
-        if(optionalUser.isEmpty()) return response.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        if(optionalUser.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
 
         var wishList = user.getUserWishClubs();
@@ -105,14 +111,14 @@ public class UserService implements UserDetailsService {
             var clubId = temp.getClubId();
             clubList.add(dtoServiceHelper.toDto(clubRepository.findById(clubId).get()));
         }
-        return response.success(clubList,"담아놓기 조회 성공");
+        return responseDto.success(clubList,"담아놓기 조회 성공");
     }
 
     /* 가입 동아리 조회 */
     @Transactional
     public ResponseEntity<?> getJoinedClub(String studentId){
         var optionalUser = userRepository.findByStudentId(studentId);
-        if(optionalUser.isEmpty()) return response.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        if(optionalUser.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
 
         var userClubList = user.getUserClubs();
@@ -122,7 +128,7 @@ public class UserService implements UserDetailsService {
             var clubId = temp.getClubId();
             clubList.add(dtoServiceHelper.toDto(clubRepository.findById(clubId).get()));
         }
-        return response.success(clubList,"가입된 동아리 조회 성공");
+        return responseDto.success(clubList,"가입된 동아리 조회 성공");
     }
 
     /* 권한 부여 */
@@ -146,9 +152,9 @@ public class UserService implements UserDetailsService {
                 user.setAuthorities(authorities);
                 userRepository.save(user);
             }
-            return response.success("권한 부여 성공");
+            return responseDto.success("권한 부여 성공");
         }
-        return response.fail("권한 부여 실패",HttpStatus.NOT_FOUND);
+        return responseDto.fail("권한 부여 실패",HttpStatus.NOT_FOUND);
     }
 
     /* 권한 제거 */
@@ -161,7 +167,7 @@ public class UserService implements UserDetailsService {
             var user = optionalUser.get();
             var targetAuthority = new UserAuthority(user.getId(),authority);
             if(user.getAuthorities() == null || !user.getAuthorities().contains(targetAuthority))
-                return response.fail("해당 권한이 없습니다.",HttpStatus.NOT_FOUND);
+                return responseDto.fail("해당 권한이 없습니다.",HttpStatus.NOT_FOUND);
 
             user.setAuthorities(
                     user.getAuthorities().stream().filter(auth -> !auth.equals(targetAuthority))
@@ -170,9 +176,9 @@ public class UserService implements UserDetailsService {
             if(user.getAuthorities().size()==0)
                 user.setAuthorities(null);
             userRepository.save(user);
-            return response.success("권한 제거 성공.");
+            return responseDto.success("권한 제거 성공.");
         }
-        return response.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
     }
 
 
@@ -183,19 +189,19 @@ public class UserService implements UserDetailsService {
         var optionalUser = userRepository.findByStudentId(studentId);
 
         if(optionalUser.isEmpty()){
-            return response.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+            return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
         }
         var target = optionalUser.get();
 
         userRepository.deleteById(target.getId());
 
-        return response.success("탈퇴 성공");
+        return responseDto.success("탈퇴 성공");
     }
 
     /* 학번 중복 확인 */
     public ResponseEntity<?> checkStudentId(String studentId) {
-        if(isValidStudentId(studentId)) return response.success("사용 가능한 학번입니다.");
-        else return response.fail("해당 학번으로 가입된 계정이 있습니다.",HttpStatus.CONFLICT);
+        if(isValidStudentId(studentId)) return responseDto.success("사용 가능한 학번입니다.");
+        else return responseDto.fail("해당 학번으로 가입된 계정이 있습니다.",HttpStatus.CONFLICT);
     }
 
     private boolean isValidStudentId(String studentId){
@@ -208,8 +214,8 @@ public class UserService implements UserDetailsService {
     /* 이메일 중복 확인 */
 
     public ResponseEntity<?> checkEmail(String email) {
-        if(isValidEmail(email)) return response.success("사용 가능한 이메일입니다.");
-        else return response.fail("해당 이메일로 가입된 계정이 존재합니다.",HttpStatus.CONFLICT);
+        if(isValidEmail(email)) return responseDto.success("사용 가능한 이메일입니다.");
+        else return responseDto.fail("해당 이메일로 가입된 계정이 존재합니다.",HttpStatus.CONFLICT);
     }
     public boolean isValidEmail(String email) {
         return userRepository.findByEmail(email+"@sogang.ac.kr").isEmpty();
@@ -223,7 +229,7 @@ public class UserService implements UserDetailsService {
     public ResponseEntity<?> resetPassword(String studentId) {
 
         var optionalUser = userRepository.findByStudentId(studentId);
-        if(optionalUser.isEmpty()) return response.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        if(optionalUser.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
 
         var user = optionalUser.get();
 
@@ -234,7 +240,7 @@ public class UserService implements UserDetailsService {
 
         emailService.sendPassword(user,newPassword);
 
-        return response.success("비밀번호 변경 성공");
+        return responseDto.success("비밀번호 변경 성공");
     }
 
 
@@ -250,10 +256,10 @@ public class UserService implements UserDetailsService {
             user.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
             userRepository.save(user);
 
-            return response.success("비밀번호 변경 성공");
+            return responseDto.success("비밀번호 변경 성공");
         }
 
-        return response.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
     }
 
 
@@ -276,7 +282,7 @@ public class UserService implements UserDetailsService {
         List<UserWishClub> userWishClubs = new ArrayList<>();
         var optionalUSer = userRepository.findByStudentId(studentId);
 
-        if(optionalUSer.isEmpty()) return response.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        if(optionalUSer.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
         User user = optionalUSer.get();
         Long userId = user.getId();
 
@@ -293,6 +299,28 @@ public class UserService implements UserDetailsService {
         user.setUserWishClubs(userWishClubs);
         userRepository.save(user);
 
-        return response.success("담아놓기 업데이트 성공");
+        return responseDto.success("담아놓기 업데이트 성공");
+    }
+
+    public ResponseEntity<?> login(UserLoginFormDto userLoginFormDto, HttpServletResponse response) {
+        var user = userRepository.findByStudentId(userLoginFormDto.getStudentId()).get();
+
+        var authenticationToken =  new UsernamePasswordAuthenticationToken(
+                userLoginFormDto.getStudentId(), userLoginFormDto.getPassword());
+
+        // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
+        // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        // 3. 인증 정보를 기반으로 JWT 토큰 생성
+        response.setHeader("auth_token", JwtTokenProvider.makeAuthToken(user));
+        response.setHeader("refresh_token", JwtTokenProvider.makeRefreshToken(user));
+
+
+        // 4. RefreshToken Redis 저장 (expirationTime 설정을 통해 자동 삭제 처리)
+//        redisTemplate.opsForValue()
+//                .set("RT:" + authentication.getName(), tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
+
+        return responseDto.success(dtoServiceHelper.toDto(user),"로그인 성공");
     }
 }
