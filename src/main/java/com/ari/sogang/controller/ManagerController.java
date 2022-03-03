@@ -3,6 +3,7 @@ package com.ari.sogang.controller;
 import com.ari.sogang.domain.dto.ClubDto;
 import com.ari.sogang.domain.service.ManagerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,12 +17,12 @@ public class ManagerController {
     // 동아리 신청 인원 관리
     /* 가입한 동아리 저장 */
     @PostMapping("/post-joined/{student_id}")
-    public void postJoinedClub(@PathVariable("student_id") String studentId, @RequestBody List<ClubDto> clubDtos){
-        managerService.postJoinedClub(studentId,clubDtos);
+    public ResponseEntity<?> postJoinedClub(@PathVariable("student_id") String studentId, @RequestBody List<ClubDto> clubDtos){
+        return managerService.postJoinedClub(studentId,clubDtos);
     }
     /*모집중 껐다 켰다*/
     @GetMapping("/set-recruit/{club_name}")
-    public void setRecruiting(@PathVariable("club_name")String clubName,@RequestParam("recruit") String flag){
-        managerService.setRecruiting(clubName, flag);
+    public ResponseEntity<?> setRecruiting(@PathVariable("club_name")String clubName,@RequestParam("recruit") String flag){
+        return managerService.setRecruiting(clubName, flag);
     }
 }
