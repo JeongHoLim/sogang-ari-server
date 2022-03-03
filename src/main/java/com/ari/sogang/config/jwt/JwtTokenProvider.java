@@ -15,8 +15,8 @@ public class JwtTokenProvider {
 
     private static String JWT_SECRET = "luwak";
 
-    private static final long AUTH_TIME = 60*20;   // 20MIN
-    private static final long REFRESH_TIME = 60*60*2;  // 2HOUR
+    public static final long AUTH_TIME = 60*20;   // 20MIN
+    public static final long REFRESH_TIME = 60*60*24*2;  // 2HOUR
 
     private static Algorithm ALGORITHM;
 
@@ -35,10 +35,12 @@ public class JwtTokenProvider {
 
     }
     public static String makeRefreshToken(User user){
+
         return JWT.create()
-                .withSubject(user.getUsername())
-                .withClaim("exp",Instant.now().getEpochSecond() + REFRESH_TIME)
-                .sign(ALGORITHM);
+                        .withSubject(user.getUsername())
+                        .withClaim("exp", Instant.now().getEpochSecond()+REFRESH_TIME)
+                        .sign(ALGORITHM)
+                ;
     }
 
     public static VerifyResult verfiy(String token){

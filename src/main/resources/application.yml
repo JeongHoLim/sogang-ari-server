@@ -2,10 +2,6 @@ server:
   port: 8080
 
 spring:
-#  h2:
-#    console:
-#      enabled: true
-#      path: /h2-console
   jpa:
     show_sql: true
     properties:
@@ -17,22 +13,24 @@ spring:
       ddl-auto: none # Create -> Update
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/sogang_ari?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: root
-    password: nz1202nz
-#    initialization-mode: always
+    url: jdbc:mysql://localhost:3306/sogang_ari
+    username: howoo
+    password:
+
   mail:
     host: smtp.gmail.com
     port: 587
     username: sogangari
-    password: luwak-tjrkddkfl
+    password:
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-#  sql:
-#    init:
-#      mode: always
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
 

@@ -3,6 +3,7 @@ package com.ari.sogang.controller;
 import com.ari.sogang.config.Helper;
 import com.ari.sogang.config.dto.ResponseDto;
 import com.ari.sogang.config.dto.UserLoginFormDto;
+import com.ari.sogang.config.dto.UserLogoutFormDto;
 import com.ari.sogang.domain.dto.PasswordDto;
 import com.ari.sogang.domain.dto.UserDto;
 import com.ari.sogang.domain.service.UserService;
@@ -15,10 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequiredArgsConstructor
-//@RequestMapping("/api")
+@RequestMapping("/api")
 public class ApiController {
 
-    private final ResponseDto responseDto;
     private final UserService userService;
 
     /* 회원가입 */
@@ -33,6 +33,10 @@ public class ApiController {
         return userService.login(userLoginFormDto,response);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody UserLogoutFormDto userLogoutForm){
+        return userService.logout(userLogoutForm);
+    }
 
     /* 회원 탈퇴 */
     @GetMapping("/sign-out/{student_id}")
