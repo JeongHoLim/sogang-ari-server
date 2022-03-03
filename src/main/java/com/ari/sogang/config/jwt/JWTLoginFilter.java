@@ -17,6 +17,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -24,18 +26,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
+public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter /*implements HandlerInterceptor*/ {
 
     private ObjectMapper objectMapper = new ObjectMapper();
     private UserService userService;
     private DtoServiceHelper dtoServiceHelper;
     DaoAuthenticationProvider s;
+
     public JWTLoginFilter(AuthenticationManager authenticationManager, UserService userService,DtoServiceHelper dtoServiceHelper) {
         super(authenticationManager);
         setFilterProcessesUrl("/api/login");
         this.userService = userService;
         this.dtoServiceHelper = dtoServiceHelper;
     }
+//
+//    @Override
+//    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+//        final String token = request.getHeader("auth_token");
+//        if (request.getMethod() == "OPTIONS") {
+//            logger.debug("if request options method is options, return true");
+//            return true;
+//        }
+//    }
 
     @SneakyThrows
     @Override
@@ -43,7 +55,11 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
             HttpServletRequest request, HttpServletResponse response
     ) throws AuthenticationException
     {
+//        if(request.getMethod() == "OPTIONS"){
+//            request.
+//        }
         RequestWrapper wrapper = new RequestWrapper(request);
+
 
         byte[] body = StreamUtils.copyToByteArray(wrapper.getInputStream());
 
