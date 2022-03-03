@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final ResponseDto response;
+
     /* 위시리스트 저장*/
     @PostMapping("/post-wish/{student_id}")
     public ResponseEntity<?> postWishList(@PathVariable("student_id") String studentId, @RequestBody List<ClubDto> clubDtos){

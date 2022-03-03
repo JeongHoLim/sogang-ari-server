@@ -5,6 +5,7 @@ import com.ari.sogang.domain.service.DtoServiceHelper;
 import com.ari.sogang.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
@@ -26,13 +28,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     private final UserService userService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-    private final JwtTokenProvider jwtTokenProvider;
-
+    private final RedisTemplate redisTemplate;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        JwtAuthenticationFilter loginFilter = new JwtAuthenticationFilter(userService,jwtTokenProvider);
+        JwtAuthenticationFilter loginFilter = new JwtAuthenticationFilter(userService,redisTemplate);
         http
                 .csrf().disable()
                 .cors()/*.configurationSource(corsConfigurationSource())*/
@@ -51,7 +52,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .antMatchers("/api/user/**").hasRole("USER")
                 .antMatchers("/api/manager/**").hasRole("USER_MANAGER")
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
+<<<<<<< HEAD
 >>>>>>> 7c32609442862874756c3c4bb3e4f05c60271eba
+=======
+                .anyRequest().permitAll()
+>>>>>>> c74e56baffa20b7d0bdc3f6ee6f1be9b3127bd30
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)

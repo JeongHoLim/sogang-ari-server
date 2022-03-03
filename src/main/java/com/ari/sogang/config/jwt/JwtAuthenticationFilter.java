@@ -3,9 +3,11 @@ package com.ari.sogang.config.jwt;
 import com.ari.sogang.domain.entity.User;
 import com.ari.sogang.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -21,14 +23,12 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     private static final String BEARER_TYPE = "Bearer";
 
     private final UserService userService;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final RedisTemplate redisTemplate;
 
-    public JwtAuthenticationFilter(UserService userService, JwtTokenProvider jwtTokenProvider) {
+    public JwtAuthenticationFilter(UserService userService,RedisTemplate redisTemplate) {
         this.userService = userService;
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.redisTemplate = redisTemplate;
     }
-
-    //    private final RedisTemplate redisTemplate;
 
 
     @Override
@@ -38,13 +38,17 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
         if(token != null){
             var result = JwtTokenProvider.verfiy(token);
-            if(result.isSuccess()){
-                var user = (User) userService.loadUserByUsername(result.getStudentId());
+            if(result.isSuccess()) {
+                String isLogout = (String) redisTemplate.opsForValue().get(token);
+                // 로그아웃 되어있는 토큰인지 검사
+                if (ObjectUtils.isEmpty(isLogout)) {
+                    var user = (User) userService.loadUserByUsername(result.getStudentId());
 
-                var usernamePasswordToken = new UsernamePasswordAuthenticationToken(
-                    user.getStudentId(),null,user.getAuthorities()
-                );
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordToken);
+                    var usernamePasswordToken = new UsernamePasswordAuthenticationToken(
+                            user.getStudentId(), null, user.getAuthorities()
+                    );
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordToken);
+                }
             }
         }
 
