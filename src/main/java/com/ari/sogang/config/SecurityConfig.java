@@ -21,6 +21,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.Arrays;
+
 @EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
@@ -36,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         JwtAuthenticationFilter loginFilter = new JwtAuthenticationFilter(userService,redisTemplate);
         http
                 .csrf().disable()
-                .cors()/*.configurationSource(corsConfigurationSource())*/
+                .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -72,6 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","PATCH","OPTIONS","DELETE"));
 
         var source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

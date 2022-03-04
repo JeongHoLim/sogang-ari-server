@@ -131,19 +131,20 @@ public class UserService implements UserDetailsService {
 
     /* Wish List 저장 */
     @Transactional
-    public ResponseEntity<?> postWishList(String studentId, List<ClubDto> clubDtos) {
-        List<UserWishClub> userWishClubs = new ArrayList<>();
-
+    public ResponseEntity<?> postWishList(String studentId, String clubName) {
         var optionalUser = userRepository.findByStudentId(studentId);
         if(optionalUser.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
+        List<UserWishClub> userWishClubs = user.getUserWishClubs();
 
         Long userId = user.getId();
+        Long clubId = clubRepository.findByName(clubName).getId();
         /* 즐겨찾기 클럽 추가 */
-        for (ClubDto temp : clubDtos) {
-            var clubId = clubRepository.findByName(temp.getName()).getId();
-            userWishClubs.add(new UserWishClub(userId, clubId));
-        }
+//        for (ClubDto temp : clubDtos) {
+//            var clubId = clubRepository.findByName(temp.getName()).getId();
+//            userWishClubs.add(new UserWishClub(userId, clubId));
+//        }
+        userWishClubs.add(new UserWishClub(userId,clubId));
         /* 영속성 전이 cacade에 의해 DB 저장 */
         user.setUserWishClubs(userWishClubs);
         userRepository.save(user);
@@ -332,23 +333,29 @@ public class UserService implements UserDetailsService {
     }
 
     /* 위시 리스트 업데이트 */
-    public ResponseEntity<?> updateWishList(String studentId, List<ClubDto> clubDtos) {
-        List<UserWishClub> userWishClubs = new ArrayList<>();
+    public ResponseEntity<?> updateWishList(String studentId, String clubName) {
+
         var optionalUSer = userRepository.findByStudentId(studentId);
 
         if(optionalUSer.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
         User user = optionalUSer.get();
-        Long userId = user.getId();
+        List<UserWishClub> userWishClubs = user.getUserWishClubs();
 
+        Long userId = user.getId();
+        Long clubId = clubRepository.findByName(clubName).getId();
         /*해당되는 User_Wish_List entity 레코드 삭제*/
-        user.setUserWishClubs(userWishClubs);
-        userRepository.save(user);
+        userWishClubs.removeIf(element -> Objects.equals(element.getUserId(), userId) && Objects.equals(element.getClubId(), clubId));
+
+
+//        user.setUserWishClubs(userWishClubs);
+//        userRepository.save(user);
 
         /* 즐겨찾기 클럽 추가 */
-        for (ClubDto temp : clubDtos) {
-            var clubId = clubRepository.findByName(temp.getName()).getId();
-            userWishClubs.add(new UserWishClub(userId, clubId));
-        }
+//        for (ClubDto temp : clubDtos) {
+//            var clubId = clubRepository.findByName(temp.getName()).getId();
+//            userWishClubs.add(new UserWishClub(userId, clubId));
+//        }
+
         /* 영속성 전이 cascade에 의해 DB 저장 */
         user.setUserWishClubs(userWishClubs);
         userRepository.save(user);

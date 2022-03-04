@@ -39,7 +39,7 @@ public class ClubController {
     public ResponseEntity<?>  getHashTag(@PathVariable("club_name") String clubName){
         return clubService.searchHashTagByName(clubName);
     }
-
+    /* 동아리 전체 조회 */
     @GetMapping("/findall")
     public ResponseEntity<?> findAll(){
         return clubService.findAll();

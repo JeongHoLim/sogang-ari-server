@@ -16,9 +16,9 @@ public class UserController {
     private final UserService userService;
 
     /* 위시리스트 저장*/
-    @PostMapping("/post-wish/{student_id}")
-    public ResponseEntity<?> postWishList(@PathVariable("student_id") String studentId, @RequestBody List<ClubDto> clubDtos){
-        return userService.postWishList(studentId,clubDtos);
+    @PostMapping("/post-wish/{student_id}/{club_name}")
+    public ResponseEntity<?> postWishList(@PathVariable("student_id") String studentId, @PathVariable("club_name") String clubName){
+        return userService.postWishList(studentId,clubName);
     }
 
     /* 위시리스트 조회*/
@@ -34,8 +34,8 @@ public class UserController {
     }
 
     /* 위시리스트 수정 ~ delete*/
-    @PutMapping("/update-wish/{student_id}")
-    public ResponseEntity<?> updateWishList(@PathVariable("student_id")String studentId, @RequestBody List<ClubDto> clubDtos){
-        return userService.updateWishList(studentId,clubDtos);
+    @DeleteMapping("/update-wish/{student_id}/{club_name}")
+    public ResponseEntity<?> updateWishList(@PathVariable("student_id")String studentId, @PathVariable("club_name") String clubName){
+        return userService.updateWishList(studentId,clubName);
     }
 }
