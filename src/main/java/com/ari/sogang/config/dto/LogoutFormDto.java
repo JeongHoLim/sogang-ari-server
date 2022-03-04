@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LogoutFormDto {
-    private String authToken;
+    private String accessToken;
     private String refreshToken;
 }
