@@ -21,7 +21,7 @@ import java.util.HashMap;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
-
+// 인증
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {

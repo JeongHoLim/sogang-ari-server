@@ -349,7 +349,7 @@ public class UserService implements UserDetailsService {
             var clubId = clubRepository.findByName(temp.getName()).getId();
             userWishClubs.add(new UserWishClub(userId, clubId));
         }
-        /* 영속성 전이 cacade에 의해 DB 저장 */
+        /* 영속성 전이 cascade에 의해 DB 저장 */
         user.setUserWishClubs(userWishClubs);
         userRepository.save(user);
 

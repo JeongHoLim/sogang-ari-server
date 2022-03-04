@@ -38,7 +38,7 @@ public class JWTCheckFilter extends BasicAuthenticationFilter {
         }
         String token = bearer.substring("Bearer ".length());
 
-        VerifyResult verifyResult = JwtProvider.verfiy(token);
+        VerifyResult verifyResult = JwtTokenProvider.verfiy(token);
 
         if(verifyResult.isSuccess()){
             User user = (User) userService.loadUserByUsername(verifyResult.getStudentId());

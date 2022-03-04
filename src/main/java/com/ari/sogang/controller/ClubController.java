@@ -39,4 +39,9 @@ public class ClubController {
     public ResponseEntity<?>  getHashTag(@PathVariable("club_name") String clubName){
         return clubService.searchHashTagByName(clubName);
     }
+
+    @GetMapping("/findall")
+    public ResponseEntity<?> findAll(){
+        return clubService.findAll();
+    }
 }

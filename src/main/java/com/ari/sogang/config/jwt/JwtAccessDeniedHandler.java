@@ -21,6 +21,7 @@ import java.util.HashMap;
 @Component
 @RequiredArgsConstructor
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
+    //권한
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {

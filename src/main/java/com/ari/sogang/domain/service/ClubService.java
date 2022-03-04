@@ -79,5 +79,14 @@ public class ClubService{
     }
 
 
-
+    public ResponseEntity<?> findAll() {
+        var clubList = new ArrayList<>();
+        for(Club club : clubRepository.findAll()){
+            clubList.add(dtoServiceHelper.toDto(club));
+        }
+        return response.success(
+                clubList,
+                "동아리 조회 성공"
+        );
+    }
 }

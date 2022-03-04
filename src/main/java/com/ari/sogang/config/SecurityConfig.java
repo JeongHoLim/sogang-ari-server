@@ -42,21 +42,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-<<<<<<< HEAD
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers("/api/user/**").hasAuthority("USER")
                 .antMatchers("/api/user_manager/**").hasAuthority("USER_MANAGER")
                 .antMatchers("/api/admin/**").hasAuthority("ADMIN")
 //                .anyRequest().denyAll()
-=======
                 .antMatchers("/api/user/**").hasRole("USER")
                 .antMatchers("/api/manager/**").hasRole("USER_MANAGER")
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
-<<<<<<< HEAD
->>>>>>> 7c32609442862874756c3c4bb3e4f05c60271eba
-=======
                 .anyRequest().permitAll()
->>>>>>> c74e56baffa20b7d0bdc3f6ee6f1be9b3127bd30
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
