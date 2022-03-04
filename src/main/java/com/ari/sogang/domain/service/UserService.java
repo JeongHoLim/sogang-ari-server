@@ -25,7 +25,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -95,7 +94,7 @@ public class UserService implements UserDetailsService {
         var user = (User)authentication.getPrincipal();
 
         var tokens = LoginResponseDto.builder()
-                .authToken(JwtTokenProvider.makeAuthToken(user))
+                .accessToken(JwtTokenProvider.makeAccessToken(user))
                 .refreshToken(refreshToken)
                         .build();
 
@@ -112,15 +111,15 @@ public class UserService implements UserDetailsService {
     /* 로그아웃 */
 
     public ResponseEntity<?> logout(LogoutFormDto userLogoutForm) {
-        var verfiedAuthTokenInfo = JwtTokenProvider.verfiy(userLogoutForm.getAuthToken());
-        var verfiedRefreshTokenInfo = JwtTokenProvider.verfiy(userLogoutForm.getRefreshToken());
+        var accessTokenInfo = JwtTokenProvider.verfiy(userLogoutForm.getAccessToken());
+        var refreshTokenInfo = JwtTokenProvider.verfiy(userLogoutForm.getRefreshToken());
 
-        if(!verfiedAuthTokenInfo.isSuccess() || !verfiedRefreshTokenInfo.isSuccess())
+        if(!accessTokenInfo.isSuccess() || !refreshTokenInfo.isSuccess())
             return responseDto.fail("잘못된 요청",HttpStatus.BAD_REQUEST);
 
         // redis에서 refreshToken 지우기
-        if(redisTemplate.opsForValue().get(verfiedRefreshTokenInfo.getStudentId())!=null){
-            redisTemplate.delete(verfiedAuthTokenInfo.getStudentId());
+        if(redisTemplate.opsForValue().get(refreshTokenInfo.getStudentId())!=null){
+            redisTemplate.delete(accessTokenInfo.getStudentId());
         }
 
         // redis black list에 추가
@@ -128,7 +127,7 @@ public class UserService implements UserDetailsService {
                 .set(userLogoutForm.getRefreshToken(), "logout", JwtTokenProvider.REFRESH_TIME, TimeUnit.SECONDS);
 
         redisTemplate.opsForValue()
-                .set(userLogoutForm.getAuthToken(), "logout", JwtTokenProvider.AUTH_TIME, TimeUnit.SECONDS);
+                .set(userLogoutForm.getAccessToken(), "logout", JwtTokenProvider.ACCESS_TIME, TimeUnit.SECONDS);
 
 
         return responseDto.success("로그아웃 성공");
