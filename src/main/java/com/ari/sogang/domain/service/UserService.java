@@ -136,16 +136,17 @@ public class UserService implements UserDetailsService {
 
 
 
-    /* Wish List 저장 */
+    /* Wish List 추가 */
     @Transactional
-    public ResponseEntity<?> postWishList(String studentId, String clubName) {
+    public ResponseEntity<?> postWishList(String studentId, Long clubId) {
         var optionalUser = userRepository.findByStudentId(studentId);
         if(optionalUser.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
         List<UserWishClub> userWishClubs = user.getUserWishClubs();
-
         Long userId = user.getId();
-        Long clubId = clubRepository.findByName(clubName).getId();
+
+        var optionalClub = clubRepository.findById(clubId);
+        if(optionalUser.isEmpty()) return responseDto.fail("해당 클럽은 존재하지 않습니다.",HttpStatus.NOT_FOUND);
         /* 즐겨찾기 클럽 추가 */
 //        for (ClubDto temp : clubDtos) {
 //            var clubId = clubRepository.findByName(temp.getName()).getId();
@@ -339,17 +340,19 @@ public class UserService implements UserDetailsService {
         return buf.toString();
     }
 
-    /* 위시 리스트 업데이트 */
-    public ResponseEntity<?> updateWishList(String studentId, String clubName) {
+    /* Wish List 삭제 */
+    public ResponseEntity<?> updateWishList(String studentId, Long clubId) {
 
-        var optionalUSer = userRepository.findByStudentId(studentId);
+        var optionalUser = userRepository.findByStudentId(studentId);
 
-        if(optionalUSer.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
-        User user = optionalUSer.get();
+        if(optionalUser.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        User user = optionalUser.get();
         List<UserWishClub> userWishClubs = user.getUserWishClubs();
 
+        var optionalClub = clubRepository.findById(clubId);
+        if(optionalUser.isEmpty()) return responseDto.fail("해당 클럽은 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+
         Long userId = user.getId();
-        Long clubId = clubRepository.findByName(clubName).getId();
         /*해당되는 User_Wish_List entity 레코드 삭제*/
         userWishClubs.removeIf(element -> Objects.equals(element.getUserId(), userId) && Objects.equals(element.getClubId(), clubId));
 

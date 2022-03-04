@@ -60,16 +60,16 @@ public class ClubService{
     }
 
     // 해당 이름의 동아리 정보 리턴
-    public ResponseEntity<?> searchClubByName(String clubName){
+    public ResponseEntity<?> getClubById(Long clubId){
         return response.success(
-                dtoServiceHelper.toDto(clubRepository.findByName(clubName)),
+                dtoServiceHelper.toDto(clubRepository.findById(clubId).get()),
                         "동아리 조회 성공"
         );
     }
 
     // 특정 동아리의 해시태그 정보 리턴
-    public ResponseEntity<?> searchHashTagByName(String clubName){
-        var clubHashTags =  clubRepository.findByName(clubName).getClubHashTags();
+    public ResponseEntity<?> getHashTagByClubId(Long clubId){
+        var clubHashTags =  clubRepository.findById(clubId).get().getClubHashTags();
         var hashTagIds = clubHashTags.stream().map(ClubHashTag::getHashTagId).collect(Collectors.toList());
 
         return response.success(

@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class ClubDto {
+    private Long id;
+
     private String name;
 
     private String introduction;

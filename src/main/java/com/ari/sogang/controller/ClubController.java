@@ -29,18 +29,18 @@ public class ClubController {
     }
 
     /* 동아리 정보 */
-    @GetMapping("/info/{club_name}")
-    public ResponseEntity<?>  getClub(@PathVariable("club_name") String clubName){
-        return clubService.searchClubByName(clubName);
+    @GetMapping("/info/{club_id}")
+    public ResponseEntity<?>  getClub(@PathVariable("club_id") Long clubId){
+        return clubService.getClubById(clubId);
     }
 
     /* 동아리별 해시태그 조회 */
-    @GetMapping("/hashtag/{club_name}")
-    public ResponseEntity<?>  getHashTag(@PathVariable("club_name") String clubName){
-        return clubService.searchHashTagByName(clubName);
+    @GetMapping("/hashtag/{club_id}")
+    public ResponseEntity<?>  getHashTag(@PathVariable("club_id") Long clubId){
+        return clubService.getHashTagByClubId(clubId);
     }
     /* 동아리 전체 조회 */
-    @GetMapping("/findall")
+    @GetMapping("/find-all")
     public ResponseEntity<?> findAll(){
         return clubService.findAll();
     }

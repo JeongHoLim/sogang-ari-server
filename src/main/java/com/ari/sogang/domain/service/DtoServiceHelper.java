@@ -23,6 +23,7 @@ public class DtoServiceHelper {
 
     public ClubDto toDto(Club entity) {
         return ClubDto.builder()
+                .id(entity.getId())
                 .name(entity.getName())
                 .section(entity.getSection())
                 .recruiting(entity.isRecruiting())
@@ -51,6 +52,7 @@ public class DtoServiceHelper {
     }
     public Club toEntity(ClubDto clubDto) {
         return Club.builder()
+                .id(clubDto.getId())
                 .name(clubDto.getName())
                 .introduction(clubDto.getIntroduction())
                 .detail(clubDto.getDetail())
