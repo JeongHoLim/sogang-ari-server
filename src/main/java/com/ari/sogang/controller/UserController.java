@@ -34,7 +34,7 @@ public class UserController {
     }
 
     /* 위시리스트 수정 ~ delete*/
-    @DeleteMapping("/update-wish/{student_id}/{club_id}")
+    @DeleteMapping("/delete-wish/{student_id}/{club_id}")
     public ResponseEntity<?> updateWishList(@PathVariable("student_id")String studentId, @PathVariable("club_id") Long clubId){
         return userService.updateWishList(studentId,clubId);
     }
