@@ -19,7 +19,7 @@ public class ResponseDto {
     @Setter
     private static class Body{
 
-        private int state;
+        private int status;
         private String result;
         private String message;
         private Object data;
@@ -38,7 +38,7 @@ public class ResponseDto {
     public ResponseEntity<?> success(Object data, String message, HttpStatus status){
 
         Body body = Body.builder()
-                .state(status.value())
+                .status(status.value())
                 .data(data)
                 .message(message)
                 .result("success")
@@ -63,7 +63,7 @@ public class ResponseDto {
     public ResponseEntity<?> fail(Object data,String message,HttpStatus status){
 
         Body body = Body.builder()
-                    .state(status.value())
+                    .status(status.value())
                     .data(data)
                     .message(message)
                     .result("fail")
@@ -81,7 +81,7 @@ public class ResponseDto {
     // 올바르지 않은 요청
     public ResponseEntity<?> invalidFields(LinkedList<LinkedHashMap<String, String>> errors) {
         Body body = Body.builder()
-                .state(HttpStatus.BAD_REQUEST.value())
+                .status(HttpStatus.BAD_REQUEST.value())
                 .data(Collections.emptyList())
                 .result("fail")
                 .message("")

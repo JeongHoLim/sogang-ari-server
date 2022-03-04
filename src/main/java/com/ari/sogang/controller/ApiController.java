@@ -1,15 +1,12 @@
 package com.ari.sogang.controller;
 
-import com.ari.sogang.config.Helper;
-import com.ari.sogang.config.dto.ResponseDto;
-import com.ari.sogang.config.dto.UserLoginFormDto;
-import com.ari.sogang.config.dto.UserLogoutFormDto;
+import com.ari.sogang.config.dto.LoginFormDto;
+import com.ari.sogang.config.dto.LogoutFormDto;
 import com.ari.sogang.domain.dto.PasswordDto;
 import com.ari.sogang.domain.dto.UserDto;
 import com.ari.sogang.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,13 +25,12 @@ public class ApiController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserLoginFormDto userLoginFormDto,
-                                   HttpServletResponse response){
-        return userService.login(userLoginFormDto,response);
+    public ResponseEntity<?> login(@RequestBody LoginFormDto userLoginFormDto){
+        return userService.login(userLoginFormDto);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody UserLogoutFormDto userLogoutForm){
+    public ResponseEntity<?> logout(@RequestBody LogoutFormDto userLogoutForm){
         return userService.logout(userLogoutForm);
     }
 

@@ -1,8 +1,9 @@
 package com.ari.sogang.domain.service;
 
+import com.ari.sogang.config.dto.LoginResponseDto;
 import com.ari.sogang.config.dto.ResponseDto;
-import com.ari.sogang.config.dto.UserLoginFormDto;
-import com.ari.sogang.config.dto.UserLogoutFormDto;
+import com.ari.sogang.config.dto.LoginFormDto;
+import com.ari.sogang.config.dto.LogoutFormDto;
 import com.ari.sogang.config.jwt.JwtTokenProvider;
 import com.ari.sogang.domain.dto.ClubDto;
 import com.ari.sogang.domain.dto.PasswordDto;
@@ -80,10 +81,9 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public ResponseEntity<?> login(UserLoginFormDto userLoginFormDto, HttpServletResponse response) {
-        var user = userRepository.findByStudentId(userLoginFormDto.getStudentId()).get();
+    public ResponseEntity<?> login(LoginFormDto userLoginFormDto) {
 
-        var authenticationToken =  new UsernamePasswordAuthenticationToken(
+        var authenticationToken = new UsernamePasswordAuthenticationToken(
                 userLoginFormDto.getStudentId(), userLoginFormDto.getPassword());
 
         // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
@@ -92,23 +92,26 @@ public class UserService implements UserDetailsService {
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         var refreshToken = JwtTokenProvider.makeRefreshToken((User)authentication.getPrincipal());
+        var user = (User)authentication.getPrincipal();
 
-        response.setHeader("auth_token", JwtTokenProvider.makeAuthToken((User)authentication.getPrincipal()));
-        response.setHeader("refresh_token", refreshToken);
+        var tokens = LoginResponseDto.builder()
+                .authToken(JwtTokenProvider.makeAuthToken(user))
+                .refreshToken(refreshToken)
+                        .build();
 
         // 4. RefreshToken Redis 저장 (expirationTime 설정을 통해 자동 삭제 처리)
         redisTemplate.opsForValue()
                 .set(user.getStudentId(), refreshToken,JwtTokenProvider.REFRESH_TIME
-                        ,TimeUnit.MILLISECONDS);
+                        ,TimeUnit.SECONDS);
 
-        return responseDto.success(dtoServiceHelper.toDto(user),"로그인 성공");
+        return responseDto.success(tokens,"로그인 성공");
     }
 
 
 
     /* 로그아웃 */
 
-    public ResponseEntity<?> logout(UserLogoutFormDto userLogoutForm) {
+    public ResponseEntity<?> logout(LogoutFormDto userLogoutForm) {
         var verfiedAuthTokenInfo = JwtTokenProvider.verfiy(userLogoutForm.getAuthToken());
         var verfiedRefreshTokenInfo = JwtTokenProvider.verfiy(userLogoutForm.getRefreshToken());
 
@@ -122,7 +125,11 @@ public class UserService implements UserDetailsService {
 
         // redis black list에 추가
         redisTemplate.opsForValue()
-                .set(userLogoutForm.getRefreshToken(), "logout", JwtTokenProvider.REFRESH_TIME, TimeUnit.MILLISECONDS);
+                .set(userLogoutForm.getRefreshToken(), "logout", JwtTokenProvider.REFRESH_TIME, TimeUnit.SECONDS);
+
+        redisTemplate.opsForValue()
+                .set(userLogoutForm.getAuthToken(), "logout", JwtTokenProvider.AUTH_TIME, TimeUnit.SECONDS);
+
 
         return responseDto.success("로그아웃 성공");
     }

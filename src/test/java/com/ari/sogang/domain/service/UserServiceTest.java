@@ -54,24 +54,24 @@ class UserServiceTest extends WebIntegrationTest{
     @DisplayName("2. 회원 가입, 탈퇴")
     void test_2(){
 
-        TestRestTemplate client = new TestRestTemplate();
-
-        var newUser = UserDto.builder()
-                .studentId("20171682")
-                .name("임정호")
-                .major("컴퓨터공학과")
-                .email("ijh9404@sogang.ac.kr")
-                .password("1111")
-                .build();
-
-        var entity = new HttpEntity<UserDto>(newUser);
-        ResponseEntity<String> response1 = client.exchange(
-                uri("/sign-in"), HttpMethod.POST,entity,String.class);
-
-        System.out.println(response1.getBody());
-
-        ResponseEntity<String> response2 = client.getForEntity(uri("/sign-out","20171682"),String.class);
-        System.out.println(response2.getBody());
+//        TestRestTemplate client = new TestRestTemplate();
+//
+//        var newUser = UserDto.builder()
+//                .studentId("20171682")
+//                .name("임정호")
+//                .major("컴퓨터공학과")
+//                .email("ijh9404@sogang.ac.kr")
+//                .password("1111")
+//                .build();
+//
+//        var entity = new HttpEntity<UserDto>(newUser);
+//        ResponseEntity<String> response1 = client.exchange(
+//                uri("/sign-in"), HttpMethod.POST,entity,String.class);
+//
+//        System.out.println(response1.getBody());
+//
+//        ResponseEntity<String> response2 = client.getForEntity(uri("/sign-out","20171682"),String.class);
+//        System.out.println(response2.getBody());
 
     }
 }
