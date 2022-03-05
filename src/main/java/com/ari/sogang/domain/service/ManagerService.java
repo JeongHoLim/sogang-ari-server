@@ -53,6 +53,7 @@ public class ManagerService {
             club.setRecruiting(true);
         else if(flag.equals("no"))
             club.setRecruiting(false);
+        else return response.fail("잘못된 요청",HttpStatus.BAD_REQUEST);
         clubRepository.save(club);
 
         return response.success("모집 설정 성공");
