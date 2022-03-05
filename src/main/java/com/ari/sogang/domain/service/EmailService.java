@@ -1,6 +1,7 @@
 package com.ari.sogang.domain.service;
 
 import com.ari.sogang.config.dto.ResponseDto;
+import com.ari.sogang.config.jwt.JwtTokenProvider;
 import com.ari.sogang.domain.dto.MailDto;
 import com.ari.sogang.domain.dto.MailFeedbackDto;
 import com.ari.sogang.domain.dto.MailFormDto;
@@ -9,6 +10,7 @@ import com.ari.sogang.domain.entity.User;
 import com.ari.sogang.domain.repository.ConfirmTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -16,16 +18,19 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class EmailService {
 
     private final JavaMailSender javaMailSender;
-    private final ConfirmTokenRepository confirmTokenRepository;
+    private final RedisTemplate<String, String> redisTemplate;
+//    private final ConfirmTokenRepository confirmTokenRepository;
     private final ResponseDto response;
 
     @Value("${spring.mail.username}")
@@ -35,44 +40,29 @@ public class EmailService {
     // 발급한 시간이랑 지금 시간이랑 비교 && 발급해준 학번이랑 비교
     @Transactional
     protected boolean verify(MailDto mailDto) {
-
-        var optionalToken = confirmTokenRepository.findByToken(mailDto.getToken());
-        if(optionalToken.isEmpty()) return false;
-
-        var foundToken = optionalToken.get();
-
-        var ret = foundToken.getStudentId().equals(mailDto.getStudentId())
-                && LocalDateTime.now().isBefore(foundToken.getCreatedAt().plusMinutes(5));
-
-        confirmTokenRepository.deleteById(foundToken.getId());
-
-        return ret;
+        var flag = redisTemplate.opsForValue().get(mailDto.getToken());
+        return !ObjectUtils.isEmpty(flag);
     }
 
     // 검증 코드 생성해서 해당 이메일로 보냄
     @Async
     @Transactional
-    public ResponseEntity<?> sendConfirmToken(MailFormDto mailFormDto) {
+    public ResponseEntity<?> sendToken(MailFormDto mailFormDto) {
 
         SimpleMailMessage message = new SimpleMailMessage();
 
         message.setTo(mailFormDto.getAddress());
         message.setSubject("서강아리 본인 확인 메일");
 
-        var code = createCode();
-        message.setText("인증 번호 : " + code);
+        var codeToken = createCode();
+        message.setText("인증 번호 : " + codeToken);
 
         // 인증 메일 발송
         javaMailSender.send(message);
 
-        var token = ConfirmToken.builder()
-                .createdAt(LocalDateTime.now())
-                .studentId(mailFormDto.getStudentId())
-                .token(code)
-                .build();
-
-        // token 저장
-        confirmTokenRepository.save(token);
+        // token 저장 (5분)
+        redisTemplate.opsForValue()
+                .set(codeToken, "이메일 인증 토큰", 60*5 , TimeUnit.SECONDS);
         // 인증 메일이 오지 않는다면? 사용자한테 이메일 다시 확인하라고 알려줘야 함
         return response.success("인증 코드 전송 성공");
     }
@@ -105,7 +95,6 @@ public class EmailService {
         return response.success("비밀번호 전송 성공");
     }
 
-
     @Transactional
     public ResponseEntity<?> sendFeedback(MailFeedbackDto mailFeedbackDto){
         SimpleMailMessage message = new SimpleMailMessage();
@@ -119,7 +108,7 @@ public class EmailService {
     }
 
 
-    public ResponseEntity<?> verfiyMailCode(MailDto mailDto) {
+    public ResponseEntity<?> verifyMailCode(MailDto mailDto) {
 
         if(verify(mailDto))
             return response.success("인증 코드 검사 성공");

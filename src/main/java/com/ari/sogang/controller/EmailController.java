@@ -18,13 +18,13 @@ public class EmailController {
 
     @PostMapping("/send-code")
     public ResponseEntity<?> sendMail(@RequestBody MailFormDto mailFormDto){
-        return emailService.sendConfirmToken(mailFormDto);
+        return emailService.sendToken(mailFormDto);
     }
 
-    @PostMapping("/verfiy-code")
-    public ResponseEntity<?> verfiyMailCode(@RequestBody MailDto mailDto){
+    @PostMapping("/verify-code")
+    public ResponseEntity<?> verifyMailCode(@RequestBody MailDto mailDto){
 
-        return emailService.verfiyMailCode(mailDto);
+        return emailService.verifyMailCode(mailDto);
     }
 
     @PostMapping("/send-feedback")
