@@ -19,9 +19,6 @@ import java.io.IOException;
 
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
-    private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String BEARER_TYPE = "Bearer";
-
     private final UserService userService;
     private final RedisTemplate redisTemplate;
 

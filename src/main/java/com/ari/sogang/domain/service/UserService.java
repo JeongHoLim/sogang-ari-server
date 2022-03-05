@@ -351,7 +351,7 @@ public class UserService implements UserDetailsService {
 
         Random random = new Random(System.currentTimeMillis());
         int tableLength = passwordTable.length;
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 
         for(int i = 0; i < 8; i++) {
             buf.append(passwordTable[random.nextInt(tableLength)]);
