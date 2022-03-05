@@ -28,7 +28,7 @@ public class ResponseDto {
 
 //    Response 객체
 //    {
-//        "state" : 200,
+//        "status" : 200,
 //        "result" : success,
 //        "message" : message,
 //        "data" : data,

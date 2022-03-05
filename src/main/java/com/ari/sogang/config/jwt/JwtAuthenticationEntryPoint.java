@@ -30,10 +30,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         var map = new HashMap<String,Object>();
 
         map.put("state",HttpStatus.UNAUTHORIZED.value());
-        map.put("message","로그인 실패");
+        map.put("message","로그인이 필요합니다.");
         map.put("result","fail");
         map.put("data", Collections.EMPTY_LIST);
-        map.put("error","인증 필요");
+        map.put("error","인증 에러");
 
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());

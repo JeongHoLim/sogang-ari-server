@@ -1,9 +1,8 @@
 package com.ari.sogang.domain.service;
 
-import com.ari.sogang.config.dto.LoginResponseDto;
 import com.ari.sogang.config.dto.ResponseDto;
 import com.ari.sogang.config.dto.LoginFormDto;
-import com.ari.sogang.config.dto.LogoutFormDto;
+import com.ari.sogang.config.dto.TokenDto;
 import com.ari.sogang.config.jwt.JwtTokenProvider;
 import com.ari.sogang.domain.dto.ClubDto;
 import com.ari.sogang.domain.dto.PasswordDto;
@@ -24,6 +23,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -93,7 +93,7 @@ public class UserService implements UserDetailsService {
         var refreshToken = JwtTokenProvider.makeRefreshToken((User)authentication.getPrincipal());
         var user = (User)authentication.getPrincipal();
 
-        var tokens = LoginResponseDto.builder()
+        var tokens = TokenDto.builder()
                 .accessToken(JwtTokenProvider.makeAccessToken(user))
                 .refreshToken(refreshToken)
                         .build();
@@ -106,11 +106,39 @@ public class UserService implements UserDetailsService {
         return responseDto.success(tokens,"로그인 성공");
     }
 
+    public ResponseEntity<?> reissue(TokenDto tokenDto) {
+
+        var refreshToken = tokenDto.getRefreshToken();
+        var refreshTokenInfo = JwtTokenProvider.verfiy(refreshToken);
+
+        String isLogout = redisTemplate.opsForValue().get(refreshToken);
+        // 로그아웃 되어있는 토큰인지 검사
+        if (!ObjectUtils.isEmpty(isLogout) ||  !refreshTokenInfo.isSuccess())
+            return responseDto.fail("토큰 에러, 재로그인 필요",HttpStatus.BAD_REQUEST);
+
+        if(redisTemplate.opsForValue().get(refreshTokenInfo.getStudentId())!=null){
+            redisTemplate.delete(refreshTokenInfo.getStudentId());
+        }
+
+        var user = User.builder().studentId(refreshTokenInfo.getStudentId()).build();
+
+        var tokens = TokenDto.builder()
+                .accessToken(JwtTokenProvider.makeAccessToken(user))
+                .refreshToken(JwtTokenProvider.makeRefreshToken(user))
+                .build();
+
+        // 기존에 사용되던 refresh 토큰 black list에 추가
+        redisTemplate.opsForValue()
+                .set(refreshToken,"logout",JwtTokenProvider.REFRESH_TIME,TimeUnit.SECONDS);
+
+        return responseDto.success(tokens,"토큰 발행 성공");
+    }
+
 
 
     /* 로그아웃 */
 
-    public ResponseEntity<?> logout(LogoutFormDto userLogoutForm) {
+    public ResponseEntity<?> logout(TokenDto userLogoutForm) {
         var accessTokenInfo = JwtTokenProvider.verfiy(userLogoutForm.getAccessToken());
         var refreshTokenInfo = JwtTokenProvider.verfiy(userLogoutForm.getRefreshToken());
 
@@ -355,21 +383,12 @@ public class UserService implements UserDetailsService {
         /*해당되는 User_Wish_List entity 레코드 삭제*/
         userWishClubs.removeIf(element -> Objects.equals(element.getUserId(), userId) && Objects.equals(element.getClubId(), clubId));
 
-
-//        user.setUserWishClubs(userWishClubs);
-//        userRepository.save(user);
-
-        /* 즐겨찾기 클럽 추가 */
-//        for (ClubDto temp : clubDtos) {
-//            var clubId = clubRepository.findByName(temp.getName()).getId();
-//            userWishClubs.add(new UserWishClub(userId, clubId));
-//        }
-
         /* 영속성 전이 cascade에 의해 DB 저장 */
         user.setUserWishClubs(userWishClubs);
         userRepository.save(user);
 
         return responseDto.success("담아놓기 업데이트 성공");
     }
+
 
 }

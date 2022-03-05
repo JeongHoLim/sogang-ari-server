@@ -1,15 +1,13 @@
 package com.ari.sogang.controller;
 
 import com.ari.sogang.config.dto.LoginFormDto;
-import com.ari.sogang.config.dto.LogoutFormDto;
+import com.ari.sogang.config.dto.TokenDto;
 import com.ari.sogang.domain.dto.PasswordDto;
 import com.ari.sogang.domain.dto.UserDto;
 import com.ari.sogang.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,14 +22,23 @@ public class ApiController {
         return userService.save(userDto);
     }
 
+    /* 로그인 */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginFormDto userLoginFormDto){
         return userService.login(userLoginFormDto);
     }
 
+    /* 로그아웃 */
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody LogoutFormDto userLogoutForm){
-        return userService.logout(userLogoutForm);
+    public ResponseEntity<?> logout(@RequestBody TokenDto tokenDto){
+        return userService.logout(tokenDto);
+    }
+
+
+    /* 토큰 재발급 */
+    @PostMapping("/reissue")
+    public ResponseEntity<?> reissue(@RequestBody TokenDto tokenDto){
+        return userService.reissue(tokenDto);
     }
 
     /* 회원 탈퇴 */
