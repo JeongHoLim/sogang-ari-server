@@ -128,7 +128,7 @@ public class UserService implements UserDetailsService {
         redisTemplate.opsForValue()
                 .set(refreshToken,"logout",JwtTokenProvider.REFRESH_TIME,TimeUnit.SECONDS);
 
-        return responseDto.success(tokens,"토큰 발행 성공");
+        return responseDto.success(tokens,"토큰 발행 성공",HttpStatus.CREATED);
     }
 
 
@@ -170,18 +170,14 @@ public class UserService implements UserDetailsService {
         Long userId = user.getId();
 
         var optionalClub = clubRepository.findById(clubId);
-        if(optionalUser.isEmpty()) return responseDto.fail("해당 클럽은 존재하지 않습니다.",HttpStatus.NOT_FOUND);
-        /* 즐겨찾기 클럽 추가 */
-//        for (ClubDto temp : clubDtos) {
-//            var clubId = clubRepository.findByName(temp.getName()).getId();
-//            userWishClubs.add(new UserWishClub(userId, clubId));
-//        }
+        if(optionalClub.isEmpty()) return responseDto.fail("해당 클럽은 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+
         userWishClubs.add(new UserWishClub(userId,clubId));
         /* 영속성 전이 cacade에 의해 DB 저장 */
         user.setUserWishClubs(userWishClubs);
         userRepository.save(user);
 
-        return responseDto.success("담아 놓기 성공");
+        return responseDto.success("담아 놓기 성공",HttpStatus.CREATED);
     }
 
     /* Wish List 조회 */
@@ -374,7 +370,7 @@ public class UserService implements UserDetailsService {
         List<UserWishClub> userWishClubs = user.getUserWishClubs();
 
         var optionalClub = clubRepository.findById(clubId);
-        if(optionalUser.isEmpty()) return responseDto.fail("해당 클럽은 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        if(optionalClub.isEmpty()) return responseDto.fail("해당 클럽은 존재하지 않습니다.",HttpStatus.NOT_FOUND);
 
         Long userId = user.getId();
         /*해당되는 User_Wish_List entity 레코드 삭제*/
