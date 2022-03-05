@@ -73,10 +73,7 @@ public class UserService implements UserDetailsService {
         // 일단 회원 가입하면 유저 권한만 승인 -> 수정 필요
         addAuthority(user.getId(),"ROLE_USER");
 
-        // 헤더 추가
-        var savedDto = dtoServiceHelper.toDto(user);
-
-        return responseDto.success(savedDto,"회원 가입이 완료되었습니다.", HttpStatus.CREATED);
+        return responseDto.success("회원 가입이 완료되었습니다.", HttpStatus.CREATED);
 
     }
 
