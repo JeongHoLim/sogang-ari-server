@@ -82,6 +82,9 @@ public class UserService implements UserDetailsService {
         var authenticationToken = new UsernamePasswordAuthenticationToken(
                 userLoginFormDto.getStudentId(), userLoginFormDto.getPassword());
 
+        if(!userRepository.existsByStudentId(userLoginFormDto.getStudentId()))
+            return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
+
         // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
         // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
@@ -164,13 +167,13 @@ public class UserService implements UserDetailsService {
     @Transactional
     public ResponseEntity<?> postWishList(String studentId, Long clubId) {
         var optionalUser = userRepository.findByStudentId(studentId);
-        if(optionalUser.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
         List<UserWishClub> userWishClubs = user.getUserWishClubs();
         Long userId = user.getId();
 
         var optionalClub = clubRepository.findById(clubId);
-        if(optionalClub.isEmpty()) return responseDto.fail("해당 클럽은 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        if(optionalClub.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
 
         userWishClubs.add(new UserWishClub(userId,clubId));
         /* 영속성 전이 cacade에 의해 DB 저장 */
@@ -184,7 +187,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public ResponseEntity<?> getWishList(String studentId){
         var optionalUser = userRepository.findByStudentId(studentId);
-        if(optionalUser.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
 
         var wishList = user.getUserWishClubs();
@@ -201,7 +204,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public ResponseEntity<?> getJoinedClub(String studentId){
         var optionalUser = userRepository.findByStudentId(studentId);
-        if(optionalUser.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
 
         var userClubList = user.getUserClubs();
@@ -216,7 +219,7 @@ public class UserService implements UserDetailsService {
 
     /* 권한 부여 */
     @Transactional
-    public ResponseEntity<?> addAuthority(Long userId,String authority){
+    public boolean addAuthority(Long userId,String authority){
 
         var optionalUser = userRepository.findById(userId);
         if(optionalUser.isPresent()){
@@ -235,9 +238,9 @@ public class UserService implements UserDetailsService {
                 user.setAuthorities(authorities);
                 userRepository.save(user);
             }
-            return responseDto.success("권한 부여 성공");
+            return true;
         }
-        return responseDto.fail("권한 부여 실패",HttpStatus.NOT_FOUND);
+        return false;
     }
 
     /* 권한 제거 */
@@ -261,7 +264,7 @@ public class UserService implements UserDetailsService {
             userRepository.save(user);
             return responseDto.success("권한 제거 성공.");
         }
-        return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
     }
 
 
@@ -272,7 +275,7 @@ public class UserService implements UserDetailsService {
         var optionalUser = userRepository.findByStudentId(studentId);
 
         if(optionalUser.isEmpty()){
-            return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+            return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         }
         var target = optionalUser.get();
 
@@ -312,7 +315,7 @@ public class UserService implements UserDetailsService {
     public ResponseEntity<?> resetPassword(String studentId) {
 
         var optionalUser = userRepository.findByStudentId(studentId);
-        if(optionalUser.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
 
         var user = optionalUser.get();
 
@@ -331,8 +334,11 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public ResponseEntity<?> changePassword(String studentId, PasswordDto passwordDto) {
-        var user = userRepository.findByStudentId(studentId).get();
+        var optionalUser = userRepository.findByStudentId(studentId);
+        if(optionalUser.isEmpty())
+            return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
 
+        var user = optionalUser.get();
         if(passwordEncoder.matches(passwordDto.getOldPassword(),user.getPassword())
                 && passwordDto.getNewPassword().equals(passwordDto.getCheckPassword())){
 
@@ -341,8 +347,7 @@ public class UserService implements UserDetailsService {
 
             return responseDto.success("비밀번호 변경 성공");
         }
-
-        return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        return responseDto.fail("비밀번호 변경 실패",HttpStatus.BAD_REQUEST);
     }
 
 
@@ -365,12 +370,12 @@ public class UserService implements UserDetailsService {
 
         var optionalUser = userRepository.findByStudentId(studentId);
 
-        if(optionalUser.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         User user = optionalUser.get();
         List<UserWishClub> userWishClubs = user.getUserWishClubs();
 
         var optionalClub = clubRepository.findById(clubId);
-        if(optionalClub.isEmpty()) return responseDto.fail("해당 클럽은 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+        if(optionalClub.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
 
         Long userId = user.getId();
         /*해당되는 User_Wish_List entity 레코드 삭제*/
