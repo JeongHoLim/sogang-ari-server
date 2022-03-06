@@ -27,10 +27,10 @@ public class AdminService {
 //        var club = optionalClub.get();
         var user = optionalUser.get();
 
-        userService.addAuthority(user.getId(),"ROLE_MANAGER");
-        userRepository.save(user);
-
-
-        return responseDto.success("동아리장 등록 성공", HttpStatus.CREATED);
+        if(userService.addAuthority(user.getId(),"ROLE_MANAGER")) {
+            userRepository.save(user);
+            return responseDto.success("동아리장 등록 성공", HttpStatus.CREATED);
+        }
+        return responseDto.fail("동아리장 등록 실패",HttpStatus.BAD_REQUEST);
     }
 }
