@@ -53,8 +53,7 @@ public class JwtTokenProvider {
                     .build();
         }
         catch (Exception ex){
-            DecodedJWT decoded = JWT.decode(token);
-            return VerifyResult.builder().success(false).studentId(decoded.getSubject()).build();
+            return VerifyResult.builder().success(false).build();
         }
     }
 
