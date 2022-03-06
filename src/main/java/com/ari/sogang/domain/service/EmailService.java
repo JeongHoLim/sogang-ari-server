@@ -1,11 +1,9 @@
 package com.ari.sogang.domain.service;
 
 import com.ari.sogang.config.dto.ResponseDto;
-import com.ari.sogang.config.jwt.JwtTokenProvider;
 import com.ari.sogang.domain.dto.MailDto;
 import com.ari.sogang.domain.dto.MailFeedbackDto;
 import com.ari.sogang.domain.dto.MailFormDto;
-import com.ari.sogang.domain.entity.ConfirmToken;
 import com.ari.sogang.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
