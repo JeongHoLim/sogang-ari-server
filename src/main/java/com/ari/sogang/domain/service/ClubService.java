@@ -59,6 +59,18 @@ public class ClubService{
         );
     }
 
+
+    public ResponseEntity<?> searchByName(String clubName) {
+
+        var candidates = clubRepository.findByNameContains(clubName);
+        return response.success(
+                candidates,"동아리 검색 성공"
+        );
+
+    }
+
+
+
     // 해당 이름의 동아리 정보 리턴
     public ResponseEntity<?> getClubById(Long clubId){
         return response.success(
@@ -89,4 +101,5 @@ public class ClubService{
                 "동아리 조회 성공"
         );
     }
+
 }

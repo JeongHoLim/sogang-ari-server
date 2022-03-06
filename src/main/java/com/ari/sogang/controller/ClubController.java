@@ -4,6 +4,7 @@ import com.ari.sogang.config.dto.ResponseDto;
 import com.ari.sogang.domain.dto.ClubDto;
 import com.ari.sogang.domain.dto.HashTagDto;
 import com.ari.sogang.domain.service.ClubService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -31,12 +32,22 @@ public class ClubController {
 
     /* 분과 검색 */
     @ApiResponses(value={
-            @ApiResponse(code = 201, message = "동아리 검색 성공")
+            @ApiResponse(code = 200, message = "동아리 검색 성공")
     })
     @GetMapping("/search_section/{section}")
     @ApiOperation(value = "분과로 동아리 검색",notes="분과로 동아리 검색")
     public ResponseEntity<?>  searchBySection(@PathVariable String section){
         return clubService.searchBySection(section);
+    }
+
+
+    @ApiResponses(value={
+            @ApiResponse(code = 200, message = "동아리 검색 성공"),
+    })
+    @ApiOperation(value = "이름으로 동아리 검색",notes="이름으로 동아리 검색")
+    @GetMapping("/search-section/")
+    public ResponseEntity<?> searchByName(@RequestParam String clubName){
+        return clubService.searchByName(clubName);
     }
 
     /* 동아리 정보 */
