@@ -46,8 +46,8 @@ public class ManagerService {
     }
 
     @Transactional
-    public ResponseEntity<?> setRecruiting(String clubName, String flag) {
-        Club club = clubRepository.findByName(clubName);
+    public ResponseEntity<?> setRecruiting(Long clubId, String flag) {
+        Club club = clubRepository.findById(clubId).get();
 
         if(flag.equals("yes"))
             club.setRecruiting(true);

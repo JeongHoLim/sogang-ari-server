@@ -1,12 +1,14 @@
 package com.ari.sogang.domain.service;
 
+import com.ari.sogang.config.dto.LoginResponseDto;
 import com.ari.sogang.config.dto.ResponseDto;
-import com.ari.sogang.config.dto.LoginFormDto;
+import com.ari.sogang.config.dto.LoginRequestDto;
 import com.ari.sogang.config.dto.TokenDto;
 import com.ari.sogang.config.jwt.JwtTokenProvider;
 import com.ari.sogang.domain.dto.ClubDto;
 import com.ari.sogang.domain.dto.PasswordDto;
 import com.ari.sogang.domain.dto.UserDto;
+import com.ari.sogang.domain.dto.WishClubDto;
 import com.ari.sogang.domain.entity.*;
 import com.ari.sogang.domain.repository.ClubRepository;
 import com.ari.sogang.domain.repository.UserRepository;
@@ -42,6 +44,7 @@ public class UserService implements UserDetailsService {
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final ResponseDto responseDto;
+    private final LoginResponseDto loginResponseDto;
     private final RedisTemplate<String, String> redisTemplate;
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -77,12 +80,12 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public ResponseEntity<?> login(LoginFormDto userLoginFormDto) {
+    public ResponseEntity<?> login(LoginRequestDto loginRequestDto) {
 
         var authenticationToken = new UsernamePasswordAuthenticationToken(
-                userLoginFormDto.getStudentId(), userLoginFormDto.getPassword());
+                loginRequestDto.getStudentId(), loginRequestDto.getPassword());
 
-        if(!userRepository.existsByStudentId(userLoginFormDto.getStudentId()))
+        if(!userRepository.existsByStudentId(loginRequestDto.getStudentId()))
             return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
 
         // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
@@ -93,17 +96,48 @@ public class UserService implements UserDetailsService {
         var refreshToken = JwtTokenProvider.makeRefreshToken((User)authentication.getPrincipal());
         var user = (User)authentication.getPrincipal();
 
-        var tokens = TokenDto.builder()
+        // 4. 로그인 성공시에 client에 전달할 정보 생성
+        //4-1. userInfo
+        UserDto userInfo = dtoServiceHelper.toDto(user);
+
+        // 4-1-1. 가입한 동아리
+        var joinedClub = findClubs(user);
+        List<String> clubNames = new ArrayList<>();
+        for(ClubDto joined : joinedClub){
+            clubNames.add(joined.getName());
+        }
+        userInfo.setJoinedClubs(clubNames);
+        // 4-1-2. 담아놓은 동아리
+        var wishClub = findWishClubs(user);
+        List<WishClubDto> wishClubDtos = new ArrayList<>();
+        for(ClubDto wished : wishClub){
+            wishClubDtos.add(
+                    WishClubDto.builder()
+                            .name(wished.getName())
+                            .section(wished.getSection())
+                            .recruiting(wished.isRecruiting())
+                            .build()
+            );
+        }
+        userInfo.setWishClubs(wishClubDtos);
+
+        // 4-2. tokenInfo
+        TokenDto tokens = TokenDto.builder()
                 .accessToken(JwtTokenProvider.makeAccessToken(user))
                 .refreshToken(refreshToken)
                         .build();
+        // 4-3. Login Response Dto에 저장.
+        LoginResponseDto loginResponseDto = LoginResponseDto.builder()
+                .userInfo(userInfo)
+                .tokenInfo(tokens)
+                .build();
 
-        // 4. RefreshToken Redis 저장 (expirationTime 설정을 통해 자동 삭제 처리)
+        // 5. RefreshToken Redis 저장 (expirationTime 설정을 통해 자동 삭제 처리)
         redisTemplate.opsForValue()
                 .set(user.getStudentId(), refreshToken,JwtTokenProvider.REFRESH_TIME
                         ,TimeUnit.SECONDS);
 
-        return responseDto.success(tokens,"로그인 성공");
+        return responseDto.success(loginResponseDto,"로그인 성공");
     }
 
     public ResponseEntity<?> reissue(TokenDto tokenDto) {
@@ -183,6 +217,16 @@ public class UserService implements UserDetailsService {
         return responseDto.success("담아 놓기 성공",HttpStatus.CREATED);
     }
 
+    /* 담아놓은 동아리 조회하는 함수 */
+    public List<ClubDto> findWishClubs(User user){
+        var wishList = user.getUserWishClubs();
+        List<ClubDto> result = new ArrayList<>();
+        for(UserWishClub temp : wishList){
+            var clubId = temp.getClubId();
+            result.add(dtoServiceHelper.toDto(clubRepository.findById(clubId).get()));
+        }
+        return result;
+    }
     /* Wish List 조회 */
     @Transactional
     public ResponseEntity<?> getWishList(String studentId){
@@ -190,14 +234,20 @@ public class UserService implements UserDetailsService {
         if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
 
-        var wishList = user.getUserWishClubs();
-        List<ClubDto> clubList = new ArrayList<>();
+        List<ClubDto> clubList = findWishClubs(user);
 
-        for(UserWishClub temp : wishList){
-            var clubId = temp.getClubId();
-            clubList.add(dtoServiceHelper.toDto(clubRepository.findById(clubId).get()));
-        }
         return responseDto.success(clubList,"담아놓기 조회 성공");
+    }
+
+    /* 가입한 동아리 조회하는 함수 */
+    public List<ClubDto> findClubs(User user){
+        var userClubList = user.getUserClubs();
+        List<ClubDto> result = new ArrayList<>();
+        for(UserClub temp : userClubList){
+            var clubId = temp.getClubId();
+            result.add(dtoServiceHelper.toDto(clubRepository.findById(clubId).get()));
+        }
+        return result;
     }
 
     /* 가입 동아리 조회 */
@@ -207,13 +257,8 @@ public class UserService implements UserDetailsService {
         if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
 
-        var userClubList = user.getUserClubs();
-        List<ClubDto> clubList = new ArrayList<>();
+        List<ClubDto> clubList = findClubs(user);
 
-        for(UserClub temp : userClubList){
-            var clubId = temp.getClubId();
-            clubList.add(dtoServiceHelper.toDto(clubRepository.findById(clubId).get()));
-        }
         return responseDto.success(clubList,"가입된 동아리 조회 성공");
     }
 

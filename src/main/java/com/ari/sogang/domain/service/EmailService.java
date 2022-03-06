@@ -7,7 +7,6 @@ import com.ari.sogang.domain.dto.MailFeedbackDto;
 import com.ari.sogang.domain.dto.MailFormDto;
 import com.ari.sogang.domain.entity.ConfirmToken;
 import com.ari.sogang.domain.entity.User;
-import com.ari.sogang.domain.repository.ConfirmTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -30,7 +29,6 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
     private final RedisTemplate<String, String> redisTemplate;
-//    private final ConfirmTokenRepository confirmTokenRepository;
     private final ResponseDto response;
 
     @Value("${spring.mail.username}")

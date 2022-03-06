@@ -1,7 +1,6 @@
 package com.ari.sogang.controller;
 
-import com.ari.sogang.config.dto.LoginFormDto;
-import com.ari.sogang.config.dto.ResponseDto;
+import com.ari.sogang.config.dto.LoginRequestDto;
 import com.ari.sogang.config.dto.TokenDto;
 import com.ari.sogang.domain.dto.PasswordDto;
 import com.ari.sogang.domain.dto.UserDto;
@@ -38,8 +37,8 @@ public class ApiController {
     })
     @PostMapping("/login")
     @ApiOperation(value = "로그인",notes="유저 로그인")
-    public ResponseEntity<?> login(@RequestBody LoginFormDto userLoginFormDto){
-        return userService.login(userLoginFormDto);
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto){
+        return userService.login(loginRequestDto);
     }
 
     /* 로그아웃 */

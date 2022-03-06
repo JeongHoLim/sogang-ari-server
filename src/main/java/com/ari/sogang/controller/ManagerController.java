@@ -35,9 +35,9 @@ public class ManagerController {
             @ApiResponse(code = 200, message = "모집 설정 성공"),
             @ApiResponse(code = 400, message = "잘못된 요청")
     })
-    @GetMapping("/set-recruit/{club_name}")
+    @GetMapping("/set-recruit/{club_id}")
     @ApiOperation(value = "동아리 모집 설정",notes="동아리 모집 여부 설정")
-    public ResponseEntity<?> setRecruiting(@PathVariable("club_name")String clubName,@RequestParam("recruit") String flag){
-        return managerService.setRecruiting(clubName, flag);
+    public ResponseEntity<?> setRecruiting(@PathVariable("club_id")Long clubId,@RequestParam("recruit") String flag){
+        return managerService.setRecruiting(clubId, flag);
     }
 }
