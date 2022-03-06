@@ -30,7 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     private final UserService userService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String,String>  redisTemplate;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

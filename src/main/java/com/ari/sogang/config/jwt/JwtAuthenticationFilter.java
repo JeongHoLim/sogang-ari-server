@@ -20,9 +20,9 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final UserService userService;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String,String> redisTemplate;
 
-    public JwtAuthenticationFilter(UserService userService,RedisTemplate redisTemplate) {
+    public JwtAuthenticationFilter(UserService userService,RedisTemplate<String,String>  redisTemplate) {
         this.userService = userService;
         this.redisTemplate = redisTemplate;
     }
