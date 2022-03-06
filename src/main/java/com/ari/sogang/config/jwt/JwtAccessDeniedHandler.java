@@ -29,7 +29,6 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
         var map = new HashMap<String,Object>();
 
-        map.put("state",HttpStatus.FORBIDDEN.value());
         map.put("message","접근 불가");
         map.put("result","fail");
         map.put("data", "");

@@ -29,12 +29,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType("application/json;charset=utf-8");
         var map = new HashMap<String,Object>();
 
-        map.put("state",HttpStatus.UNAUTHORIZED.value());
         map.put("message","로그인이 필요합니다.");
         map.put("result","fail");
         map.put("data", Collections.EMPTY_LIST);
         map.put("error","인증 에러");
-
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().write(objectMapper.writeValueAsString(map));
