@@ -43,7 +43,7 @@ public class ResponseDto {
         return success(data,message,HttpStatus.OK);
     }
     public ResponseEntity<?>success(String message,HttpStatus status){
-        return success(message,status);
+        return success(Collections.emptyList(),message,status);
     }
 
 
