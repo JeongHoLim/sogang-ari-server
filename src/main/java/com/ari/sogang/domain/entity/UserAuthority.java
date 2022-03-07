@@ -24,4 +24,6 @@ public class UserAuthority implements GrantedAuthority {
     @Id
     private String authority;
 
+    @Id
+    private Long clubId;
 }

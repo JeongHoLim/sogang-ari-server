@@ -17,17 +17,17 @@ public class AdminService {
     private final ClubRepository clubRepository;
     private final ResponseDto responseDto;
 
-    public ResponseEntity<?> registerManager(String managerId,String clubId){
+    public ResponseEntity<?> registerManager(String managerId,String strClubId){
 
         var optionalUser = userRepository.findByStudentId(managerId);
-        var optionalClub = clubRepository.findById(Long.valueOf(clubId));
+        var clubId = Long.valueOf(strClubId);
+        var optionalClub = clubRepository.findById(clubId);
         if(optionalClub.isEmpty() || optionalUser.isEmpty())
             return responseDto.fail("존재하지 않는 동아리 혹은 유저",HttpStatus.NOT_FOUND);
 
-//        var club = optionalClub.get();
         var user = optionalUser.get();
 
-        if(userService.addAuthority(user.getId(),"ROLE_MANAGER")) {
+        if(userService.addAuthority(user.getId(),"ROLE_MANAGER",clubId)) {
             userRepository.save(user);
             return responseDto.success("동아리장 등록 성공", HttpStatus.CREATED);
         }

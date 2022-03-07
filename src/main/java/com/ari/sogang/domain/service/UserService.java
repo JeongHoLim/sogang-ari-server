@@ -74,7 +74,7 @@ public class UserService implements UserDetailsService {
         var user = dtoServiceHelper.toEntity(userDto);
         userRepository.save(user);
         // 일단 회원 가입하면 유저 권한만 승인 -> 수정 필요
-        addAuthority(user.getId(),"ROLE_USER");
+        addAuthority(user.getId(),"ROLE_USER",-1L);
 
         return responseDto.success("회원 가입이 완료되었습니다.", HttpStatus.CREATED);
 
@@ -264,12 +264,12 @@ public class UserService implements UserDetailsService {
 
     /* 권한 부여 */
     @Transactional
-    public boolean addAuthority(Long userId,String authority){
+    public boolean addAuthority(Long userId,String authority,Long clubId){
 
         var optionalUser = userRepository.findById(userId);
         if(optionalUser.isPresent()){
             var user = optionalUser.get();
-            var newAuthority = new UserAuthority(userId,authority);
+            var newAuthority = new UserAuthority(userId,authority,clubId);
             if(user.getAuthorities()==null){
                 var authorities = new HashSet<UserAuthority>();
                 authorities.add(newAuthority);
@@ -290,13 +290,13 @@ public class UserService implements UserDetailsService {
 
     /* 권한 제거 */
     @Transactional
-    public ResponseEntity<?> removeAuthority(Long userId,String authority){
+    public ResponseEntity<?> removeAuthority(Long userId,String authority,Long clubId){
 
         var optionalUser = userRepository.findById(userId);
 
         if(optionalUser.isPresent()){
             var user = optionalUser.get();
-            var targetAuthority = new UserAuthority(user.getId(),authority);
+            var targetAuthority = new UserAuthority(user.getId(),authority,clubId);
             if(user.getAuthorities() == null || !user.getAuthorities().contains(targetAuthority))
                 return responseDto.fail("해당 권한이 없습니다.",HttpStatus.NOT_FOUND);
 
