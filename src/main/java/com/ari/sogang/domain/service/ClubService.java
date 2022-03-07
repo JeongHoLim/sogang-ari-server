@@ -61,7 +61,6 @@ public class ClubService{
 
 
     public ResponseEntity<?> searchByName(String clubName) {
-
         var candidates = clubRepository.findByNameContains(clubName);
         return response.success(
                 candidates,"동아리 검색 성공"
