@@ -2,7 +2,9 @@ package com.ari.sogang.domain.service;
 
 import com.ari.sogang.config.dto.ResponseDto;
 import com.ari.sogang.domain.dto.ClubRequestDto;
+import com.ari.sogang.domain.dto.ClubUpdateDto;
 import com.ari.sogang.domain.entity.Club;
+import com.ari.sogang.domain.entity.User;
 import com.ari.sogang.domain.entity.UserAuthority;
 import com.ari.sogang.domain.entity.UserClub;
 import com.ari.sogang.domain.repository.ClubRepository;
@@ -10,6 +12,8 @@ import com.ari.sogang.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +25,8 @@ public class ManagerService {
     private final UserRepository userRepository;
     private final ClubRepository clubRepository;
     private final ResponseDto response;
-
+    private final UserService userService;
+    private final ResponseDto responseDto;
 
     @Transactional
     public ResponseEntity<?> postJoinedClub(ClubRequestDto clubRequestDto,String studentId){
@@ -102,5 +107,136 @@ public class ManagerService {
         clubRepository.save(club);
 
         return response.success("모집 설정 성공");
+    }
+
+    public UserAuthority verifyManager(User user){
+        for(UserAuthority userAuthority : user.getAuthorities()) {
+            if(userAuthority.getAuthority().equals("ROLE_MANAGER")){
+                return userAuthority; // success
+            }
+        }
+        return null; // fail
+    }
+
+    // 동아리장 위임
+    @Transactional
+    public ResponseEntity<?> delegateClub(String managerId, String studentId) {
+        var optionalManager =  userRepository.findByStudentId(managerId);
+        var optionalUser = userRepository.findByStudentId(studentId);
+
+        if(optionalUser.isEmpty()) return response.fail("등록되지 않은 유저",HttpStatus.NOT_FOUND);
+        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
+
+        var manager = optionalManager.get();
+        var student = optionalUser.get();
+
+        var auth = verifyManager(manager);
+
+        if(auth != null){ // 정상적으로 권한이 있는 경우.
+            if(userService.addAuthority(student.getId(), auth.getAuthority(), auth.getClubId())){
+                userRepository.save(student); //새로운 동아리장에게 권한 주고
+                userService.removeAuthority(manager.getId(), auth.getAuthority(), auth.getClubId());
+                userRepository.save(manager); //기존 동아리장 권한 삭제
+
+                return responseDto.success("동아리장 위임 성공", HttpStatus.OK);
+            } else {
+                return responseDto.fail("동아리장 위임 실패", HttpStatus.BAD_REQUEST);
+            }
+        }
+        else { // 해당 아이디가 동아리장 권한이 없는 경우.
+            return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);
+        }
+    }
+
+    // 동아리 이름 변경.
+    public ResponseEntity<?> updateClubName(String managerId, ClubUpdateDto info) {
+        var optionalManager =  userRepository.findByStudentId(managerId);
+
+        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
+
+        var manager = optionalManager.get();
+        var auth = verifyManager(manager);
+        String newName = info.getName();
+
+        if(auth == null){
+            return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);
+        } else if(newName == null){
+            return responseDto.fail("공백을 입력할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+        else{
+          var club = clubRepository.findById(auth.getClubId()).get();
+          club.setName(newName);
+          clubRepository.save(club);
+          return responseDto.success("동아리 이름 수정 성공.", HttpStatus.OK);
+        }
+    }
+
+    // 동아리 대문 변경.
+    public ResponseEntity<?> updateIntroduction(String managerId, ClubUpdateDto info) {
+        var optionalManager =  userRepository.findByStudentId(managerId);
+
+        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
+
+        var manager = optionalManager.get();
+        var auth = verifyManager(manager);
+        String newIntro = info.getIntroduction();
+
+        if(auth == null){
+            return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);
+        } else if(newIntro == null){
+            return responseDto.fail("공백을 입력할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+        else{
+            var club = clubRepository.findById(auth.getClubId()).get();
+            club.setName(newIntro);
+            clubRepository.save(club);
+            return responseDto.success("동아리 대문 수정 성공.", HttpStatus.OK);
+        }
+    }
+
+    // 동아리 상세 정보 변경.
+    public ResponseEntity<?> updateDetail(String managerId, ClubUpdateDto info) {
+        var optionalManager =  userRepository.findByStudentId(managerId);
+
+        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
+
+        var manager = optionalManager.get();
+        var auth = verifyManager(manager);
+        String newDetail = info.getDetail();
+
+        if(auth == null){
+            return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);
+        } else if(newDetail == null){
+            return responseDto.fail("공백을 입력할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+        else{
+            var club = clubRepository.findById(auth.getClubId()).get();
+            club.setName(newDetail);
+            clubRepository.save(club);
+            return responseDto.success("동아리 상세정보 수정 성공.", HttpStatus.OK);
+        }
+    }
+
+    // 동아리 소개 url 변경.
+    public ResponseEntity<?> updateUrl(String managerId, ClubUpdateDto info) {
+        var optionalManager =  userRepository.findByStudentId(managerId);
+
+        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
+
+        var manager = optionalManager.get();
+        var auth = verifyManager(manager);
+        String newUrl = info.getUrl();
+
+        if(auth == null){
+            return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);
+        } else if(newUrl == null){
+            return responseDto.fail("공백을 입력할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+        else{
+            var club = clubRepository.findById(auth.getClubId()).get();
+            club.setName(newUrl);
+            clubRepository.save(club);
+            return responseDto.success("동아리 URL 수정 성공.", HttpStatus.OK);
+        }
     }
 }

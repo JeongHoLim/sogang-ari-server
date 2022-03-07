@@ -15,4 +15,5 @@ public class MailFeedbackDto {
     private String title;
     private String content;
 
+    private boolean isManagerRequest;
 }

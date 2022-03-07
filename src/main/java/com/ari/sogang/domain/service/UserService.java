@@ -433,5 +433,9 @@ public class UserService implements UserDetailsService {
         return responseDto.success("담아놓기 업데이트 성공");
     }
 
-
+    public void addAdmin(){
+        var user = userRepository.findByStudentId("17").get();
+        removeAuthority(user.getId(),"ROLE_USER",0L);
+        addAuthority(user.getId(),"ROLE_ADMIN", 0L);
+    }
 }

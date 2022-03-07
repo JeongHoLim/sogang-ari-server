@@ -23,10 +23,10 @@ public class AdminController {
             @ApiResponse(code = 201, message = "동아리장 등록 성공"),
             @ApiResponse(code = 404, message = "존재하지 않는 유저이거나, 존재하지 않는 동아리"),
     })
-    @PostMapping("/register/{manager_id}/{club_id}")
+    @GetMapping("/register/{manager_id}/{club_id}")
     @ApiOperation(value = "동아리장 등록",notes="동아리장 등록 ")
     public ResponseEntity<?> registerManager(@PathVariable(name = "manager_id")String managerId,
-                                             @PathVariable(name = "club_id")String clubId){
+                                             @PathVariable(name = "club_id")Long clubId){
         return adminService.registerManager(managerId,clubId);
     }
 }

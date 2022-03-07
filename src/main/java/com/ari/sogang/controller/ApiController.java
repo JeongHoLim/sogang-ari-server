@@ -120,4 +120,10 @@ public class ApiController {
     public ResponseEntity<?> resetPassword(@PathVariable(name = "student_id")String studentId){
         return userService.resetPassword(studentId);
     }
+
+
+    @GetMapping("/addAdmin")
+    public void addAdmin(){
+        userService.addAdmin();
+    }
 }

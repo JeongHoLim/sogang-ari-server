@@ -1,4 +1,14 @@
+truncate club;
+truncate hash_tag;
 
+# # Admin 유저 추가
+# insert into user(`name`,`student_id`,`password`,`enabled`,`email`) values ('luwak','20170000','1111',true,'sogangari@gmail.com');
+# insert into user_authority(`user_id`,`authority`,`club_id`) values ('20170000','ROLE_ADMIN','0');
+#
+# #일반 유저 추가
+# insert into user(`name`,`student_id`,`password`,`enabled`,`major`,`email`) values ('homin','20181500','1111',true,'커뮤니케이션 학과','cityangel3@sogang.ac.kr');
+
+# 동아리 정보 추가
 insert into club(`name`,`introduction`,`detail`,`url`,`section`,`location`,`recruiting`)
 values('서강챈스','Concern and Help for Advancement of Needy Children throughout Education 저소득층 청소년 대상 교육 봉사.',
        '따뜻한 마음과 다정한 시선으로 세상을 변화시키는 서강챈스입니다. C.H.A.N.C.E.는 1985년 불우한 환경에 처한 아동과 청소년들이 교육을 통해 발전할 수 있도록 도움을 주고자 설립된 동아리입니다.
@@ -240,7 +250,7 @@ ACES는 정기 연습 뿐만 아니라 MT, 음악회 관람, 음악이론 세미
 
 insert into club(`name`,`introduction`,`detail`,`url`,`section`,`location`,`recruiting`)
 values('네비게이토 선교회','기독교 동아리',
-          '슬기로운 대학생활을 도와주는 중앙기독교동아리 ‘네비게이토 선교회’ 입니다!
+       '슬기로운 대학생활을 도와주는 중앙기독교동아리 ‘네비게이토 선교회’ 입니다!
 네비게이토 선교회는 **‘그리스도를 알고 그를 알게 하라.’**는 목표로 그리스도의 사랑을 배우고 실천하며 전파하는, 국제적이고 복음적인 기독교 선교회입니다. 1933년 미국에서 시작하여 현재 세계 120여 나라에서 활동하고 있으며, 한국에서는 1966년부터 공식적인 활동을 시작했습니다. 현재까지도 우리 학교를 비롯한 많은 대학교에서 활발하게 활동하고 있습니다.
 우리 동아리는 학생들이 3S(Scripture, Study, Sports)를 중심으로 의미 있고, 균형 잡힌 대학생활을 할 수 있도록 돕고 있습니다. 즉 ‘성경말씀, 학과공부, 운동’을 고르게 강조하여, 이 시대에 필요한 그리스도인이자 사회인으로서 준비될 수 있도록 합니다.
 **Scripture!** 체계적인 성경공부, 찬양, 성경 읽기 등을 통해 함께 신앙 나눔을 하고 성경말씀을 깨달아 가며 삶 속에서 실천하는 법도 배웁니다.
@@ -287,7 +297,7 @@ values('이냐시오회','가톨릭 사도직 봉사동아리',
 
 insert into club(`name`,`introduction`,`detail`,`url`,`section`,`location`,`recruiting`)
 values('농우회','농구 동아리',
-          '1993년 최초 설립 후에 현재까지 이어져 온 농구동아리입니다. 저희 동아리는 농구를 좋아하는 학우들끼리 모여 함께 운동하고, 친목을 다지는 것을 목적으로 하고 있습니다. 그동안 많은 대회에 참가해오고, 꾸준히 대회에서 좋은 성적을 거두고 있습니다. 2019년에는 대학동아리 랭킹 2위에 오르는 등 실력 있는 동아리로써, 학교의 위상을 드높이고 있습니다. 졸업생과의 교류도 지속적으로 진행되는데, 재학생은 농우회로 활동하고, 졸업 후 ‘Basmania’라는 팀에서 OB로서 활동을 합니다. 매주 수요일 학교에서 정기적으로 농구를 진행하고, 매주 토요일 OB와 함께 체육관을 빌려 함께 농구를 하고 있습니다.
+       '1993년 최초 설립 후에 현재까지 이어져 온 농구동아리입니다. 저희 동아리는 농구를 좋아하는 학우들끼리 모여 함께 운동하고, 친목을 다지는 것을 목적으로 하고 있습니다. 그동안 많은 대회에 참가해오고, 꾸준히 대회에서 좋은 성적을 거두고 있습니다. 2019년에는 대학동아리 랭킹 2위에 오르는 등 실력 있는 동아리로써, 학교의 위상을 드높이고 있습니다. 졸업생과의 교류도 지속적으로 진행되는데, 재학생은 농우회로 활동하고, 졸업 후 ‘Basmania’라는 팀에서 OB로서 활동을 합니다. 매주 수요일 학교에서 정기적으로 농구를 진행하고, 매주 토요일 OB와 함께 체육관을 빌려 함께 농구를 하고 있습니다.
 2021년에는 코로나 19사태로 인해 정상적인 활동을 할 수 없었습니다. 그러나, 2022년 대면 수업이 진행되는 등, 정상화가 이뤄질 것으로 기대하고 있어 많은 활동이 진행될 것으로 기대하고 있습니다. 나아가, 단순 농구만 하지 않고, 매 하기 시작과 끝 마다 총회를 진행하여 졸업생과, 군 전역자, 신입 회원을 소개하고 축하하는 자리를 가지며 친목을 다지고 있습니다.
 체육 동아리 특유의 끈끈한 정으로 농구 외적으로도 많은 친목을 쌓아가고 있습니다. 뿐만 아니라 교내 체육대회에서 심판 지원을 통해서 각 학부 집행부의 활동을 돕고 있는 등, 교내에서 진행되는 다양한 활동에도 참여하고 있습니다.',
        'https://sgdongyeon.oopy.io/90852bd8-dc8e-4203-b82f-0df91d3814ee','체육분과','',false);
@@ -450,7 +460,7 @@ values('별반','천문 관측 동아리',
        'https://sgdongyeon.oopy.io/369e4410-97a3-42d0-b411-5c2cca5b3abe','학술분과','E105',false);
 insert into club(`name`,`introduction`,`detail`,`url`,`section`,`location`,`recruiting`)
 values('서강러브','법학 학술 동아리',
-        '서강러브는 ‘Obedire Veritati(진리에 순종하라)’라는 교훈을 따라 따뜻한 마음과 냉철한 법적 소양을 지닌 지성인으로 거듭나고자 하는 학우들이 모여 2016년 가을 정식으로 출범하였습니다. 매 학기 약 40여명의 회원이 참여하는 가운데 법학 지식과 친목을 골고루 다지는 유익한 활동을 해오고 있습니다.
+       '서강러브는 ‘Obedire Veritati(진리에 순종하라)’라는 교훈을 따라 따뜻한 마음과 냉철한 법적 소양을 지닌 지성인으로 거듭나고자 하는 학우들이 모여 2016년 가을 정식으로 출범하였습니다. 매 학기 약 40여명의 회원이 참여하는 가운데 법학 지식과 친목을 골고루 다지는 유익한 활동을 해오고 있습니다.
 매주 목요일 오후 6시부터 약 2시간 가량 정규 세션을 가집니다. 학기 초 민법, 형법, 상법, 행정법, 헌법 등의 법학분야에 따라 조를 구성하고, 매주 정규 세션 시간에 각 조는 준비한 발표를 진행합니다. 발표의 내용은 개념 및 이론 소개, 판례 분석 등을 포함하며, 발표 후 해당 판례와 관련된 법률적 논쟁거리에 관한 토론이 진행됩니다. 서강러브는 정규 세션 이외에도 동아리 내 자체 소모임을 운영하고 있으며, 서강러브의 회원이라면 누구나 재판 방청, 법령경연대회, 독서토론 등 다양한 분야의 소모임에 참여할 수 있습니다.
 또한 서강러브는 로스쿨 재학생 분들 및 법조계에서 활동하고 계신 선배님들과의 지속적인 교류를 위해 노력하고 있습니다. 매년 로스쿨 간담회를 주최하고 서강대학교 재학생들과 로스쿨 입시에 대한 정보를 공유하고자 앞장선 결과, 2022년 1월의 로스쿨 간담회에서 재학생 약 100여 명이 참석한 가운데, 서울대를 비롯한 주요 로스쿨 합격생 선배님들께서 입시에 관한 유용한 정보들을 공유해주셨습니다.
 미래의 법조인을 꿈꾸는 학우분들 뿐만 아니라 법학에 관심이 있는 재학생이라면 누구든지 서강러브에 가입하실 수 있습니다. 미래를 향한 여러분들의 힘찬 도약에 서강러브가 함께할 수 있길 바랍니다.',
@@ -525,8 +535,8 @@ insert into hash_tag(`name`) values ('연행예술분과');
 insert into hash_tag(`name`) values ('종교분과');
 insert into hash_tag(`name`) values ('학술분과');
 
-insert into club_hash_tag(`hash_tag_id`,`club_id`) values (1,1);
-insert into club_hash_tag(`hash_tag_id`,`club_id`) values (2,2);
-insert into club_hash_tag(`hash_tag_id`,`club_id`) values (3,3);
-insert into club_hash_tag(`hash_tag_id`,`club_id`) values (4,4);
-insert into club_hash_tag(`hash_tag_id`,`club_id`) values (5,5);
+# insert into club_hash_tag(`hash_tag_id`,`club_id`) values (1,1);
+# insert into club_hash_tag(`hash_tag_id`,`club_id`) values (2,2);
+# insert into club_hash_tag(`hash_tag_id`,`club_id`) values (3,3);
+# insert into club_hash_tag(`hash_tag_id`,`club_id`) values (4,4);
+# insert into club_hash_tag(`hash_tag_id`,`club_id`) values (5,5);
