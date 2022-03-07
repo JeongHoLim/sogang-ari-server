@@ -1,6 +1,5 @@
 package com.ari.sogang.controller;
 
-import com.ari.sogang.domain.dto.ClubDto;
 import com.ari.sogang.domain.dto.ClubRequestDto;
 import com.ari.sogang.domain.service.ManagerService;
 import io.swagger.annotations.ApiOperation;
@@ -8,11 +7,9 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/manager")
@@ -40,10 +37,34 @@ public class ManagerController {
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 403, message = "권한 없음")
     })
-    @PutMapping("/set-recruit")
-    @ApiOperation(value = "동아리 모집 설정",notes="동아리 모집 여부 설정")
-    public ResponseEntity<?> setRecruiting(@RequestBody ClubRequestDto clubRequestDto,
+    @PutMapping("/update-recruit")
+    @ApiOperation(value = "동아리 모집 변경",notes="동아리 모집 여부 변경")
+    public ResponseEntity<?> updateRecruiting(@RequestBody ClubRequestDto clubRequestDto,
                                            @RequestParam("recruit") String flag){
-        return managerService.setRecruiting(clubRequestDto, flag);
+        return managerService.updateRecruiting(clubRequestDto, flag);
     }
+
+//    @PutMapping("/update-club-name")
+//    @ApiOperation(value = "동아리 이름 변경",notes="동아리 이름 변경")
+//    public ResponseEntity<?> updateClubName(){
+//        return managerService.updateClubName();
+//    }
+//
+//    @PutMapping("/update-intro")
+//    @ApiOperation(value = "동아리 소개 변경",notes="동아리 소개 변경")
+//    public ResponseEntity<?> updateIntroduction(){
+//        return managerService.updateIntroduction();
+//    }
+//
+//    @PutMapping("/update-detail")
+//    @ApiOperation(value = "동아리 디테일 변경",notes="동아리 디테일 변경")
+//    public ResponseEntity<?> updateDetail(){
+//        return managerService.updateDetail();
+//    }
+//    @PutMapping("/update-url")
+//    @ApiOperation(value = "동아리 소개 url 변경",notes="동아리 소개 url 변경")
+//    public ResponseEntity<?> updateUrl(){
+//        return managerService.updateUrl();
+//    }
+
 }

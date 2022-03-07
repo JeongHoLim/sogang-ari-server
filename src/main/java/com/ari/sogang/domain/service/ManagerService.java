@@ -1,10 +1,8 @@
 package com.ari.sogang.domain.service;
 
 import com.ari.sogang.config.dto.ResponseDto;
-import com.ari.sogang.domain.dto.ClubDto;
 import com.ari.sogang.domain.dto.ClubRequestDto;
 import com.ari.sogang.domain.entity.Club;
-import com.ari.sogang.domain.entity.User;
 import com.ari.sogang.domain.entity.UserAuthority;
 import com.ari.sogang.domain.entity.UserClub;
 import com.ari.sogang.domain.repository.ClubRepository;
@@ -12,13 +10,10 @@ import com.ari.sogang.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -77,7 +72,7 @@ public class ManagerService {
     }
 
     @Transactional
-    public ResponseEntity<?> setRecruiting(ClubRequestDto clubRequestDto, String flag) {
+    public ResponseEntity<?> updateRecruiting(ClubRequestDto clubRequestDto, String flag) {
         var optionalClub =  clubRepository.findById(clubRequestDto.getClubId());
         var optionalManager =  userRepository.findByStudentId(clubRequestDto.getManagerId());
 
