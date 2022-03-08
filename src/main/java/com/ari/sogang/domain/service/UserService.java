@@ -27,6 +27,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -37,6 +40,9 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
+
+    @PersistenceContext
+    private EntityManager em;
 
     private final UserRepository userRepository;
     private final ClubRepository clubRepository;
@@ -279,7 +285,7 @@ public class UserService implements UserDetailsService {
             else if(!user.getAuthorities().contains(newAuthority)){
                 var authorities = new HashSet<UserAuthority>();
                 authorities.add(newAuthority);
-                authorities.addAll(authorities);
+                authorities.addAll(user.getAuthorities());
                 user.setAuthorities(authorities);
                 userRepository.save(user);
             }
@@ -435,8 +441,14 @@ public class UserService implements UserDetailsService {
     }
 
     public void addAdmin(){
+//        EntityManagerFactory emf = Persistance.createEntityManagerFactory("name"); EntityManager em = emf.createEntityManager();
+//        EntityManager em = emf.createEntityManager();
+
         var user = userRepository.findByStudentId("17").get();
-        removeAuthority(user.getId(),"ROLE_USER",0L);
         addAuthority(user.getId(),"ROLE_ADMIN", 0L);
+        em.flush();
+        removeAuthority(user.getId(),"ROLE_USER",-1L);
+        em.flush();
+        userRepository.save(user);
     }
 }

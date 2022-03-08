@@ -119,7 +119,7 @@ public class ManagerService {
     }
 
     // 동아리장 위임
-    @Transactional
+//    @Transactional
     public ResponseEntity<?> delegateClub(String managerId, String studentId) {
         var optionalManager =  userRepository.findByStudentId(managerId);
         var optionalUser = userRepository.findByStudentId(studentId);
@@ -137,7 +137,7 @@ public class ManagerService {
 //                userRepository.save(student); //새로운 동아리장에게 권한 주고
                 if(userService.removeAuthority(manager.getId(), auth.getAuthority(), auth.getClubId()).getStatusCode() == HttpStatus.OK) {
                     manager.getAuthorities().forEach(System.out::println);
-                    userRepository.save(manager);
+//                    userRepository.save(manager);
                     return responseDto.success("동아리장 위임 성공", HttpStatus.OK);
                 }
             } else {
