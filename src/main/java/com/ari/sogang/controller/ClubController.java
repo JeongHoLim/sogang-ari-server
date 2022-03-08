@@ -24,7 +24,7 @@ public class ClubController {
     @ApiResponses(value={
             @ApiResponse(code = 200, message = "동아리 검색 성공")
     })
-    @PostMapping("/search_tag")
+    @PostMapping("/tag")
     @ApiOperation(value = "해시태그로 검색",notes="해시태그로 동아리 검색")
     public ResponseEntity<?> searchByHashTag(@RequestBody List<HashTagDto> hashTagDtos){
         return clubService.searchByHashTag(hashTagDtos);
@@ -34,18 +34,17 @@ public class ClubController {
     @ApiResponses(value={
             @ApiResponse(code = 200, message = "동아리 검색 성공")
     })
-    @GetMapping("/search_section/{section}")
+    @GetMapping("/section")
     @ApiOperation(value = "분과로 동아리 검색",notes="분과로 동아리 검색")
-    public ResponseEntity<?>  searchBySection(@PathVariable String section){
+    public ResponseEntity<?>  searchBySection(@RequestParam String section){
         return clubService.searchBySection(section);
     }
-
 
     @ApiResponses(value={
             @ApiResponse(code = 200, message = "동아리 검색 성공"),
     })
     @ApiOperation(value = "이름으로 동아리 검색",notes="이름으로 동아리 검색")
-    @GetMapping("/search-section/")
+    @GetMapping("/name/")
     public ResponseEntity<?> searchByName(@RequestParam String clubName){
         return clubService.searchByName(clubName);
     }
@@ -54,7 +53,7 @@ public class ClubController {
     @ApiResponses(value={
             @ApiResponse(code = 200, message = "동아리 조회 성공")
     })
-    @GetMapping("/info/{club_id}")
+    @GetMapping("/{club_id}/info")
     @ApiOperation(value = "동아리 조회",notes="동아리 정보 조회")
     public ResponseEntity<?>  getClub(@PathVariable("club_id") Long clubId){
         return clubService.getClubById(clubId);
@@ -64,7 +63,7 @@ public class ClubController {
     @ApiResponses(value={
             @ApiResponse(code = 200, message = "해시태그 조회 성공")
     })
-    @GetMapping("/hashtag/{club_id}")
+    @GetMapping("/{club_id}/tag")
     @ApiOperation(value = "해시태그 조회",notes="특정 동아리 해시태그 조회")
     public ResponseEntity<?>  getHashTag(@PathVariable("club_id") Long clubId){
         return clubService.getHashTagByClubId(clubId);
@@ -73,7 +72,7 @@ public class ClubController {
     @ApiResponses(value={
             @ApiResponse(code = 200, message = "전체 동아리 조회 성공")
     })
-    @GetMapping("/find-all")
+    @GetMapping("/all")
     @ApiOperation(value = "동아리 전체 조회",notes="전체 동아리 정보 조회")
     public ResponseEntity<?> findAll(){
         return clubService.findAll();
