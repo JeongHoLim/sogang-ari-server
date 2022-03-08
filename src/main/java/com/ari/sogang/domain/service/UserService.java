@@ -304,10 +304,11 @@ public class UserService implements UserDetailsService {
                     user.getAuthorities().stream().filter(auth -> !auth.equals(targetAuthority))
                             .collect(Collectors.toSet())
             );
+
             if(user.getAuthorities().size()==0)
                 user.setAuthorities(null);
             userRepository.save(user);
-            return responseDto.success("권한 제거 성공.");
+            return responseDto.success("권한 제거 성공.",HttpStatus.OK);
         }
         return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
     }
