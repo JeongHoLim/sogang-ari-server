@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 
+
 @Service
 @RequiredArgsConstructor
 public class ManagerService {
@@ -120,38 +121,34 @@ public class ManagerService {
     }
 
     // 동아리장 위임
-//    @Transactional
+    @Transactional
     public ResponseEntity<?> delegateClub(String managerId, String studentId) {
-        var optionalManager =  userRepository.findByStudentId(managerId);
+        var optionalManager = userRepository.findByStudentId(managerId);
         var optionalUser = userRepository.findByStudentId(studentId);
 
-        if(optionalUser.isEmpty()) return response.fail("등록되지 않은 유저",HttpStatus.NOT_FOUND);
-        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
+        if (optionalUser.isEmpty()) return response.fail("등록되지 않은 유저", HttpStatus.NOT_FOUND);
+        if (optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장", HttpStatus.NOT_FOUND);
 
         var manager = optionalManager.get();
         var student = optionalUser.get();
 
         var auth = verifyManager(manager);
 
-        if(auth != null){ // 정상적으로 권한이 있는 경우.
-<<<<<<< HEAD
-            if(userService.addAuthority(student.getId(), auth.getAuthority(), auth.getClubId())){
+        if (auth != null) { // 정상적으로 권한이 있는 경우.
+            if (userService.addAuthority(student.getId(), auth.getAuthority(), auth.getClubId())) {
 //                userRepository.save(student); //새로운 동아리장에게 권한 주고
-                if(userService.removeAuthority(manager.getId(), auth.getAuthority(), auth.getClubId()).getStatusCode() == HttpStatus.OK) {
+                if (userService.removeAuthority(manager.getId(), auth.getAuthority(), auth.getClubId())) {
                     manager.getAuthorities().forEach(System.out::println);
 //                    userRepository.save(manager);
                     return responseDto.success("동아리장 위임 성공", HttpStatus.OK);
                 }
             } else {
-=======
-            if(userService.addAuthority(student.getId(), auth.getAuthority(), auth.getClubId()) &&
-                    userService.removeAuthority(manager.getId(), auth.getAuthority(), auth.getClubId()))
-            {
-                return responseDto.success("동아리장 위임 성공");
-            }
-            else {
->>>>>>> 5a3f43c87ca102d7d009a95c7666e057bf594d51
-                return responseDto.fail("동아리장 위임 실패", HttpStatus.BAD_REQUEST);
+                if (userService.addAuthority(student.getId(), auth.getAuthority(), auth.getClubId()) &&
+                        userService.removeAuthority(manager.getId(), auth.getAuthority(), auth.getClubId())) {
+                    return responseDto.success("동아리장 위임 성공");
+                } else {
+                    return responseDto.fail("동아리장 위임 실패", HttpStatus.BAD_REQUEST);
+                }
             }
         }
         return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);

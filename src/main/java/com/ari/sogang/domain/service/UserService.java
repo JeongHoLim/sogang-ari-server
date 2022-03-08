@@ -269,35 +269,19 @@ public class UserService implements UserDetailsService {
     }
 
     /* 권한 부여 */
-    public boolean addAuthority(Long userId,String authority,Long clubId){
+    public boolean addAuthority(Long userId,String authority,Long clubId) {
 
         var optionalUser = userRepository.findById(userId);
-        if(optionalUser.isPresent()){
+        if (optionalUser.isPresent()) {
             var user = optionalUser.get();
-            var newAuthority = new UserAuthority(userId,authority,clubId);
-<<<<<<< HEAD
-            if(user.getAuthorities()==null){
-                var authorities = new HashSet<UserAuthority>();
-                authorities.add(newAuthority);
-                user.setAuthorities(authorities);
-                userRepository.save(user);
-            }
-            else if(!user.getAuthorities().contains(newAuthority)){
-                var authorities = new HashSet<UserAuthority>();
-                authorities.add(newAuthority);
-                authorities.addAll(user.getAuthorities());
-                user.setAuthorities(authorities);
-=======
-            if(!user.getAuthorities().contains(newAuthority)){
+            var newAuthority = new UserAuthority(userId, authority, clubId);
+            if (!user.getAuthorities().contains(newAuthority)) {
                 user.getAuthorities().add(newAuthority);
->>>>>>> 5a3f43c87ca102d7d009a95c7666e057bf594d51
                 userRepository.save(user);
             }
-            return true;
         }
         return false;
     }
-
     /* 권한 제거 */
     public boolean removeAuthority(Long userId,String authority,Long clubId){
 
@@ -440,15 +424,10 @@ public class UserService implements UserDetailsService {
         return responseDto.success("담아놓기 업데이트 성공");
     }
 
+    @Transactional
     public void addAdmin(){
-//        EntityManagerFactory emf = Persistance.createEntityManagerFactory("name"); EntityManager em = emf.createEntityManager();
-//        EntityManager em = emf.createEntityManager();
-
         var user = userRepository.findByStudentId("17").get();
         addAuthority(user.getId(),"ROLE_ADMIN", 0L);
-        em.flush();
         removeAuthority(user.getId(),"ROLE_USER",-1L);
-        em.flush();
-        userRepository.save(user);
     }
 }
