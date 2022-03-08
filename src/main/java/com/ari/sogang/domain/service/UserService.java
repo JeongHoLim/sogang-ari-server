@@ -220,7 +220,7 @@ public class UserService implements UserDetailsService {
         user.setUserWishClubs(userWishClubs);
         userRepository.save(user);
 
-        return responseDto.success("담아 놓기 성공",HttpStatus.CREATED);
+        return responseDto.success(userWishClubs,"담아 놓기 성공",HttpStatus.CREATED);
     }
 
     /* 담아놓은 동아리 조회하는 함수 */
@@ -269,13 +269,13 @@ public class UserService implements UserDetailsService {
     }
 
     /* 권한 부여 */
-    @Transactional
     public boolean addAuthority(Long userId,String authority,Long clubId){
 
         var optionalUser = userRepository.findById(userId);
         if(optionalUser.isPresent()){
             var user = optionalUser.get();
             var newAuthority = new UserAuthority(userId,authority,clubId);
+<<<<<<< HEAD
             if(user.getAuthorities()==null){
                 var authorities = new HashSet<UserAuthority>();
                 authorities.add(newAuthority);
@@ -287,6 +287,10 @@ public class UserService implements UserDetailsService {
                 authorities.add(newAuthority);
                 authorities.addAll(user.getAuthorities());
                 user.setAuthorities(authorities);
+=======
+            if(!user.getAuthorities().contains(newAuthority)){
+                user.getAuthorities().add(newAuthority);
+>>>>>>> 5a3f43c87ca102d7d009a95c7666e057bf594d51
                 userRepository.save(user);
             }
             return true;
@@ -295,28 +299,24 @@ public class UserService implements UserDetailsService {
     }
 
     /* 권한 제거 */
-    @Transactional
-    public ResponseEntity<?> removeAuthority(Long userId,String authority,Long clubId){
+    public boolean removeAuthority(Long userId,String authority,Long clubId){
 
         var optionalUser = userRepository.findById(userId);
 
         if(optionalUser.isPresent()){
             var user = optionalUser.get();
-            var targetAuthority = new UserAuthority(user.getId(),authority,clubId);
-            if(user.getAuthorities() == null || !user.getAuthorities().contains(targetAuthority))
-                return responseDto.fail("해당 권한이 없습니다.",HttpStatus.NOT_FOUND);
+            var targetAuthority = new UserAuthority(userId,authority,clubId);
 
-            user.setAuthorities(
-                    user.getAuthorities().stream().filter(auth -> !auth.equals(targetAuthority))
-                            .collect(Collectors.toSet())
-            );
+            if(!user.getAuthorities().contains(targetAuthority)) {
+                return false;
+            }
 
-            if(user.getAuthorities().size()==0)
-                user.setAuthorities(null);
+            user.getAuthorities().remove(targetAuthority);
+
             userRepository.save(user);
-            return responseDto.success("권한 제거 성공.",HttpStatus.OK);
+            return true;
         }
-        return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
+        return false;
     }
 
 

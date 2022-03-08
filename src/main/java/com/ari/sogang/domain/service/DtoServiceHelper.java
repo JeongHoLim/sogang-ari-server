@@ -6,9 +6,13 @@ import com.ari.sogang.domain.dto.UserDto;
 import com.ari.sogang.domain.entity.Club;
 import com.ari.sogang.domain.entity.HashTag;
 import com.ari.sogang.domain.entity.User;
+import com.ari.sogang.domain.entity.UserAuthority;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +52,8 @@ public class DtoServiceHelper {
                 .enabled(true)
                 .password(passwordEncoder.encode(userDto.getPassword()))
                 .email(userDto.getEmail())
+                .authorities(new HashSet<UserAuthority>() {
+                })
                 .build();
     }
     public Club toEntity(ClubDto clubDto) {
