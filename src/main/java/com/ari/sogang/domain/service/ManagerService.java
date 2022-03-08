@@ -43,7 +43,8 @@ public class ManagerService {
         if(optionalManager.isEmpty()) return response.fail("해당 동아리장은 존재하지 않는 유저입니다.",HttpStatus.NOT_FOUND);
 
         var user = optionalUser.get();
-        var managerId = optionalManager.get().getId();
+        var manager = optionalManager.get();
+        var managerId = manager.getId();
 
         Long userId = user.getId();
         if(!user.getAuthorities().contains(
@@ -133,14 +134,12 @@ public class ManagerService {
         var auth = verifyManager(manager);
 
         if(auth != null){ // 정상적으로 권한이 있는 경우.
-            if(userService.addAuthority(student.getId(), auth.getAuthority(), auth.getClubId())){
-//                userRepository.save(student); //새로운 동아리장에게 권한 주고
-                if(userService.removeAuthority(manager.getId(), auth.getAuthority(), auth.getClubId()).getStatusCode() == HttpStatus.OK) {
-                    manager.getAuthorities().forEach(System.out::println);
-                    userRepository.save(manager);
-                    return responseDto.success("동아리장 위임 성공", HttpStatus.OK);
-                }
-            } else {
+            if(userService.addAuthority(student.getId(), auth.getAuthority(), auth.getClubId()) &&
+                    userService.removeAuthority(manager.getId(), auth.getAuthority(), auth.getClubId()))
+            {
+                return responseDto.success("동아리장 위임 성공");
+            }
+            else {
                 return responseDto.fail("동아리장 위임 실패", HttpStatus.BAD_REQUEST);
             }
         }

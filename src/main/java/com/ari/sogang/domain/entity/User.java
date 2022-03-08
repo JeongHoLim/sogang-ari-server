@@ -41,7 +41,8 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "userId",cascade = CascadeType.ALL)
     private List<UserClub> userClubs;
 
-    @OneToMany(mappedBy = "userId",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "userId",cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,orphanRemoval = true)
     private Set<UserAuthority> authorities;
 
     @Override
