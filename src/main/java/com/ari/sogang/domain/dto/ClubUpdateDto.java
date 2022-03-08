@@ -18,4 +18,6 @@ public class ClubUpdateDto {
     private String detail;
 
     private String url;
+
+    private String recruit;
 }

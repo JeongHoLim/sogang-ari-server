@@ -29,14 +29,11 @@ public class ManagerService {
     private final ResponseDto responseDto;
 
     @Transactional
-    public ResponseEntity<?> postJoinedClub(ClubRequestDto clubRequestDto,String studentId){
-
-        var clubId = clubRequestDto.getClubId();
-        var managerStudentId = clubRequestDto.getManagerId();
+    public ResponseEntity<?> postJoinedClub(Long clubId,String managerId, String studentId){
 
         var optionalUser = userRepository.findByStudentId(studentId);
         var optionalClub = clubRepository.findById(clubId);
-        var optionalManager = userRepository.findByStudentId(managerStudentId);
+        var optionalManager = userRepository.findByStudentId(managerId);
 
         if(optionalUser.isEmpty()) return response.fail("해당 유저가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
         if(optionalClub.isEmpty()) return response.fail("등록되지 않은 동아리입니다.",HttpStatus.NOT_FOUND);
@@ -44,18 +41,11 @@ public class ManagerService {
 
         var user = optionalUser.get();
         var manager = optionalManager.get();
-        var managerId = manager.getId();
 
         Long userId = user.getId();
-        if(!user.getAuthorities().contains(
-                UserAuthority.builder()
-                        .clubId(clubId)
-                        .userId(managerId)
-                        .authority("ROLE_MANAGER")
-                .build())){
+        if(!isValidManager(manager,clubId)){
             return response.fail("권한 없음",HttpStatus.FORBIDDEN);
         }
-
 
         if(user.getUserClubs() == null)
             user.setUserClubs(new ArrayList<>());
@@ -77,51 +67,20 @@ public class ManagerService {
         return response.success("동아리 가입 성공",HttpStatus.CREATED);
     }
 
-    @Transactional
-    public ResponseEntity<?> updateRecruiting(ClubRequestDto clubRequestDto, String flag) {
-        var optionalClub =  clubRepository.findById(clubRequestDto.getClubId());
-        var optionalManager =  userRepository.findByStudentId(clubRequestDto.getManagerId());
 
-        if(optionalClub.isEmpty()) return response.fail("등록되지 않은 동아리",HttpStatus.NOT_FOUND);
-        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
 
-        var manager = optionalManager.get();
-        var managerId = manager.getId();
-
-        if(!manager.getAuthorities().contains(
+    private boolean isValidManager(User manager,Long clubId){
+        return manager.getAuthorities().contains(
                 UserAuthority.builder()
-                        .clubId(clubRequestDto.getClubId())
-                        .userId(managerId)
+                        .clubId(clubId)
+                        .userId(manager.getId())
                         .authority("ROLE_MANAGER")
-                        .build())){
-            return response.fail("권한 없음",HttpStatus.FORBIDDEN);
-        }
-
-        Club club = optionalClub.get();
-
-        if(flag.equals("yes"))
-            club.setRecruiting(true);
-        else if(flag.equals("no"))
-            club.setRecruiting(false);
-        else return response.fail("잘못된 요청",HttpStatus.BAD_REQUEST);
-
-        clubRepository.save(club);
-
-        return response.success("모집 설정 성공");
-    }
-
-    public UserAuthority verifyManager(User user){
-        for(UserAuthority userAuthority : user.getAuthorities()) {
-            if(userAuthority.getAuthority().equals("ROLE_MANAGER")){
-                return userAuthority; // success
-            }
-        }
-        return null; // fail
+                        .build());
     }
 
     // 동아리장 위임
     @Transactional
-    public ResponseEntity<?> delegateClub(String managerId, String studentId) {
+    public ResponseEntity<?> delegateClub(Long clubId,String managerId, String studentId) {
         var optionalManager =  userRepository.findByStudentId(managerId);
         var optionalUser = userRepository.findByStudentId(studentId);
 
@@ -131,11 +90,11 @@ public class ManagerService {
         var manager = optionalManager.get();
         var student = optionalUser.get();
 
-        var auth = verifyManager(manager);
 
-        if(auth != null){ // 정상적으로 권한이 있는 경우.
-            if(userService.addAuthority(student.getId(), auth.getAuthority(), auth.getClubId()) &&
-                    userService.removeAuthority(manager.getId(), auth.getAuthority(), auth.getClubId()))
+        // 이 부분 살짝 찜찜
+        if(isValidManager(manager,clubId)){ // 정상적으로 권한이 있는 경우.
+            if(userService.addAuthority(student.getId(),"ROLE_MANAGER", clubId) &&
+                    userService.removeAuthority(manager.getId(), "ROLE_MANAGER",clubId))
             {
                 return responseDto.success("동아리장 위임 성공");
             }
@@ -146,95 +105,142 @@ public class ManagerService {
         return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);
     }
 
+    @Transactional
+    public ResponseEntity<?> updateClub(Long clubId,String managerId,ClubUpdateDto clubUpdateInfo) {
+        var optionalClub =  clubRepository.findById(clubId);
+        var optionalManager =  userRepository.findByStudentId(managerId);
+
+        if(optionalClub.isEmpty()) return response.fail("등록되지 않은 동아리",HttpStatus.NOT_FOUND);
+        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
+
+        var manager = optionalManager.get();
+        var manageId = manager.getId();
+
+        if(!manager.getAuthorities().contains(
+                UserAuthority.builder()
+                        .clubId(clubId)
+                        .userId(manageId)
+                        .authority("ROLE_MANAGER")
+                        .build())){
+            return response.fail("권한 없음",HttpStatus.FORBIDDEN);
+        }
+
+        Club club = optionalClub.get();
+
+        var flag = clubUpdateInfo.getRecruit();
+
+        var clubName = clubUpdateInfo.getName();
+        var clubDetail = clubUpdateInfo.getDetail();
+        var clubUrl = clubUpdateInfo.getUrl();
+        var clubIntro = clubUpdateInfo.getIntroduction();
+
+        if("yes".equals(flag))
+            club.setRecruiting(true);
+        else if("no".equals(flag))
+            club.setRecruiting(false);
+        else return response.fail("잘못된 요청",HttpStatus.BAD_REQUEST);
+
+        // 예외 처리는 나중에~
+
+        club.setName(clubName);
+        club.setDetail(clubDetail);
+        club.setUrl(clubUrl);
+        club.setIntroduction(clubIntro);
+
+        clubRepository.save(club);
+
+        return response.success("모집 설정 성공");
+    }
+
     // 동아리 이름 변경.
-    public ResponseEntity<?> updateClubName(String managerId, ClubUpdateDto info) {
-        var optionalManager =  userRepository.findByStudentId(managerId);
-
-        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
-
-        var manager = optionalManager.get();
-        var auth = verifyManager(manager);
-        String newName = info.getName();
-
-        if(auth == null){
-            return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);
-        } else if(newName == null){
-            return responseDto.fail("공백을 입력할 수 없습니다.", HttpStatus.BAD_REQUEST);
-        }
-        else{
-          var club = clubRepository.findById(auth.getClubId()).get();
-          club.setName(newName);
-          clubRepository.save(club);
-          return responseDto.success("동아리 이름 수정 성공.", HttpStatus.OK);
-        }
-    }
-
-    // 동아리 대문 변경.
-    public ResponseEntity<?> updateIntroduction(String managerId, ClubUpdateDto info) {
-        var optionalManager =  userRepository.findByStudentId(managerId);
-
-        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
-
-        var manager = optionalManager.get();
-        var auth = verifyManager(manager);
-        String newIntro = info.getIntroduction();
-
-        if(auth == null){
-            return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);
-        } else if(newIntro.length() == 0){
-            return responseDto.fail("공백을 입력할 수 없습니다.", HttpStatus.BAD_REQUEST);
-        }
-        else{
-            var club = clubRepository.findById(auth.getClubId()).get();
-            club.setIntroduction(newIntro);
-            clubRepository.save(club);
-            return responseDto.success("동아리 대문 수정 성공.", HttpStatus.OK);
-        }
-    }
-
-    // 동아리 상세 정보 변경.
-    public ResponseEntity<?> updateDetail(String managerId, ClubUpdateDto info) {
-        var optionalManager =  userRepository.findByStudentId(managerId);
-
-        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
-
-        var manager = optionalManager.get();
-        var auth = verifyManager(manager);
-        String newDetail = info.getDetail();
-
-        if(auth == null){
-            return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);
-        } else if(newDetail.length() == 0){
-            return responseDto.fail("공백을 입력할 수 없습니다.", HttpStatus.BAD_REQUEST);
-        }
-        else{
-            var club = clubRepository.findById(auth.getClubId()).get();
-            club.setDetail(newDetail);
-            clubRepository.save(club);
-            return responseDto.success("동아리 상세정보 수정 성공.", HttpStatus.OK);
-        }
-    }
-
-    // 동아리 소개 url 변경.
-    public ResponseEntity<?> updateUrl(String managerId, ClubUpdateDto info) {
-        var optionalManager =  userRepository.findByStudentId(managerId);
-
-        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
-
-        var manager = optionalManager.get();
-        var auth = verifyManager(manager);
-        String newUrl = info.getUrl();
-
-        if(auth == null){
-            return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);
-        } else if(newUrl.length() == 0){
-            return responseDto.fail("공백을 입력할 수 없습니다.", HttpStatus.BAD_REQUEST);
-        }
-        else{
-            var club = clubRepository.findById(auth.getClubId()).get();
-            club.setUrl(newUrl);
-            clubRepository.save(club);
-            return responseDto.success("동아리 URL 수정 성공.", HttpStatus.OK);
-        }
-    }
+//    private ResponseEntity<?> updateClubName(String managerId, ClubUpdateDto info) {
+//        var optionalManager =  userRepository.findByStudentId(managerId);
+//
+//        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
+//
+//        var manager = optionalManager.get();
+//        var auth = verifyManager(manager);
+//        String newName = info.getName();
+//
+//        if(auth == null){
+//            return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);
+//        } else if(newName == null){
+//            return responseDto.fail("공백을 입력할 수 없습니다.", HttpStatus.BAD_REQUEST);
+//        }
+//        else{
+//          var club = clubRepository.findById(auth.getClubId()).get();
+//          club.setName(newName);
+//          clubRepository.save(club);
+//          return responseDto.success("동아리 이름 수정 성공.", HttpStatus.OK);
+//        }
+//    }
+//
+//    // 동아리 대문 변경.
+//    public ResponseEntity<?> updateIntroduction(String managerId, ClubUpdateDto info) {
+//        var optionalManager =  userRepository.findByStudentId(managerId);
+//
+//        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
+//
+//        var manager = optionalManager.get();
+//        var auth = verifyManager(manager);
+//        String newIntro = info.getIntroduction();
+//
+//        if(auth == null){
+//            return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);
+//        } else if(newIntro.length() == 0){
+//            return responseDto.fail("공백을 입력할 수 없습니다.", HttpStatus.BAD_REQUEST);
+//        }
+//        else{
+//            var club = clubRepository.findById(auth.getClubId()).get();
+//            club.setIntroduction(newIntro);
+//            clubRepository.save(club);
+//            return responseDto.success("동아리 대문 수정 성공.", HttpStatus.OK);
+//        }
+//    }
+//
+//    // 동아리 상세 정보 변경.
+//    public ResponseEntity<?> updateDetail(String managerId, ClubUpdateDto info) {
+//        var optionalManager =  userRepository.findByStudentId(managerId);
+//
+//        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
+//
+//        var manager = optionalManager.get();
+//        var auth = verifyManager(manager);
+//        String newDetail = info.getDetail();
+//
+//        if(auth == null){
+//            return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);
+//        } else if(newDetail.length() == 0){
+//            return responseDto.fail("공백을 입력할 수 없습니다.", HttpStatus.BAD_REQUEST);
+//        }
+//        else{
+//            var club = clubRepository.findById(auth.getClubId()).get();
+//            club.setDetail(newDetail);
+//            clubRepository.save(club);
+//            return responseDto.success("동아리 상세정보 수정 성공.", HttpStatus.OK);
+//        }
+//    }
+//
+//    // 동아리 소개 url 변경.
+//    public ResponseEntity<?> updateUrl(String managerId, ClubUpdateDto info) {
+//        var optionalManager =  userRepository.findByStudentId(managerId);
+//
+//        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
+//
+//        var manager = optionalManager.get();
+//        var auth = verifyManager(manager);
+//        String newUrl = info.getUrl();
+//
+//        if(auth == null){
+//            return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);
+//        } else if(newUrl.length() == 0){
+//            return responseDto.fail("공백을 입력할 수 없습니다.", HttpStatus.BAD_REQUEST);
+//        }
+//        else{
+//            var club = clubRepository.findById(auth.getClubId()).get();
+//            club.setUrl(newUrl);
+//            clubRepository.save(club);
+//            return responseDto.success("동아리 URL 수정 성공.", HttpStatus.OK);
+//        }
+//    }
 }
