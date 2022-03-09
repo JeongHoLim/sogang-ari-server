@@ -81,13 +81,10 @@ public class ManagerService {
 
     // 동아리장 위임
     @Transactional
-<<<<<<< HEAD
-    public ResponseEntity<?> delegateClub(String managerId, String studentId) {
-        var optionalManager = userRepository.findByStudentId(managerId);
-=======
+
     public ResponseEntity<?> delegateClub(Long clubId,String managerId, String studentId) {
         var optionalManager =  userRepository.findByStudentId(managerId);
->>>>>>> 7a69c178e2c8de562cbdd979913d0dc16152e357
+
         var optionalUser = userRepository.findByStudentId(studentId);
 
         if (optionalUser.isEmpty()) return response.fail("등록되지 않은 유저", HttpStatus.NOT_FOUND);
@@ -96,24 +93,6 @@ public class ManagerService {
         var manager = optionalManager.get();
         var student = optionalUser.get();
 
-
-<<<<<<< HEAD
-        if (auth != null) { // 정상적으로 권한이 있는 경우.
-            if (userService.addAuthority(student.getId(), auth.getAuthority(), auth.getClubId())) {
-//                userRepository.save(student); //새로운 동아리장에게 권한 주고
-                if (userService.removeAuthority(manager.getId(), auth.getAuthority(), auth.getClubId())) {
-                    manager.getAuthorities().forEach(System.out::println);
-//                    userRepository.save(manager);
-                    return responseDto.success("동아리장 위임 성공", HttpStatus.OK);
-                }
-            } else {
-                if (userService.addAuthority(student.getId(), auth.getAuthority(), auth.getClubId()) &&
-                        userService.removeAuthority(manager.getId(), auth.getAuthority(), auth.getClubId())) {
-                    return responseDto.success("동아리장 위임 성공");
-                } else {
-                    return responseDto.fail("동아리장 위임 실패", HttpStatus.BAD_REQUEST);
-                }
-=======
         // 이 부분 살짝 찜찜
         if(isValidManager(manager,clubId)){ // 정상적으로 권한이 있는 경우.
             if(userService.addAuthority(student.getId(),"ROLE_MANAGER", clubId) &&
@@ -123,7 +102,7 @@ public class ManagerService {
             }
             else {
                 return responseDto.fail("동아리장 위임 실패", HttpStatus.BAD_REQUEST);
->>>>>>> 7a69c178e2c8de562cbdd979913d0dc16152e357
+
             }
         }
         return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);

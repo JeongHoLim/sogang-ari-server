@@ -35,10 +35,10 @@ public class User extends BaseEntity implements UserDetails {
     private String email;
 
 
-    @OneToMany(mappedBy = "userId",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userId",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<UserWishClub> userWishClubs;
 
-    @OneToMany(mappedBy = "userId",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userId",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<UserClub> userClubs;
 
     @OneToMany(mappedBy = "userId",cascade = CascadeType.ALL,

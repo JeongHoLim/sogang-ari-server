@@ -28,11 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import java.util.List;
 
@@ -408,17 +406,23 @@ public class UserService implements UserDetailsService {
 
         if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         User user = optionalUser.get();
-        List<UserWishClub> userWishClubs = user.getUserWishClubs();
 
         var optionalClub = clubRepository.findById(clubId);
         if(optionalClub.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
 
-        Long userId = user.getId();
+        boolean success = false;
         /*해당되는 User_Wish_List entity 레코드 삭제*/
-        userWishClubs.removeIf(element -> Objects.equals(element.getUserId(), userId) && Objects.equals(element.getClubId(), clubId));
 
-        /* 영속성 전이 cascade에 의해 DB 저장 */
-        user.setUserWishClubs(userWishClubs);
+        var found = user.getUserWishClubs();
+        for(var x : found){
+            if(Objects.equals(x.getClubId(), clubId)) {
+                success = user.getUserWishClubs().remove(x);
+                break;
+            }
+        }
+        if(!success)
+            return responseDto.fail("담아놓기 목록에 존재하지 않습니다.",HttpStatus.NOT_FOUND);
+
         userRepository.save(user);
 
         return responseDto.success("담아놓기 업데이트 성공");
