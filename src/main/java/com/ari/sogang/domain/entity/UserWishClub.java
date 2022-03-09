@@ -19,8 +19,8 @@ public class UserWishClub implements Serializable {
     @JoinColumn(name = "user_id")
     private Long userId;
 
-    @Id
-    @JoinColumn(name="club_id")
-    private Long clubId;
+    //여기서 Fetchtype lazy, eager 차이 없긴함. club에 cascade 안해서..(뇌피셜)
+    @ManyToOne(targetEntity = Club.class, fetch = FetchType.LAZY)
+    private Club club;
 
 }

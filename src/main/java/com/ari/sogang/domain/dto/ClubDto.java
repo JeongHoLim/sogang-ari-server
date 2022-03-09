@@ -26,5 +26,7 @@ public class ClubDto {
 
     private String section;
 
+    private String location;
+
     private boolean recruiting;
 }

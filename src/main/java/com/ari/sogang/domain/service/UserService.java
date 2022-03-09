@@ -207,15 +207,17 @@ public class UserService implements UserDetailsService {
     @Transactional
     public ResponseEntity<?> postWishList(String studentId, Long clubId) {
         var optionalUser = userRepository.findByStudentId(studentId);
-        if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
-        var user = optionalUser.get();
-        List<UserWishClub> userWishClubs = user.getUserWishClubs();
-        Long userId = user.getId();
-
         var optionalClub = clubRepository.findById(clubId);
-        if(optionalClub.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
 
-        userWishClubs.add(new UserWishClub(userId,clubId));
+        if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
+        if(optionalClub.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
+        var user = optionalUser.get();
+        var club = optionalClub.get();
+
+        List<UserWishClub> userWishClubs = user.getUserWishClubs();
+
+        userWishClubs.add(new UserWishClub(user.getId(),club));
+
         /* 영속성 전이 cacade에 의해 DB 저장 */
         user.setUserWishClubs(userWishClubs);
         userRepository.save(user);
@@ -228,8 +230,8 @@ public class UserService implements UserDetailsService {
         var wishList = user.getUserWishClubs();
         List<ClubDto> result = new ArrayList<>();
         for(UserWishClub temp : wishList){
-            var clubId = temp.getClubId();
-            result.add(dtoServiceHelper.toDto(clubRepository.findById(clubId).get()));
+            var club = temp.getClub();
+            result.add(dtoServiceHelper.toDto(club));
         }
         return result;
     }
@@ -250,8 +252,8 @@ public class UserService implements UserDetailsService {
         var userClubList = user.getUserClubs();
         List<ClubDto> result = new ArrayList<>();
         for(UserClub temp : userClubList){
-            var clubId = temp.getClubId();
-            result.add(dtoServiceHelper.toDto(clubRepository.findById(clubId).get()));
+            var club = temp.getClub();
+            result.add(dtoServiceHelper.toDto(club));
         }
         return result;
     }
@@ -402,23 +404,29 @@ public class UserService implements UserDetailsService {
     }
 
     /* Wish List 삭제 */
+    @Transactional
     public ResponseEntity<?> updateWishList(String studentId, Long clubId) {
 
         var optionalUser = userRepository.findByStudentId(studentId);
-
-        if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
-        User user = optionalUser.get();
-        List<UserWishClub> userWishClubs = user.getUserWishClubs();
-
         var optionalClub = clubRepository.findById(clubId);
+        if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         if(optionalClub.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
+        User user = optionalUser.get();
+        Club club = optionalClub.get();
 
-        Long userId = user.getId();
+
+        UserWishClub targetWishClub = new UserWishClub(user.getId(), club);
+
+
+        if(!user.getUserWishClubs().contains(targetWishClub)) {
+            return responseDto.fail("해당 동아리를 담아놓지 않았습니다.",HttpStatus.BAD_REQUEST);
+        }
+
         /*해당되는 User_Wish_List entity 레코드 삭제*/
-        userWishClubs.removeIf(element -> Objects.equals(element.getUserId(), userId) && Objects.equals(element.getClubId(), clubId));
+        user.getUserWishClubs().remove(targetWishClub);
+
 
         /* 영속성 전이 cascade에 의해 DB 저장 */
-        user.setUserWishClubs(userWishClubs);
         userRepository.save(user);
 
         return responseDto.success("담아놓기 업데이트 성공");

@@ -34,6 +34,7 @@ public class DtoServiceHelper {
                 .detail(entity.getDetail())
                 .url(entity.getUrl())
                 .introduction(entity.getIntroduction())
+                .location(entity.getLocation())
                 .build();
     }
     public UserDto toDto(User user) {

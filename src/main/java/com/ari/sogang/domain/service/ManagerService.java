@@ -41,6 +41,7 @@ public class ManagerService {
         if(optionalManager.isEmpty()) return response.fail("해당 동아리장은 존재하지 않는 유저입니다.",HttpStatus.NOT_FOUND);
 
         var user = optionalUser.get();
+        var club = optionalClub.get();
         var manager = optionalManager.get();
 
         Long userId = user.getId();
@@ -51,18 +52,15 @@ public class ManagerService {
         if(user.getUserClubs() == null)
             user.setUserClubs(new ArrayList<>());
 
-        var userClubs = user.getUserClubs();
-        var newClub = new UserClub(clubId,userId);
+        var newClub = new UserClub(userId, club);
 
         // 동아리 없으면 추가
-        if(userClubs.contains(newClub))
+        if(user.getUserClubs().contains(newClub))
             return response.fail("해당 유저는 이미 가입되어있습니다.",HttpStatus.CONFLICT);
-
-        userClubs.add(newClub);
+        else
+            user.getUserClubs().add(newClub);
 
         /* 영속성 전이 cacade에 의해 DB 저장 */
-
-        user.setUserClubs(userClubs);
         userRepository.save(user);
 
         return response.success("동아리 가입 성공",HttpStatus.CREATED);
@@ -81,13 +79,8 @@ public class ManagerService {
 
     // 동아리장 위임
     @Transactional
-<<<<<<< HEAD
-    public ResponseEntity<?> delegateClub(String managerId, String studentId) {
-        var optionalManager = userRepository.findByStudentId(managerId);
-=======
     public ResponseEntity<?> delegateClub(Long clubId,String managerId, String studentId) {
         var optionalManager =  userRepository.findByStudentId(managerId);
->>>>>>> 7a69c178e2c8de562cbdd979913d0dc16152e357
         var optionalUser = userRepository.findByStudentId(studentId);
 
         if (optionalUser.isEmpty()) return response.fail("등록되지 않은 유저", HttpStatus.NOT_FOUND);
@@ -97,23 +90,6 @@ public class ManagerService {
         var student = optionalUser.get();
 
 
-<<<<<<< HEAD
-        if (auth != null) { // 정상적으로 권한이 있는 경우.
-            if (userService.addAuthority(student.getId(), auth.getAuthority(), auth.getClubId())) {
-//                userRepository.save(student); //새로운 동아리장에게 권한 주고
-                if (userService.removeAuthority(manager.getId(), auth.getAuthority(), auth.getClubId())) {
-                    manager.getAuthorities().forEach(System.out::println);
-//                    userRepository.save(manager);
-                    return responseDto.success("동아리장 위임 성공", HttpStatus.OK);
-                }
-            } else {
-                if (userService.addAuthority(student.getId(), auth.getAuthority(), auth.getClubId()) &&
-                        userService.removeAuthority(manager.getId(), auth.getAuthority(), auth.getClubId())) {
-                    return responseDto.success("동아리장 위임 성공");
-                } else {
-                    return responseDto.fail("동아리장 위임 실패", HttpStatus.BAD_REQUEST);
-                }
-=======
         // 이 부분 살짝 찜찜
         if(isValidManager(manager,clubId)){ // 정상적으로 권한이 있는 경우.
             if(userService.addAuthority(student.getId(),"ROLE_MANAGER", clubId) &&
@@ -123,7 +99,6 @@ public class ManagerService {
             }
             else {
                 return responseDto.fail("동아리장 위임 실패", HttpStatus.BAD_REQUEST);
->>>>>>> 7a69c178e2c8de562cbdd979913d0dc16152e357
             }
         }
         return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);

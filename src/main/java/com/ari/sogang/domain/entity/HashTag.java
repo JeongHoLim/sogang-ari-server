@@ -21,6 +21,6 @@ public class HashTag extends BaseEntity{
 
     private String name;
 
-    @OneToMany(mappedBy = "hashTagId",cascade = CascadeType.ALL)
-    List<ClubHashTag> clubHashTags = new ArrayList<>();
+//    @OneToMany(mappedBy = "hashTagId",cascade = CascadeType.ALL)
+//    List<ClubHashTag> clubHashTags = new ArrayList<>();
 }
