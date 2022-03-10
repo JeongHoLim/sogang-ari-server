@@ -62,4 +62,16 @@ public class ManagerController {
     }
 
 
+    @ApiResponses(value={
+            @ApiResponse(code = 200, message = "지원자 조회 성공"),
+            @ApiResponse(code = 400, message = "잘못된 요청"),
+            @ApiResponse(code = 403, message = "권한 없음")
+    })
+    @GetMapping("/{club_id}/{manager_id}/candidate")
+    @ApiOperation(value = "동아리 지원자 조회",notes="동아리 지원자 조회")
+    public ResponseEntity<?> getCandidates(@PathVariable(name = "manager_id") String managerId,
+                                        @PathVariable(name = "club_id") Long clubId){
+        return managerService.getCandidates(clubId,managerId);
+    }
+
 }

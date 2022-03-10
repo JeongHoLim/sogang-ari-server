@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 public class ManagerService {
     private final UserRepository userRepository;
     private final ClubRepository clubRepository;
-    private final ResponseDto response;
     private final UserService userService;
     private final ResponseDto responseDto;
 
@@ -30,9 +30,9 @@ public class ManagerService {
         var optionalClub = clubRepository.findById(clubId);
         var optionalManager = userRepository.findByStudentId(managerId);
 
-        if(optionalUser.isEmpty()) return response.fail("해당 유저가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
-        if(optionalClub.isEmpty()) return response.fail("등록되지 않은 동아리입니다.",HttpStatus.NOT_FOUND);
-        if(optionalManager.isEmpty()) return response.fail("해당 동아리장은 존재하지 않는 유저입니다.",HttpStatus.NOT_FOUND);
+        if(optionalUser.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+        if(optionalClub.isEmpty()) return responseDto.fail("등록되지 않은 동아리입니다.",HttpStatus.NOT_FOUND);
+        if(optionalManager.isEmpty()) return responseDto.fail("해당 동아리장은 존재하지 않는 유저입니다.",HttpStatus.NOT_FOUND);
 
         var user = optionalUser.get();
         var club = optionalClub.get();
@@ -40,7 +40,7 @@ public class ManagerService {
 
         Long userId = user.getId();
         if(!isValidManager(manager,clubId)){
-            return response.fail("권한 없음",HttpStatus.FORBIDDEN);
+            return responseDto.fail("권한 없음",HttpStatus.FORBIDDEN);
         }
 
 
@@ -51,8 +51,11 @@ public class ManagerService {
         var newClub = new UserClub(clubId,userId);
 
         // 동아리 없으면 추가
-        if(userClubs.contains(newClub))
-            return response.fail("해당 유저는 이미 가입되어있습니다.",HttpStatus.CONFLICT);
+        if(userClubs.contains(newClub)){
+            club.getClubUsers().remove(new ClubUser(clubId,userId));
+            clubRepository.save(club);
+            return responseDto.fail("해당 유저는 이미 가입되어있습니다.",HttpStatus.CONFLICT);
+        }
 
         userClubs.add(newClub);
         club.getClubUsers().remove(new ClubUser(clubId,userId));
@@ -63,7 +66,7 @@ public class ManagerService {
         userRepository.save(user);
         clubRepository.save(club);
 
-        return response.success("동아리 가입 성공",HttpStatus.CREATED);
+        return responseDto.success("동아리 가입 성공",HttpStatus.CREATED);
     }
 
 
@@ -84,8 +87,8 @@ public class ManagerService {
 
         var optionalUser = userRepository.findByStudentId(studentId);
 
-        if (optionalUser.isEmpty()) return response.fail("등록되지 않은 유저", HttpStatus.NOT_FOUND);
-        if (optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장", HttpStatus.NOT_FOUND);
+        if (optionalUser.isEmpty()) return responseDto.fail("등록되지 않은 유저", HttpStatus.NOT_FOUND);
+        if (optionalManager.isEmpty()) return responseDto.fail("등록되지 않은 동아리 장", HttpStatus.NOT_FOUND);
 
         var manager = optionalManager.get();
         var student = optionalUser.get();
@@ -110,13 +113,13 @@ public class ManagerService {
         var optionalClub =  clubRepository.findById(clubId);
         var optionalManager =  userRepository.findByStudentId(managerId);
 
-        if(optionalClub.isEmpty()) return response.fail("등록되지 않은 동아리",HttpStatus.NOT_FOUND);
-        if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
+        if(optionalClub.isEmpty()) return responseDto.fail("등록되지 않은 동아리",HttpStatus.NOT_FOUND);
+        if(optionalManager.isEmpty()) return responseDto.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
 
         var manager = optionalManager.get();
 
         if(!isValidManager(manager,clubId)){
-            return response.fail("권한 없음",HttpStatus.FORBIDDEN);
+            return responseDto.fail("권한 없음",HttpStatus.FORBIDDEN);
         }
 
         Club club = optionalClub.get();
@@ -127,12 +130,12 @@ public class ManagerService {
         var clubDetail = clubUpdateInfo.getDetail();
         var clubUrl = clubUpdateInfo.getUrl();
         var clubIntro = clubUpdateInfo.getIntroduction();
-
+        var clubHashTags = clubUpdateInfo.getHashTags();
         if("yes".equals(flag))
             club.setRecruiting(true);
         else if("no".equals(flag))
             club.setRecruiting(false);
-        else return response.fail("잘못된 요청",HttpStatus.BAD_REQUEST);
+        else return responseDto.fail("잘못된 요청",HttpStatus.BAD_REQUEST);
 
         // 예외 처리는 나중에~
 
@@ -141,9 +144,37 @@ public class ManagerService {
         club.setUrl(clubUrl);
         club.setIntroduction(clubIntro);
 
+        var deleted = club.getClubHashTags();
+        club.getClubHashTags().removeAll(deleted);
+
+        var res = clubHashTags.stream().map(ht -> new ClubHashTag(ht,clubId)).collect(Collectors.toList());
+        for(var r : res)
+            club.getClubHashTags().add(r);
+
+
         clubRepository.save(club);
 
-        return response.success("모집 설정 성공");
+        return responseDto.success("모집 설정 성공");
+    }
+
+    public ResponseEntity<?> getCandidates(Long clubId, String managerId) {
+
+
+        var optionalUser = userRepository.findByStudentId(managerId);
+        var optionalClub = clubRepository.findById(clubId);
+
+        if(optionalClub.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
+        if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
+
+        var manager = optionalUser.get();
+        var club = optionalClub.get();
+
+        if(!isValidManager(manager,clubId))
+            return responseDto.fail("권한 없음",HttpStatus.FORBIDDEN);
+
+        var candidates = club.getClubUsers();
+
+        return responseDto.success(candidates,"지원자 조회 성공");
     }
 
     // 동아리 이름 변경.
