@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,4 +21,8 @@ public class ClubUpdateDto {
     private String url;
 
     private String recruit;
+
+    private String location;
+
+    private List<String> hashTags;
 }

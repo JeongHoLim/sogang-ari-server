@@ -33,15 +33,18 @@ public class Club extends BaseEntity{
 
     private boolean recruiting;
 
+    // 가입된 사용자
     @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL)
     List<UserClub> userClubs;
 
-    @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL,orphanRemoval = true)
     List<ClubHashTag> clubHashTags;
 
+    // 담아놓기
     @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL)
     List<UserWishClub> userWishClubs;
 
+    // 가입 신청 명단
     @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL,orphanRemoval = true)
     List<ClubUser> clubUsers;
 
