@@ -21,14 +21,14 @@ public class ClubController {
     private final ClubService clubService;
 
     /* 해시태그 검색 */
-    @ApiResponses(value={
-            @ApiResponse(code = 200, message = "동아리 검색 성공")
-    })
-    @PostMapping("/tag")
-    @ApiOperation(value = "해시태그로 검색",notes="해시태그로 동아리 검색")
-    public ResponseEntity<?> searchByHashTag(@RequestBody List<HashTagDto> hashTagDtos){
-        return clubService.searchByHashTag(hashTagDtos);
-    }
+//    @ApiResponses(value={
+//            @ApiResponse(code = 200, message = "동아리 검색 성공")
+//    })
+//    @PostMapping("/tag")
+//    @ApiOperation(value = "해시태그로 검색",notes="해시태그로 동아리 검색")
+//    public ResponseEntity<?> searchByHashTag(@RequestBody List<HashTagDto> hashTagDtos){
+//        return clubService.searchByHashTag(hashTagDtos);
+//    }
 
     /* 분과 검색 */
     @ApiResponses(value={
@@ -44,7 +44,7 @@ public class ClubController {
             @ApiResponse(code = 200, message = "동아리 검색 성공"),
     })
     @ApiOperation(value = "이름으로 동아리 검색",notes="이름으로 동아리 검색")
-    @GetMapping("/name/")
+    @GetMapping("/name")
     public ResponseEntity<?> searchByName(@RequestParam String clubName){
         return clubService.searchByName(clubName);
     }
@@ -60,14 +60,14 @@ public class ClubController {
     }
 
     /* 동아리별 해시태그 조회 */
-    @ApiResponses(value={
-            @ApiResponse(code = 200, message = "해시태그 조회 성공")
-    })
-    @GetMapping("/{club_id}/tag")
-    @ApiOperation(value = "해시태그 조회",notes="특정 동아리 해시태그 조회")
-    public ResponseEntity<?>  getHashTag(@PathVariable("club_id") Long clubId){
-        return clubService.getHashTagByClubId(clubId);
-    }
+//    @ApiResponses(value={
+//            @ApiResponse(code = 200, message = "해시태그 조회 성공")
+//    })
+//    @GetMapping("/{club_id}/tag")
+//    @ApiOperation(value = "해시태그 조회",notes="특정 동아리 해시태그 조회")
+//    public ResponseEntity<?>  getHashTag(@PathVariable("club_id") Long clubId){
+//        return clubService.getHashTagByClubId(clubId);
+//    }
     /* 동아리 전체 조회 */
     @ApiResponses(value={
             @ApiResponse(code = 200, message = "전체 동아리 조회 성공")
