@@ -1,10 +1,8 @@
 package com.ari.sogang.domain.service;
 
 import com.ari.sogang.domain.dto.ClubDto;
-import com.ari.sogang.domain.dto.HashTagDto;
 import com.ari.sogang.domain.dto.UserDto;
 import com.ari.sogang.domain.entity.Club;
-import com.ari.sogang.domain.entity.HashTag;
 import com.ari.sogang.domain.entity.User;
 import com.ari.sogang.domain.entity.UserAuthority;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +16,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class DtoServiceHelper {
     private final PasswordEncoder passwordEncoder;
-
-    public HashTagDto toDto(HashTag entity) {
-        return HashTagDto.builder()
-                .name(entity.getName())
-                .build();
-    }
 
     public ClubDto toDto(Club entity) {
         return ClubDto.builder()
@@ -65,11 +57,6 @@ public class DtoServiceHelper {
                 .url(clubDto.getUrl())
                 .section(clubDto.getSection())
                 .recruiting(clubDto.isRecruiting())
-                .build();
-    }
-    public HashTag toEntity(HashTagDto hashTagDto) {
-        return HashTag.builder()
-                .name(hashTagDto.getName())
                 .build();
     }
 }

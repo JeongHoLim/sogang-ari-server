@@ -14,8 +14,7 @@ import java.io.Serializable;
 @IdClass(value=ClubHashTag.class)
 public class ClubHashTag implements Serializable {
     @Id
-    @JoinColumn(name ="hash_tag_id")
-    private Long hashTagId;
+    private String name;
 
     @Id
     @JoinColumn(name ="club_id")

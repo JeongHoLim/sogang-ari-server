@@ -1,5 +1,6 @@
 package com.ari.sogang.domain.dto;
 
+import com.ari.sogang.domain.entity.ClubHashTag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -27,4 +29,6 @@ public class ClubDto {
     private String section;
 
     private boolean recruiting;
+
+    private List<String> hashTags;
 }

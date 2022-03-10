@@ -36,12 +36,15 @@ public class Club extends BaseEntity{
     private boolean recruiting;
 
     @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL)
-    List<UserClub> userClubs = new ArrayList<>();
+    List<UserClub> userClubs;
 
     @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL)
-    List<ClubHashTag> clubHashTags = new ArrayList<>();
+    List<ClubHashTag> clubHashTags;
 
     @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL)
-    List<UserWishClub> userWishClubs = new ArrayList<>();
+    List<UserWishClub> userWishClubs;
+
+    @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL,orphanRemoval = true)
+    List<ClubUser> clubUsers;
 
 }
