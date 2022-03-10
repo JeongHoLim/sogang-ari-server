@@ -276,6 +276,7 @@ public class UserService implements UserDetailsService {
             if (!user.getAuthorities().contains(newAuthority)) {
                 user.getAuthorities().add(newAuthority);
                 userRepository.save(user);
+                return true;
             }
         }
         return false;
@@ -433,5 +434,30 @@ public class UserService implements UserDetailsService {
         var user = userRepository.findByStudentId("17").get();
         addAuthority(user.getId(),"ROLE_ADMIN", 0L);
         removeAuthority(user.getId(),"ROLE_USER",-1L);
+    }
+
+    @Transactional
+    public ResponseEntity<?> joinClub(String studentId, Long clubId) {
+
+        var optionalUser = userRepository.findByStudentId(studentId);
+        var optionalClub = clubRepository.findById(clubId);
+
+        if(optionalUser.isEmpty())
+            return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
+
+        if(optionalClub.isEmpty())
+            return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
+
+        var club = optionalClub.get();
+
+        var clubUsers = club.getClubUsers();
+        var user = new ClubUser(clubId,optionalUser.get().getId()) ;
+        if(clubUsers.contains(user)){
+           return responseDto.fail("이미 가입된 동아리입니다.",HttpStatus.CONFLICT);
+        }
+
+        clubUsers.add(user);
+
+        return responseDto.success("동아리 가입 신청 성공",HttpStatus.CREATED);
     }
 }

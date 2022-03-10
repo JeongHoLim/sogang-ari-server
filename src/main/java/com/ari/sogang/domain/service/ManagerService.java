@@ -3,10 +3,7 @@ package com.ari.sogang.domain.service;
 import com.ari.sogang.config.dto.ResponseDto;
 import com.ari.sogang.domain.dto.ClubRequestDto;
 import com.ari.sogang.domain.dto.ClubUpdateDto;
-import com.ari.sogang.domain.entity.Club;
-import com.ari.sogang.domain.entity.User;
-import com.ari.sogang.domain.entity.UserAuthority;
-import com.ari.sogang.domain.entity.UserClub;
+import com.ari.sogang.domain.entity.*;
 import com.ari.sogang.domain.repository.ClubRepository;
 import com.ari.sogang.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +39,7 @@ public class ManagerService {
 
         var user = optionalUser.get();
         var manager = optionalManager.get();
+        var club = optionalClub.get();
 
         Long userId = user.getId();
         if(!isValidManager(manager,clubId)){
@@ -59,11 +57,13 @@ public class ManagerService {
             return response.fail("해당 유저는 이미 가입되어있습니다.",HttpStatus.CONFLICT);
 
         userClubs.add(newClub);
-
+        club.getClubUsers().remove(new ClubUser(clubId,userId));
         /* 영속성 전이 cacade에 의해 DB 저장 */
 
         user.setUserClubs(userClubs);
+
         userRepository.save(user);
+        clubRepository.save(club);
 
         return response.success("동아리 가입 성공",HttpStatus.CREATED);
     }

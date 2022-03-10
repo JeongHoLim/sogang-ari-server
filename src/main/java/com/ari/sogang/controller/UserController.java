@@ -30,6 +30,19 @@ public class UserController {
         return userService.postWishList(studentId,clubId);
     }
 
+    @ApiResponses(value={
+            @ApiResponse(code = 201, message = "동아리 가입 성공"),
+            @ApiResponse(code = 401, message = "로그인 필요"),
+            @ApiResponse(code = 403, message = "권한 없음"),
+            @ApiResponse(code = 404, message = "존재하지 않는 유저이거나, 존재하지 않는 동아리"),
+    })
+    @PostMapping("/{student_id}/join/{club_id}")
+    @ApiOperation(value = "가입 신청 ",notes="동아리 가입 신청")
+    @PreAuthorize("#studentId == authentication.principal")
+    public ResponseEntity<?> joinClub(@PathVariable("student_id") String studentId, @PathVariable("club_id") Long clubId){
+        return userService.joinClub(studentId,clubId);
+    }
+
     /* 담아놓기 조회*/
     @ApiResponses(value={
             @ApiResponse(code = 200, message = "담아 놓기 성공"),
