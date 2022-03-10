@@ -47,5 +47,4 @@ public class Club extends BaseEntity{
     @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL,orphanRemoval = true)
     List<ClubUser> clubUsers;
 
-
 }

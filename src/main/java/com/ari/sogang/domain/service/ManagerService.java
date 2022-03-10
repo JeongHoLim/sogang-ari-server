@@ -50,10 +50,15 @@ public class ManagerService {
             user.setUserClubs(new ArrayList<>());
 
         var newClub = new UserClub(userId, club);
+<<<<<<< HEAD
         var userClubs = user.getUserClubs();
+=======
+
+>>>>>>> 2e20a8e582481322fe403d3be5f82cc74ad43be7
         // 동아리 없으면 추가
-        if(userClubs.contains(newClub))
+        if(user.getUserClubs().contains(newClub))
             return response.fail("해당 유저는 이미 가입되어있습니다.",HttpStatus.CONFLICT);
+<<<<<<< HEAD
 
         userClubs.add(newClub);
         club.getClubUsers().remove(new ClubUser(clubId,userId));
@@ -61,6 +66,12 @@ public class ManagerService {
 
         user.setUserClubs(userClubs);
 
+=======
+        else
+            user.getUserClubs().add(newClub);
+
+        /* 영속성 전이 cacade에 의해 DB 저장 */
+>>>>>>> 2e20a8e582481322fe403d3be5f82cc74ad43be7
         userRepository.save(user);
         clubRepository.save(club);
 
@@ -82,8 +93,11 @@ public class ManagerService {
     @Transactional
     public ResponseEntity<?> delegateClub(Long clubId,String managerId, String studentId) {
         var optionalManager =  userRepository.findByStudentId(managerId);
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 2e20a8e582481322fe403d3be5f82cc74ad43be7
         var optionalUser = userRepository.findByStudentId(studentId);
 
         if (optionalUser.isEmpty()) return response.fail("등록되지 않은 유저", HttpStatus.NOT_FOUND);
