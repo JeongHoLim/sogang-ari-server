@@ -24,14 +24,14 @@ public class UserController {
             @ApiResponse(code = 404, message = "존재하지 않는 유저이거나, 존재하지 않는 동아리"),
     })
     @PostMapping("/{student_id}/wish/{club_id}")
-    @ApiOperation(value = "담아놓기 ",notes="유저의 담아놓기에 동아리 추가")
+    @ApiOperation(value = "담아놓기",notes="유저의 담아놓기에 동아리 추가")
     @PreAuthorize("#studentId == authentication.principal")
     public ResponseEntity<?> postWishList(@PathVariable("student_id") String studentId, @PathVariable("club_id") Long clubId){
         return userService.postWishList(studentId,clubId);
     }
 
     @ApiResponses(value={
-            @ApiResponse(code = 201, message = "동아리 가입 성공"),
+            @ApiResponse(code = 201, message = "동아리 가입 신청 성공"),
             @ApiResponse(code = 401, message = "로그인 필요"),
             @ApiResponse(code = 403, message = "권한 없음"),
             @ApiResponse(code = 404, message = "존재하지 않는 유저이거나, 존재하지 않는 동아리"),

@@ -1,6 +1,5 @@
 package com.ari.sogang.domain.dto;
 
-import com.ari.sogang.domain.entity.Club;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

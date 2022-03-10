@@ -3,8 +3,6 @@ package com.ari.sogang.domain.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Entity

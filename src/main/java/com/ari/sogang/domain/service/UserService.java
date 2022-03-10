@@ -39,6 +39,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
+    @PersistenceContext
+    private EntityManager em;
 
     private final UserRepository userRepository;
     private final ClubRepository clubRepository;
@@ -46,6 +48,7 @@ public class UserService implements UserDetailsService {
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final ResponseDto responseDto;
+    private final LoginResponseDto loginResponseDto;
     private final RedisTemplate<String, String> redisTemplate;
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -202,17 +205,15 @@ public class UserService implements UserDetailsService {
     @Transactional
     public ResponseEntity<?> postWishList(String studentId, Long clubId) {
         var optionalUser = userRepository.findByStudentId(studentId);
-        var optionalClub = clubRepository.findById(clubId);
-
         if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
-        if(optionalClub.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
-        var club = optionalClub.get();
-
         List<UserWishClub> userWishClubs = user.getUserWishClubs();
+        Long userId = user.getId();
 
-        userWishClubs.add(new UserWishClub(user.getId(),club.getId()));
+        var optionalClub = clubRepository.findById(clubId);
+        if(optionalClub.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
 
+        userWishClubs.add(new UserWishClub(userId,clubId));
         /* 영속성 전이 cacade에 의해 DB 저장 */
         user.setUserWishClubs(userWishClubs);
         userRepository.save(user);
@@ -225,8 +226,8 @@ public class UserService implements UserDetailsService {
         var wishList = user.getUserWishClubs();
         List<ClubDto> result = new ArrayList<>();
         for(UserWishClub temp : wishList){
-            var club = clubRepository.findById(temp.getClubId()).get();
-            result.add(dtoServiceHelper.toDto(club));
+            var clubId = temp.getClubId();
+            result.add(dtoServiceHelper.toDto(clubRepository.findById(clubId).get()));
         }
         return result;
     }
@@ -247,8 +248,8 @@ public class UserService implements UserDetailsService {
         var userClubList = user.getUserClubs();
         List<ClubDto> result = new ArrayList<>();
         for(UserClub temp : userClubList){
-            var club = temp.getClub();
-            result.add(dtoServiceHelper.toDto(club));
+            var clubId = temp.getClubId();
+            result.add(dtoServiceHelper.toDto(clubRepository.findById(clubId).get()));
         }
         return result;
     }
@@ -400,15 +401,15 @@ public class UserService implements UserDetailsService {
     }
 
     /* Wish List 삭제 */
-    @Transactional
     public ResponseEntity<?> updateWishList(String studentId, Long clubId) {
 
         var optionalUser = userRepository.findByStudentId(studentId);
 
-        var optionalClub = clubRepository.findById(clubId);
         if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
-        if(optionalClub.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
         User user = optionalUser.get();
+
+        var optionalClub = clubRepository.findById(clubId);
+        if(optionalClub.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
 
         boolean success = false;
         /*해당되는 User_Wish_List entity 레코드 삭제*/
@@ -422,7 +423,6 @@ public class UserService implements UserDetailsService {
         }
         if(!success)
             return responseDto.fail("담아놓기 목록에 존재하지 않습니다.",HttpStatus.NOT_FOUND);
-
 
         userRepository.save(user);
 
@@ -457,7 +457,6 @@ public class UserService implements UserDetailsService {
         }
 
         clubUsers.add(user);
-
 
         return responseDto.success("동아리 가입 신청 성공",HttpStatus.CREATED);
     }

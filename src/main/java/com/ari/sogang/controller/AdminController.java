@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AdminController {
 
-    private final ResponseDto responseDto;
     private final AdminService adminService;
 
     /* 관리자 사이트 */

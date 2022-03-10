@@ -1,6 +1,5 @@
 package com.ari.sogang.controller;
 
-import com.ari.sogang.domain.dto.ClubRequestDto;
 import com.ari.sogang.domain.dto.ClubUpdateDto;
 import com.ari.sogang.domain.service.ManagerService;
 import io.swagger.annotations.ApiOperation;
@@ -9,8 +8,6 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.nio.file.AccessDeniedException;
 
 @RestController
 @RequestMapping("/api/manager")

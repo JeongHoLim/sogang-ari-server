@@ -14,9 +14,10 @@ import java.io.Serializable;
 @IdClass(UserClub.class)
 public class UserClub implements Serializable {
     @Id
+    @JoinColumn(name = "club_id")
+    private Long clubId;
+
+    @Id
     @JoinColumn(name = "user_id")
     private Long userId;
-
-    @ManyToOne(targetEntity = Club.class, fetch = FetchType.LAZY)
-    private Club club;
 }

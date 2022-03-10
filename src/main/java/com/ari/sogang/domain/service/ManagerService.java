@@ -1,7 +1,6 @@
 package com.ari.sogang.domain.service;
 
 import com.ari.sogang.config.dto.ResponseDto;
-import com.ari.sogang.domain.dto.ClubRequestDto;
 import com.ari.sogang.domain.dto.ClubUpdateDto;
 import com.ari.sogang.domain.entity.*;
 import com.ari.sogang.domain.repository.ClubRepository;
@@ -9,8 +8,6 @@ import com.ari.sogang.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,19 +43,16 @@ public class ManagerService {
             return response.fail("권한 없음",HttpStatus.FORBIDDEN);
         }
 
+
         if(user.getUserClubs() == null)
             user.setUserClubs(new ArrayList<>());
 
-        var newClub = new UserClub(userId, club);
-<<<<<<< HEAD
         var userClubs = user.getUserClubs();
-=======
+        var newClub = new UserClub(clubId,userId);
 
->>>>>>> 2e20a8e582481322fe403d3be5f82cc74ad43be7
         // 동아리 없으면 추가
-        if(user.getUserClubs().contains(newClub))
+        if(userClubs.contains(newClub))
             return response.fail("해당 유저는 이미 가입되어있습니다.",HttpStatus.CONFLICT);
-<<<<<<< HEAD
 
         userClubs.add(newClub);
         club.getClubUsers().remove(new ClubUser(clubId,userId));
@@ -66,12 +60,6 @@ public class ManagerService {
 
         user.setUserClubs(userClubs);
 
-=======
-        else
-            user.getUserClubs().add(newClub);
-
-        /* 영속성 전이 cacade에 의해 DB 저장 */
->>>>>>> 2e20a8e582481322fe403d3be5f82cc74ad43be7
         userRepository.save(user);
         clubRepository.save(club);
 
@@ -93,11 +81,7 @@ public class ManagerService {
     @Transactional
     public ResponseEntity<?> delegateClub(Long clubId,String managerId, String studentId) {
         var optionalManager =  userRepository.findByStudentId(managerId);
-<<<<<<< HEAD
 
-
-=======
->>>>>>> 2e20a8e582481322fe403d3be5f82cc74ad43be7
         var optionalUser = userRepository.findByStudentId(studentId);
 
         if (optionalUser.isEmpty()) return response.fail("등록되지 않은 유저", HttpStatus.NOT_FOUND);
@@ -105,7 +89,6 @@ public class ManagerService {
 
         var manager = optionalManager.get();
         var student = optionalUser.get();
-
 
         // 이 부분 살짝 찜찜
         if(isValidManager(manager,clubId)){ // 정상적으로 권한이 있는 경우.
@@ -116,6 +99,7 @@ public class ManagerService {
             }
             else {
                 return responseDto.fail("동아리장 위임 실패", HttpStatus.BAD_REQUEST);
+
             }
         }
         return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);
@@ -130,14 +114,8 @@ public class ManagerService {
         if(optionalManager.isEmpty()) return response.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
 
         var manager = optionalManager.get();
-        var manageId = manager.getId();
 
-        if(!manager.getAuthorities().contains(
-                UserAuthority.builder()
-                        .clubId(clubId)
-                        .userId(manageId)
-                        .authority("ROLE_MANAGER")
-                        .build())){
+        if(!isValidManager(manager,clubId)){
             return response.fail("권한 없음",HttpStatus.FORBIDDEN);
         }
 
