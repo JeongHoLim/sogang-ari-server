@@ -84,4 +84,18 @@ public class UserController {
     public ResponseEntity<?> updateWishList(@PathVariable("student_id")String studentId, @PathVariable("club_id") Long clubId){
         return userService.updateWishList(studentId,clubId);
     }
+
+    //issue 1
+    // 유저가 회원 탈퇴하면 사이트에서만 가입한 동아리가 삭제되는거라
+    // 사실상 담아놓기 기능처럼 뺄 수 있는거라 의미 없을거 같은데 (실제로 동아리 탈퇴되는게 아님)
+    // 1. 가입신청 처럼 탈퇴 신청처럼 만든다.
+    // 2. 가입신청과 같은 맥락에서, 신청을 받으면 저장해 놓을 곳이 필요. => 어떤식으로 저장해두고 매니저에게 보여줄지?
+    // 2-1. 프론트 단에서, 신청하면 유저가 신청하면, 리스트로 관리.. etc
+
+//    @DeleteMapping ("/{club_id}/{manager_id}/join/{student_id}")
+//    @ApiOperation(value = "동아리 탈퇴",notes="특정 유저 동아리 탈퇴 승인")
+//    public ResponseEntity<?> updateJoinedClub(@PathVariable(name = "student_id") String studentId,
+//                                              @PathVariable(name = "club_id") Long clubId) {
+//        return userService.updateJoinedClub(clubId,studentId);
+//    }
 }

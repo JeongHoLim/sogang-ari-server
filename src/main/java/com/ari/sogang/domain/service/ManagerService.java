@@ -38,8 +38,8 @@ public class ManagerService {
         if(optionalManager.isEmpty()) return response.fail("해당 동아리장은 존재하지 않는 유저입니다.",HttpStatus.NOT_FOUND);
 
         var user = optionalUser.get();
-        var manager = optionalManager.get();
         var club = optionalClub.get();
+        var manager = optionalManager.get();
 
         Long userId = user.getId();
         if(!isValidManager(manager,clubId)){
@@ -49,9 +49,8 @@ public class ManagerService {
         if(user.getUserClubs() == null)
             user.setUserClubs(new ArrayList<>());
 
+        var newClub = new UserClub(userId, club);
         var userClubs = user.getUserClubs();
-        var newClub = new UserClub(clubId,userId);
-
         // 동아리 없으면 추가
         if(userClubs.contains(newClub))
             return response.fail("해당 유저는 이미 가입되어있습니다.",HttpStatus.CONFLICT);
@@ -81,9 +80,9 @@ public class ManagerService {
 
     // 동아리장 위임
     @Transactional
-
     public ResponseEntity<?> delegateClub(Long clubId,String managerId, String studentId) {
         var optionalManager =  userRepository.findByStudentId(managerId);
+
 
         var optionalUser = userRepository.findByStudentId(studentId);
 
@@ -92,6 +91,7 @@ public class ManagerService {
 
         var manager = optionalManager.get();
         var student = optionalUser.get();
+
 
         // 이 부분 살짝 찜찜
         if(isValidManager(manager,clubId)){ // 정상적으로 권한이 있는 경우.
@@ -102,7 +102,6 @@ public class ManagerService {
             }
             else {
                 return responseDto.fail("동아리장 위임 실패", HttpStatus.BAD_REQUEST);
-
             }
         }
         return responseDto.fail("권한 없음", HttpStatus.FORBIDDEN);

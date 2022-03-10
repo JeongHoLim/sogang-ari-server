@@ -129,7 +129,7 @@ public class UserService implements UserDetailsService {
         TokenDto tokens = TokenDto.builder()
                 .accessToken(JwtTokenProvider.makeAccessToken(user))
                 .refreshToken(refreshToken)
-                        .build();
+                .build();
         // 4-3. Login Response Dto에 저장.
         LoginResponseDto loginResponseDto = LoginResponseDto.builder()
                 .userInfo(userInfo)
@@ -453,7 +453,7 @@ public class UserService implements UserDetailsService {
         var clubUsers = club.getClubUsers();
         var user = new ClubUser(clubId,optionalUser.get().getId()) ;
         if(clubUsers.contains(user)){
-           return responseDto.fail("이미 가입된 동아리입니다.",HttpStatus.CONFLICT);
+            return responseDto.fail("이미 가입된 동아리입니다.",HttpStatus.CONFLICT);
         }
 
         clubUsers.add(user);

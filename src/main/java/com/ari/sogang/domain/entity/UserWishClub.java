@@ -22,5 +22,4 @@ public class UserWishClub implements Serializable {
     @Id
     @JoinColumn(name="club_id")
     private Long clubId;
-
 }
