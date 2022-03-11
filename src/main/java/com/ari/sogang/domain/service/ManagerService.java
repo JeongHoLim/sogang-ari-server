@@ -2,16 +2,19 @@ package com.ari.sogang.domain.service;
 
 import com.ari.sogang.config.dto.ResponseDto;
 import com.ari.sogang.domain.dto.ClubUpdateDto;
+import com.ari.sogang.domain.dto.MailAlarmDto;
 import com.ari.sogang.domain.entity.*;
 import com.ari.sogang.domain.repository.ClubRepository;
 import com.ari.sogang.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -22,6 +25,9 @@ public class ManagerService {
     private final ClubRepository clubRepository;
     private final UserService userService;
     private final ResponseDto responseDto;
+
+    private final EmailService emailService;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
     public ResponseEntity<?> postJoinedClub(Long clubId,String managerId, String studentId){
@@ -179,7 +185,41 @@ public class ManagerService {
 
     public ResponseEntity<?> alarm(Long clubId, String managerId) {
 
-        return responseDto.success("메일 발송 성공");
+        var optionalClub = clubRepository.findById(clubId);
+        if(optionalClub.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
+
+        var optionalManager= userRepository.findByStudentId(managerId);
+        if(optionalManager.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
+
+        var manager = optionalManager.get();
+
+        if(!isValidManager(manager,clubId)){
+            return responseDto.fail("권한 없음",HttpStatus.FORBIDDEN);
+        }
+        var club = optionalClub.get();
+
+
+        if(redisTemplate.opsForValue().get(club.getName())!=null){
+            return responseDto.fail("알림 기능을 이용한지 아직 하루가 지나지 않았습니다.",HttpStatus.BAD_REQUEST);
+        }
+
+        var userList =  club.getUserWishClubs().stream().map(
+                u -> userRepository.findById(u.getUserId()).get()
+        ).collect(Collectors.toList());
+
+
+        for(var user : userList){
+            var mailForm = MailAlarmDto.builder()
+                    .address(user.getEmail()).clubName(club.getName()).build();
+            emailService.sendAlarm(mailForm);
+        }
+
+        // test로 2분만 해놨음
+        redisTemplate.opsForValue()
+                .set(club.getName(), "알림 기능", 2 , TimeUnit.MINUTES);
+
+
+        return responseDto.success("알림 메일 전송 성공");
     }
 
 

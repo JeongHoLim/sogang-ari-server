@@ -80,7 +80,7 @@ public class ManagerController {
             @ApiResponse(code = 400, message = "잘못된 요청"),
             @ApiResponse(code = 403, message = "권한 없음")
     })
-    @GetMapping("/{club_id}/{manager_id}/candidate")
+    @GetMapping("/{club_id}/{manager_id}/alarm")
     @ApiOperation(value = "모집 알림 기능",notes="동아리가 모집중으로 바뀌면 담아놓기한 유저에게 메일 발송")
     public ResponseEntity<?> alarm(@PathVariable(name = "manager_id") String managerId,
                                            @PathVariable(name = "club_id") Long clubId){

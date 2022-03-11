@@ -1,6 +1,7 @@
 package com.ari.sogang.domain.service;
 
 import com.ari.sogang.config.dto.ResponseDto;
+import com.ari.sogang.domain.dto.MailAlarmDto;
 import com.ari.sogang.domain.dto.MailDto;
 import com.ari.sogang.domain.dto.MailFeedbackDto;
 import com.ari.sogang.domain.dto.MailFormDto;
@@ -108,6 +109,19 @@ public class EmailService {
         if(verify(mailDto))
             return response.success("인증 코드 검사 성공");
         else return response.fail("코드 불일치 혹은 인증 코드 만료", HttpStatus.BAD_REQUEST);
+
+    }
+
+    public void sendAlarm(MailAlarmDto mailAlarmDto){
+
+        var message = new SimpleMailMessage();
+        message.setTo(mailAlarmDto.getAddress());
+        var content = String.format("담아놓으신 동아리 [%s]가 신규 인원 모집 중으로 변경되었습니다.",mailAlarmDto.getClubName());
+        message.setSubject("서강아리 동아리 알림");
+
+        message.setText(content);
+        // 인증 메일 발송
+        javaMailSender.send(message);
 
     }
 }
