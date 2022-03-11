@@ -177,6 +177,18 @@ public class ManagerService {
         return responseDto.success(candidates,"지원자 조회 성공");
     }
 
+    public ResponseEntity<?> alarm(Long clubId, String managerId) {
+
+        return responseDto.success("메일 발송 성공");
+    }
+
+
+
+
+
+
+
+
     // 동아리 이름 변경.
 //    private ResponseEntity<?> updateClubName(String managerId, ClubUpdateDto info) {
 //        var optionalManager =  userRepository.findByStudentId(managerId);
