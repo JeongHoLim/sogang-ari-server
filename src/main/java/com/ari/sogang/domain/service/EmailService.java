@@ -29,6 +29,7 @@ import javax.mail.internet.MimeMessage;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -74,17 +75,7 @@ public class EmailService {
     }
 
     private String createCode() {
-        Random random = new Random(); //난수 생성
-        StringBuilder key= new StringBuilder();
-
-        for(int i=0;i<3;i++){
-            int index = random.nextInt(25)+65;
-            key.append((char) index);
-        }
-
-        key.append(random.nextInt(1000));
-
-        return key.toString();
+        return Integer.toString( ThreadLocalRandom.current().nextInt(100000, 1000000) );
     }
 
     @Transactional
