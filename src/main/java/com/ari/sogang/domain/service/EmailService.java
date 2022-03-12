@@ -13,11 +13,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMailMessage;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.util.Objects;
+import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -92,14 +102,24 @@ public class EmailService {
     }
 
     @Transactional
-    public ResponseEntity<?> sendFeedback(MailFeedbackDto mailFeedbackDto){
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(sogangAriEmail + "@gmail.com");
-        message.setSubject(mailFeedbackDto.getTitle());
+    public ResponseEntity<?> sendFeedback(MailFeedbackDto mailFeedbackDto, MultipartFile file){
+        var message = javaMailSender.createMimeMessage();
+        try{
+            var flg = file!=null;
+            var helper = new MimeMessageHelper(message,flg,"utf-8");
+            if(flg){
+                helper.addAttachment(Objects.requireNonNull(file.getOriginalFilename()),file);
+            }
+            helper.setSubject(mailFeedbackDto.getTitle());
+            helper.setText("From : " + mailFeedbackDto.getEmail()+"\n메시지 : "+mailFeedbackDto.getContent());
+            helper.setTo(sogangAriEmail+"@gmail.com");
 
-        message.setText("From : " + mailFeedbackDto.getEmail()+"\n메시지 : "+mailFeedbackDto.getContent());
-        // 인증 메일 발송
-        javaMailSender.send(message);
+            javaMailSender.send(message);
+
+        }catch(Exception ex){
+            return response.fail("전송 실패",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
         return response.success("피드백 전송 성공");
     }
 

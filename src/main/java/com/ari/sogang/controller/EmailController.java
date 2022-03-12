@@ -8,13 +8,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class EmailController {
 
     private final EmailService emailService;
@@ -40,12 +41,15 @@ public class EmailController {
     }
 
     @ApiResponses(value={
-            @ApiResponse(code = 200, message = "피드백 전송 성공")
+            @ApiResponse(code = 200, message = "피드백 전송 성공"),
+            @ApiResponse(code = 500,message="서버 오류ㅎㅎ")
     })
-    @PostMapping("/feedback")
+    @PostMapping(path = "/feedback",
+            consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
     @ApiOperation(value = "피드백/문의 전송",notes="피드백/문의 전송")
-    public ResponseEntity<?> sendFeedback(@RequestBody MailFeedbackDto mailFeedbackDto){
-        return emailService.sendFeedback(mailFeedbackDto);
+    public ResponseEntity<?> sendFeedback(@RequestPart(value = "mailFeedback") MailFeedbackDto mailFeedbackDto,
+                                          @RequestPart(value = "file",required = false) MultipartFile file){
+        return emailService.sendFeedback(mailFeedbackDto,file);
     }
 
 
