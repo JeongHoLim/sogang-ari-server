@@ -3,6 +3,8 @@ package com.ari.sogang.config.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 @Component
+@Getter
+@Setter
 public class ResponseDto {
 
     @Builder
@@ -34,6 +38,7 @@ public class ResponseDto {
                 .build();
         return ResponseEntity.status(status).body(body);
     }
+
     // message만 있는 성공 응답
     public ResponseEntity<?> success(String message){
         return success(Collections.emptyList(),message,HttpStatus.OK);

@@ -5,9 +5,17 @@ import com.ari.sogang.domain.entity.Club;
 import com.ari.sogang.domain.entity.ClubHashTag;
 import com.ari.sogang.domain.repository.ClubRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,7 +25,7 @@ import java.util.stream.Collectors;
 public class ClubService{
     private final ClubRepository clubRepository;
     private final DtoServiceHelper dtoServiceHelper;
-    private final ResponseDto response;
+    private final ResponseDto responseDto;
 
 
     private List<String> getHashTags(Club club){
@@ -26,7 +34,7 @@ public class ClubService{
     // 분과(체육 분과 등 총 6개)에 해당하는 동아리 리스트 리턴
     public ResponseEntity<?> searchBySection(String section){
 
-        return response.success(
+        return responseDto.success(
             clubRepository.findAllBySection(section).stream()
                 .map(
                         club -> {
@@ -42,7 +50,7 @@ public class ClubService{
 
     public ResponseEntity<?> searchByName(String clubName) {
         var candidates = clubRepository.findByNameContains(clubName);
-        return response.success(
+        return responseDto.success(
                 candidates.stream().map(
                         club -> {
                             var dto = dtoServiceHelper.toDto(club);
@@ -61,7 +69,7 @@ public class ClubService{
         var club = clubRepository.findById(clubId).get();
         var dto =dtoServiceHelper.toDto(club);
         dto.setHashTags(getHashTags(club));
-        return response.success( dto, "동아리 조회 성공");
+        return responseDto.success( dto, "동아리 조회 성공");
     }
 
     // 특정 동아리의 해시태그 정보 리턴
@@ -86,10 +94,43 @@ public class ClubService{
         for(Club club : clubRepository.findAll()){
             clubList.add(dtoServiceHelper.toDto(club));
         }
-        return response.success(
+        return responseDto.success(
                 clubList,
                 "동아리 조회 성공"
         );
     }
 
+    public ResponseEntity<?> getLogo(Long clubId) {
+
+        String path = "C:\\Users\\9997i\\Desktop\\work_space\\test";
+        String folder = "\\logoes\\";
+
+        var resource = new FileSystemResource(path+folder + clubId+".png");
+
+        HttpHeaders header = new HttpHeaders();
+        Path filePath = null;
+
+        if(!resource.exists()) {
+            var defaultResource = new FileSystemResource(path+folder +"0.png");
+
+            try {
+                filePath = Paths.get(path + folder +"0.png");
+                header.add("Content-type", Files.probeContentType(filePath));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return new ResponseEntity<Resource>(defaultResource, header, HttpStatus.OK);
+        }
+        else {
+            try {
+                filePath = Paths.get(path + folder + clubId + ".png");
+                header.add("Content-type", Files.probeContentType(filePath));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return new ResponseEntity<Resource>(resource, header, HttpStatus.OK);
+        }
+
+
+    }
 }
