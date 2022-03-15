@@ -21,17 +21,20 @@ public class User extends BaseEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     @Column(name = "student_id")
     private String studentId;
 
+    @Column(nullable = false)
     private String password;
 
     private boolean enabled;
 
     private String major;
 
+    @Column(nullable = false)
     private String email;
 
 
