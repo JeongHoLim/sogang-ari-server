@@ -5,6 +5,7 @@ import com.ari.sogang.domain.entity.Club;
 import com.ari.sogang.domain.entity.ClubHashTag;
 import com.ari.sogang.domain.repository.ClubRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -26,6 +27,13 @@ public class ClubService{
     private final ClubRepository clubRepository;
     private final DtoServiceHelper dtoServiceHelper;
     private final ResponseDto responseDto;
+
+    @Value("${spring.logo.path}")
+    private String path;
+
+    @Value("${spring.logo.folder}")
+    private String folder;
+
 
 
     private List<String> getHashTags(Club club){
@@ -102,34 +110,27 @@ public class ClubService{
 
     public ResponseEntity<?> getLogo(Long clubId) {
 
-        String path = "C:\\Users\\9997i\\Desktop\\work_space\\test";
-        String folder = "\\logoes\\";
-
         var resource = new FileSystemResource(path+folder + clubId+".png");
 
         HttpHeaders header = new HttpHeaders();
-        Path filePath = null;
 
-        if(!resource.exists()) {
-            var defaultResource = new FileSystemResource(path+folder +"0.png");
+        var fileName = clubId + ".png";
 
-            try {
-                filePath = Paths.get(path + folder +"0.png");
-                header.add("Content-type", Files.probeContentType(filePath));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return new ResponseEntity<Resource>(defaultResource, header, HttpStatus.OK);
+        if(!resource.exists()){
+            fileName = "0.png";
+            resource = new FileSystemResource(path+folder+fileName);
         }
-        else {
-            try {
-                filePath = Paths.get(path + folder + clubId + ".png");
-                header.add("Content-type", Files.probeContentType(filePath));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return new ResponseEntity<Resource>(resource, header, HttpStatus.OK);
+
+        try {
+            var filePath = Paths.get(path + folder + fileName);
+            header.add("Content-type", Files.probeContentType(filePath));
         }
+        catch (IOException e) {
+            e.printStackTrace();
+            return responseDto.fail("서버 오류",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<Resource>(resource, header, HttpStatus.OK);
 
 
     }
