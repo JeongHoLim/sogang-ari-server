@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,4 +78,17 @@ public class ClubController {
     public ResponseEntity<?> findAll(){
         return clubService.findAll();
     }
+
+
+    @ApiResponses(value={
+            @ApiResponse(code = 200, message = "조회 성공")
+    })
+    @GetMapping(value = "/logo/{club_id}",produces = MediaType.IMAGE_PNG_VALUE)
+    @ApiOperation(value = "동아리 로고 조회",notes="동아리 로고 조회")
+    public ResponseEntity<?> getLogo(@PathVariable(name = "club_id") Long clubId){
+        return clubService.getLogo(clubId);
+    }
+
+
+
 }
