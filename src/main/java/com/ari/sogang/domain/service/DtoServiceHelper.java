@@ -31,6 +31,7 @@ public class DtoServiceHelper {
     public UserDto toDto(User user) {
         return UserDto.builder()
                 .email(user.getEmail())
+                .alarmEmail(user.getAlarmEmail())
                 .major(user.getMajor())
                 .name(user.getName())
                 .studentId(user.getStudentId())
@@ -44,6 +45,7 @@ public class DtoServiceHelper {
                 .enabled(true)
                 .password(passwordEncoder.encode(userDto.getPassword()))
                 .email(userDto.getEmail())
+                .alarmEmail(userDto.getAlarmEmail())
                 .authorities(new HashSet<UserAuthority>() {
                 })
                 .build();

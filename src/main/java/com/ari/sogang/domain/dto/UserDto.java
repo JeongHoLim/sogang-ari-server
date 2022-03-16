@@ -17,6 +17,7 @@ public class UserDto {
     private String name;
     private String major;
     private String email;
+    private String alarmEmail;
 
     private List<String> joinedClubs;
     private List<WishClubDto> wishClubs;

@@ -34,6 +34,8 @@ public class User extends BaseEntity implements UserDetails {
 
     private String email;
 
+    @Column(name = "alarm_email")
+    private String alarmEmail;
 
     @OneToMany(mappedBy = "userId",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<UserWishClub> userWishClubs;
