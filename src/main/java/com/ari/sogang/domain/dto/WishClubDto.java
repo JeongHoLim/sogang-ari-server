@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class WishClubDto {
+    private Long clubId;
     private String name;
 
     private String section;
