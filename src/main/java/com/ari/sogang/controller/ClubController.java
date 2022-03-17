@@ -60,15 +60,6 @@ public class ClubController {
         return clubService.getClubById(clubId);
     }
 
-    /* 동아리별 해시태그 조회 */
-//    @ApiResponses(value={
-//            @ApiResponse(code = 200, message = "해시태그 조회 성공")
-//    })
-//    @GetMapping("/{club_id}/tag")
-//    @ApiOperation(value = "해시태그 조회",notes="특정 동아리 해시태그 조회")
-//    public ResponseEntity<?>  getHashTag(@PathVariable("club_id") Long clubId){
-//        return clubService.getHashTagByClubId(clubId);
-//    }
     /* 동아리 전체 조회 */
     @ApiResponses(value={
             @ApiResponse(code = 200, message = "전체 동아리 조회 성공")
