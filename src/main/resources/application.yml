@@ -16,8 +16,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/sogang_ari
-    username:
-    password:
+    username: root
+    password: nz1202nz
     initialization-mode: never
   mail:
     host: smtp.gmail.com
@@ -36,7 +36,7 @@ spring:
     port: 6379
 
   logo:
-    path: C:\\Users\\Administrator\\Desktop     # 원격용
-#    path: C:\\Users\\9997i\\Desktop\\work_space\\test      # 로컬용
-    folder: \\logoes\\
+    path: C:\Users\Administrator\Desktop     # 원격용
+  #  path: /Users/jaewon/Desktop     # 로컬용
+    folder: \logoes\
 

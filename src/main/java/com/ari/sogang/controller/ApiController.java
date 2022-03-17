@@ -64,17 +64,6 @@ public class ApiController {
         return userService.reissue(tokenDto);
     }
 
-    /* 회원 탈퇴 */
-    @ApiResponses(value={
-            @ApiResponse(code = 200, message = "회원 탈퇴 성공"),
-            @ApiResponse(code = 404, message = "존재하지 않는 유저"),
-    })
-    @GetMapping("/sign-out/{student_id}")
-    @ApiOperation(value = "회원 탈퇴",notes="유저 회원 탈퇴")
-    public ResponseEntity<?> signOut(@PathVariable("student_id") String studentId){
-        return userService.signOut(studentId);
-    }
-
     /* 중복된 학번 체크 */
     @ApiResponses(value={
             @ApiResponse(code = 200, message = "사용 가능한 학번"),
@@ -97,29 +86,6 @@ public class ApiController {
         return userService.checkEmail(email);
     }
 
-    /* 비밀번호 변경 */
-    @ApiResponses(value={
-            @ApiResponse(code = 200, message = "비밀번호 변경 성공"),
-            @ApiResponse(code = 404, message = "존재하지 않는 유저")
-    })
-    @PostMapping("/change-pwd/{student_id}")
-    @ApiOperation(value = "비밀번호 변경",notes="유저 비밀번호 변경")
-    public ResponseEntity<?> changePassword(@PathVariable(name = "student_id")String studentId,
-                                                 @RequestBody PasswordDto passwordDto){
-        return userService.changePassword(studentId,passwordDto);
-    }
-
-
-    /* 비밀번호 분실 */
-    @ApiResponses(value={
-            @ApiResponse(code = 200, message = "새로운 비밀번호 전송 성공"),
-            @ApiResponse(code = 404, message = "존재하지 않는 유저")
-    })
-    @GetMapping("/reset-pwd/{student_id}")
-    @ApiOperation(value = "비밀번호 초기화",notes="유저 비밀번호 유실시, 초기화")
-    public ResponseEntity<?> resetPassword(@PathVariable(name = "student_id")String studentId){
-        return userService.resetPassword(studentId);
-    }
 
 
     @GetMapping("/addAdmin")
