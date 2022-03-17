@@ -83,7 +83,7 @@ public class ClubController {
     @ApiResponses(value={
             @ApiResponse(code = 200, message = "조회 성공")
     })
-    @GetMapping(value = "/logo/{club_id}",produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/{club_id}/logo",produces = MediaType.IMAGE_PNG_VALUE)
     @ApiOperation(value = "동아리 로고 조회",notes="동아리 로고 조회")
     public ResponseEntity<?> getLogo(@PathVariable(name = "club_id") Long clubId){
         return clubService.getLogo(clubId);

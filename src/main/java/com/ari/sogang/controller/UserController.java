@@ -1,5 +1,6 @@
 package com.ari.sogang.controller;
 
+import com.ari.sogang.domain.dto.PasswordDto;
 import com.ari.sogang.domain.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -64,7 +65,7 @@ public class UserController {
             @ApiResponse(code = 403, message = "권한 없음"),
             @ApiResponse(code = 404, message = "존재하지 않는 유저"),
     })
-    @GetMapping("/{student_id}/joined")
+    @GetMapping("/{student_id}/join")
     @ApiOperation(value = "가입된 동아리 조회",notes="유저의 가입된 동아리 조회")
     @PreAuthorize("#studentId == authentication.principal")
     public ResponseEntity<?> getJoinedClub(@PathVariable("student_id") String studentId) {
@@ -84,6 +85,46 @@ public class UserController {
     public ResponseEntity<?> updateWishList(@PathVariable("student_id")String studentId, @PathVariable("club_id") Long clubId){
         return userService.updateWishList(studentId,clubId);
     }
+
+
+    /* 비밀번호 변경 */
+    @ApiResponses(value={
+            @ApiResponse(code = 200, message = "비밀번호 변경 성공"),
+            @ApiResponse(code = 404, message = "존재하지 않는 유저")
+    })
+    @PostMapping("/change-pwd/{student_id}")
+    @ApiOperation(value = "비밀번호 변경",notes="유저 비밀번호 변경")
+    @PreAuthorize("#studentId == authentication.principal")
+    public ResponseEntity<?> changePassword(@PathVariable(name = "student_id")String studentId,
+                                            @RequestBody PasswordDto passwordDto){
+        return userService.changePassword(studentId,passwordDto);
+    }
+
+
+    /* 비밀번호 분실 */
+    @ApiResponses(value={
+            @ApiResponse(code = 200, message = "새로운 비밀번호 전송 성공"),
+            @ApiResponse(code = 404, message = "존재하지 않는 유저")
+    })
+    @GetMapping("/reset-pwd/{student_id}")
+    @PreAuthorize("#studentId == authentication.principal")
+    @ApiOperation(value = "비밀번호 초기화",notes="유저 비밀번호 유실시, 초기화")
+    public ResponseEntity<?> resetPassword(@PathVariable(name = "student_id")String studentId){
+        return userService.resetPassword(studentId);
+    }
+
+
+    /* 회원 탈퇴 */
+    @ApiResponses(value={
+            @ApiResponse(code = 200, message = "회원 탈퇴 성공"),
+            @ApiResponse(code = 404, message = "존재하지 않는 유저"),
+    })
+    @GetMapping("/sign-out/{student_id}")
+    @ApiOperation(value = "회원 탈퇴",notes="유저 회원 탈퇴")
+    public ResponseEntity<?> signOut(@PathVariable("student_id") String studentId){
+        return userService.signOut(studentId);
+    }
+
 
     //issue 1
     // 유저가 회원 탈퇴하면 사이트에서만 가입한 동아리가 삭제되는거라
