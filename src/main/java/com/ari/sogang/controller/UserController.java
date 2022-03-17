@@ -46,7 +46,7 @@ public class UserController {
 
     /* 담아놓기 조회*/
     @ApiResponses(value={
-            @ApiResponse(code = 200, message = "담아 놓기 성공"),
+            @ApiResponse(code = 200, message = "담아 놓기 조회 성공"),
             @ApiResponse(code = 401, message = "로그인 필요"),
             @ApiResponse(code = 403, message = "권한 없음"),
             @ApiResponse(code = 404, message = "존재하지 않는 유저"),
@@ -86,8 +86,6 @@ public class UserController {
         return userService.updateWishList(studentId,clubId);
     }
 
-<<<<<<< HEAD
-=======
 
     /* 비밀번호 변경 */
     @ApiResponses(value={
@@ -141,5 +139,4 @@ public class UserController {
 //                                              @PathVariable(name = "club_id") Long clubId) {
 //        return userService.updateJoinedClub(clubId,studentId);
 //    }
->>>>>>> 8dfd26fe6d0f90f7f185bd9c14de7e64dc467727
 }

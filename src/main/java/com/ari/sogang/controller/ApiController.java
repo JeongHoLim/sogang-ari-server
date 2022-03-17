@@ -43,7 +43,7 @@ public class ApiController {
 
     /* 로그아웃 */
     @ApiResponses(value={
-            @ApiResponse(code = 201, message = "회원가입 성공"),
+            @ApiResponse(code = 200, message = "로그아웃 성공"),
             @ApiResponse(code = 400, message = "잘못된 요청")
     })
     @PostMapping("/logout")
