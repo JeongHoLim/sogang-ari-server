@@ -121,6 +121,7 @@ public class UserController {
     })
     @GetMapping("/sign-out/{student_id}")
     @ApiOperation(value = "회원 탈퇴",notes="유저 회원 탈퇴")
+    @PreAuthorize("#studentId == authentication.principal")
     public ResponseEntity<?> signOut(@PathVariable("student_id") String studentId){
         return userService.signOut(studentId);
     }
