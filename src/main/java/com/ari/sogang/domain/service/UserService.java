@@ -65,7 +65,7 @@ public class UserService implements UserDetailsService {
 
         var optionalClub = clubRepository.findById(clubId);
         if(optionalClub.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
-
+        var club = optionalClub.get();
         var newClub = new UserWishClub(userId,clubId);
 
         if(user.getUserWishClubs().contains(newClub))
@@ -77,21 +77,14 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
 
 
-        var wishClub = findWishClubs(user);
-        List<WishClubDto> wishClubDtos = new ArrayList<>();
-        for(ClubDto wished : wishClub){
-            wishClubDtos.add(
-                    WishClubDto.builder()
-                            .clubId(wished.getId())
-                            .name(wished.getName())
-                            .section(wished.getSection())
-                            .recruiting(wished.isRecruiting())
-                            .build()
-            );
-        }
+        var newWishClubDto = WishClubDto.builder()
+                .clubId(newClub.getClubId())
+                .section(club.getSection())
+                .name(club.getName())
+                .recruiting(club.isRecruiting())
+                .build();
 
-
-        return responseDto.success(wishClubDtos,"담아 놓기 성공",HttpStatus.CREATED);
+        return responseDto.success(newWishClubDto,"담아 놓기 성공",HttpStatus.CREATED);
     }
 
     /* 담아놓은 동아리 조회하는 함수 */
@@ -111,9 +104,21 @@ public class UserService implements UserDetailsService {
         if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
 
-        List<ClubDto> clubList = findWishClubs(user);
+        var wishClub = findWishClubs(user);
+        List<WishClubDto> wishClubDtos = new ArrayList<>();
+        for(ClubDto wished : wishClub){
+            wishClubDtos.add(
+                    WishClubDto.builder()
+                            .clubId(wished.getId())
+                            .name(wished.getName())
+                            .section(wished.getSection())
+                            .recruiting(wished.isRecruiting())
+                            .build()
+            );
+        }
 
-        return responseDto.success(clubList,"담아놓기 조회 성공");
+
+        return responseDto.success(wishClubDtos,"담아놓기 조회 성공");
     }
 
     /* 가입한 동아리 조회하는 함수 */
