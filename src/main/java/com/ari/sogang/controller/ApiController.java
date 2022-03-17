@@ -4,6 +4,7 @@ import com.ari.sogang.config.dto.LoginRequestDto;
 import com.ari.sogang.config.dto.TokenDto;
 import com.ari.sogang.domain.dto.PasswordDto;
 import com.ari.sogang.domain.dto.UserDto;
+import com.ari.sogang.domain.service.ApiService;
 import com.ari.sogang.domain.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class ApiController {
 
     private final UserService userService;
+    private final ApiService apiService;
 
     /* 회원가입 */
     @ApiResponses(value={
@@ -27,7 +29,7 @@ public class ApiController {
     @PostMapping(value = "/sign-in")
     @ApiOperation(value = "회원 가입",notes="신규 유저 회원 가입")
     public ResponseEntity<?> signUp(@RequestBody UserDto userDto){
-        return userService.save(userDto);
+        return apiService.save(userDto);
     }
 
     /* 로그인 */
@@ -38,7 +40,8 @@ public class ApiController {
     @PostMapping("/login")
     @ApiOperation(value = "로그인",notes="유저 로그인")
     public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto){
-        return userService.login(loginRequestDto);
+//        return userService.login(loginRequestDto);
+        return apiService.login(loginRequestDto);
     }
 
     /* 로그아웃 */
@@ -49,7 +52,7 @@ public class ApiController {
     @PostMapping("/logout")
     @ApiOperation(value = "로그아웃",notes="유저 로그아웃")
     public ResponseEntity<?> logout(@RequestBody TokenDto tokenDto){
-        return userService.logout(tokenDto);
+        return apiService.logout(tokenDto);
     }
 
 
@@ -61,7 +64,7 @@ public class ApiController {
     @PostMapping("/reissue")
     @ApiOperation(value = "토큰 재발급",notes="엑세스 토큰 만료시, 토큰 재발급")
     public ResponseEntity<?> reissue(@RequestBody TokenDto tokenDto){
-        return userService.reissue(tokenDto);
+        return apiService.reissue(tokenDto);
     }
 
     /* 중복된 학번 체크 */
@@ -72,7 +75,7 @@ public class ApiController {
     @GetMapping("/check-student-id/{student_id}")
     @ApiOperation(value = "학번 체크",notes="중복된 학번 체크")
     public ResponseEntity<?> checkStudentId(@PathVariable("student_id") String studentId){
-        return userService.checkStudentId(studentId);
+        return apiService.checkStudentId(studentId);
     }
 
     /* 이메일로 가입된 계정이 있는지 체크 */
@@ -83,7 +86,7 @@ public class ApiController {
     @GetMapping("/check-email/{student_email}")
     @ApiOperation(value = "이메일 체크",notes="이메일 중복 체크")
     public ResponseEntity<?> checkEmail(@PathVariable("student_email")String email){
-        return userService.checkEmail(email);
+        return apiService.checkEmail(email);
     }
 
 
