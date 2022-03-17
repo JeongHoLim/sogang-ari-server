@@ -213,7 +213,12 @@ public class UserService implements UserDetailsService {
         var optionalClub = clubRepository.findById(clubId);
         if(optionalClub.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
 
-        userWishClubs.add(new UserWishClub(userId,clubId));
+        var newClub = new UserWishClub(userId,clubId);
+
+        if(user.getUserWishClubs().contains(newClub))
+            return responseDto.fail("이미 담아놓은 동아리입니다.",HttpStatus.CONFLICT);
+
+        userWishClubs.add(newClub);
         /* 영속성 전이 cacade에 의해 DB 저장 */
         user.setUserWishClubs(userWishClubs);
         userRepository.save(user);
