@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -92,6 +93,32 @@ public class ClubService{
 
         return new ResponseEntity<Resource>(resource, header, HttpStatus.OK);
 
+    }
 
+    public ResponseEntity<?> searchBySectionAndPage(String section,int page) {
+
+        if(page<=0) return responseDto.fail("페이지 번호 오류",HttpStatus.BAD_REQUEST);
+        var clubList = new ArrayList<>();
+        for(Club club : clubRepository.findAllBySection(section,PageRequest.of(page-1,6))){
+            clubList.add(dtoServiceHelper.toDto(club));
+        }
+        return responseDto.success(
+                clubList,
+                "동아리 조회 성공"
+        );
+    }
+
+    public ResponseEntity<?> searchByNameAndPage(String name,int page) {
+
+        if(page<=0) return responseDto.fail("페이지 번호 오류",HttpStatus.BAD_REQUEST);
+
+        var clubList = new ArrayList<>();
+        for(Club club : clubRepository.findByNameContains(name,PageRequest.of(page-1,6))){
+            clubList.add(dtoServiceHelper.toDto(club));
+        }
+        return responseDto.success(
+                clubList,
+                "동아리 조회 성공"
+        );
     }
 }

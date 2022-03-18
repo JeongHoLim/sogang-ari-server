@@ -21,23 +21,13 @@ import java.util.List;
 public class ClubController {
     private final ClubService clubService;
 
-    /* 해시태그 검색 */
-//    @ApiResponses(value={
-//            @ApiResponse(code = 200, message = "동아리 검색 성공")
-//    })
-//    @PostMapping("/tag")
-//    @ApiOperation(value = "해시태그로 검색",notes="해시태그로 동아리 검색")
-//    public ResponseEntity<?> searchByHashTag(@RequestBody List<HashTagDto> hashTagDtos){
-//        return clubService.searchByHashTag(hashTagDtos);
-//    }
-
     /* 분과 검색 */
     @ApiResponses(value={
             @ApiResponse(code = 200, message = "동아리 검색 성공")
     })
     @GetMapping("/section")
     @ApiOperation(value = "분과로 동아리 검색",notes="분과로 동아리 검색")
-    public ResponseEntity<?>  searchBySection(@RequestParam String section){
+    public ResponseEntity<?>  searchBySection(@RequestParam("section") String section){
         return clubService.searchBySection(section);
     }
 
@@ -46,7 +36,7 @@ public class ClubController {
     })
     @ApiOperation(value = "이름으로 동아리 검색",notes="이름으로 동아리 검색")
     @GetMapping("/name")
-    public ResponseEntity<?> searchByName(@RequestParam String clubName){
+    public ResponseEntity<?> searchByName(@RequestParam("name") String clubName){
         return clubService.searchByName(clubName);
     }
 
@@ -70,6 +60,30 @@ public class ClubController {
         return clubService.findAll();
     }
 
+//    /* 동아리 페이지로 조회 */
+//    @ApiResponses(value={
+//            @ApiResponse(code = 200, message = "동아리 조회 성공")
+//    })
+//    @GetMapping("/section")
+//    @ApiOperation(value = "분과로 페이지 검색",notes="페이지에 해당하는 검색 내용을 리턴합니다")
+//    public ResponseEntity<?> searchBySectionAndPage(@RequestParam("page") int page,
+//                                                    @RequestParam(name = "section") String section){
+//        return clubService.searchBySectionAndPage(section,page);
+//    }
+//
+//
+//    /* 동아리 페이지로 조회 */
+//    @ApiResponses(value={
+//            @ApiResponse(code = 200, message = "전체 동아리 조회 성공")
+//    })
+//    @GetMapping("/name")
+//    @ApiOperation(value = "이름으로 페이지 검색",notes="페이지에 해당하는 검색 내용을 리턴합니다")
+//    public ResponseEntity<?> searchByNameAndPage(@RequestParam("page") int page,
+//                                                 @RequestParam(name = "name") String clubName){
+//        return clubService.searchByNameAndPage(clubName,page);
+//    }
+
+
 
     @ApiResponses(value={
             @ApiResponse(code = 200, message = "조회 성공")
@@ -79,7 +93,6 @@ public class ClubController {
     public ResponseEntity<?> getLogo(@PathVariable(name = "club_id") Long clubId){
         return clubService.getLogo(clubId);
     }
-
 
 
 }
