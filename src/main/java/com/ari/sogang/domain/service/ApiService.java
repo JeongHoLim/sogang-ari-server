@@ -131,8 +131,8 @@ public class ApiService {
         }
 
         // redis에서 refreshToken 지우기
-        if(redisTemplate.opsForValue().get(refreshTokenInfo.getStudentId())!=null){
-            redisTemplate.delete(accessTokenInfo.getStudentId());
+        if(redisTemplate.opsForValue().get(refreshTokenInfo.getUserId())!=null){
+            redisTemplate.delete(accessTokenInfo.getUserId());
         }
 
         // redis black list에 추가
@@ -157,11 +157,11 @@ public class ApiService {
         if (!ObjectUtils.isEmpty(isLogout) ||  !refreshTokenInfo.isSuccess())
             return responseDto.fail("토큰 에러, 재로그인 필요",HttpStatus.BAD_REQUEST);
 
-        if(redisTemplate.opsForValue().get(refreshTokenInfo.getStudentId())!=null){
-            redisTemplate.delete(refreshTokenInfo.getStudentId());
+        if(redisTemplate.opsForValue().get(refreshTokenInfo.getUserId())!=null){
+            redisTemplate.delete(refreshTokenInfo.getUserId());
         }
 
-        var user = User.builder().studentId(refreshTokenInfo.getStudentId()).build();
+        var user = User.builder().userId(refreshTokenInfo.getUserId()).build();
 
         var tokens = TokenDto.builder()
                 .accessToken(JwtTokenProvider.makeAccessToken(user))

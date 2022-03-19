@@ -48,7 +48,7 @@ public class JwtTokenProvider {
         try{
             DecodedJWT verified = JWT.require(ALGORITHM).build().verify(token);
             return VerifyResult.builder()
-                    .studentId(verified.getSubject())
+                    .userId(verified.getSubject())
                     .success(true)
                     .build();
         }

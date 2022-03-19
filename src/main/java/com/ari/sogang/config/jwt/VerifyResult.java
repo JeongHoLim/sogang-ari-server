@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class VerifyResult {
 
     private boolean success;
-    private String studentId;
+    private String userId;
 
 }
