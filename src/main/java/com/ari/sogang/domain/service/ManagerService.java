@@ -135,6 +135,9 @@ public class ManagerService {
         var clubUrl = clubUpdateInfo.getUrl();
         var clubIntro = clubUpdateInfo.getIntroduction();
         var clubHashTags = clubUpdateInfo.getHashTags();
+        var clubRecruitStart = clubUpdateInfo.getStartDate();
+        var clubRecruitEnd = clubUpdateInfo.getEndDate();
+
         if("yes".equals(flag))
             club.setRecruiting(true);
         else if("no".equals(flag))
@@ -147,14 +150,15 @@ public class ManagerService {
         club.setDetail(clubDetail);
         club.setUrl(clubUrl);
         club.setIntroduction(clubIntro);
+        club.setStartDate(clubRecruitStart);
+        club.setEndDate(clubRecruitEnd);
 
         var deleted = club.getClubHashTags();
         club.getClubHashTags().removeAll(deleted);
 
-        var res = clubHashTags.stream().map(ht -> new ClubHashTag(ht,clubId)).collect(Collectors.toList());
+        var res = clubHashTags.stream().map(ht -> new ClubHashTag(ht,clubId)).collect(Collectors.toSet());
         for(var r : res)
             club.getClubHashTags().add(r);
-
 
         clubRepository.save(club);
 

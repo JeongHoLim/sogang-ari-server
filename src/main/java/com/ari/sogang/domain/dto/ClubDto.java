@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -28,5 +29,9 @@ public class ClubDto {
 
     private boolean recruiting;
 
-    private List<String> hashTags;
+    private String startDate;
+
+    private String endDate;
+
+    private Set<String> hashTags;
 }

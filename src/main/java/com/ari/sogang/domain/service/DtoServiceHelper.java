@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,8 +20,8 @@ import java.util.stream.Collectors;
 public class DtoServiceHelper {
     private final PasswordEncoder passwordEncoder;
 
-    private List<String> getHashTags(Club club){
-        return club.getClubHashTags().stream().map(ClubHashTag::getName).collect(Collectors.toList());
+    private Set<String> getHashTags(Club club){
+        return club.getClubHashTags().stream().map(ClubHashTag::getName).collect(Collectors.toSet());
     }
     public ClubDto toDto(Club club) {
         return ClubDto.builder()
@@ -33,6 +34,8 @@ public class DtoServiceHelper {
                 .introduction(club.getIntroduction())
                 .location(club.getLocation())
                 .hashTags(getHashTags(club))
+                .startDate(club.getStartDate())
+                .endDate(club.getEndDate())
                 .build();
     }
     public UserDto toDto(User user) {
@@ -60,6 +63,8 @@ public class DtoServiceHelper {
                 .url(clubDto.getUrl())
                 .section(clubDto.getSection())
                 .recruiting(clubDto.isRecruiting())
+                .startDate(clubDto.getStartDate())
+                .endDate(clubDto.getEndDate())
                 .build();
     }
 }

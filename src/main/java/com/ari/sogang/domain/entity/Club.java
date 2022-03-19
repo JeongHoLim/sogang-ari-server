@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -33,12 +34,16 @@ public class Club extends BaseEntity{
 
     private boolean recruiting;
 
+    private String startDate;
+
+    private String endDate;
+
     // 가입된 사용자
     @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL)
     List<UserClub> userClubs;
 
     @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL,orphanRemoval = true)
-    List<ClubHashTag> clubHashTags;
+    Set<ClubHashTag> clubHashTags;
 
     // 담아놓기
     @OneToMany(mappedBy = "clubId",cascade = CascadeType.ALL)
