@@ -21,24 +21,15 @@ public class User extends BaseEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String name;
 
-    @Column(name = "student_id")
+    @Column(name = "student_id") //email
     private String studentId;
 
     @Column(nullable = false)
     private String password;
 
     private boolean enabled;
-
-    private String major;
-
-    @Column(nullable = false)
-    private String email;
-
-    @Column(name = "alarm_email")
-    private String alarmEmail;
 
     @OneToMany(mappedBy = "userId",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<UserWishClub> userWishClubs;
@@ -54,7 +45,6 @@ public class User extends BaseEntity implements UserDetails {
     public String getUsername() {
         return studentId;
     }
-
     @Override
     public boolean isAccountNonExpired() {
         return enabled;

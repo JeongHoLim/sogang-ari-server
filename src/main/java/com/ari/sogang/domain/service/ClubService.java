@@ -2,7 +2,6 @@ package com.ari.sogang.domain.service;
 
 import com.ari.sogang.config.dto.ResponseDto;
 import com.ari.sogang.domain.entity.Club;
-import com.ari.sogang.domain.entity.ClubHashTag;
 import com.ari.sogang.domain.repository.ClubRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,10 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service

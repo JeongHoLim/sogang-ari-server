@@ -13,8 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -22,13 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+
 import java.util.Objects;
-import java.util.Properties;
-import java.util.Random;
+
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -82,7 +76,7 @@ public class EmailService {
     public ResponseEntity<?> sendPassword(User user,String newPassword) {
         SimpleMailMessage message = new SimpleMailMessage();
 
-        message.setTo(user.getEmail());
+        message.setTo(user.getStudentId());
         message.setSubject("서강아리 비밀번호 변경");
         message.setText("변경된 비밀번호 : " + newPassword);
 

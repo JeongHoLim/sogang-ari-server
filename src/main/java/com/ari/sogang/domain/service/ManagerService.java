@@ -208,7 +208,7 @@ public class ManagerService {
 
         for(var user : userList){
             var mailForm = MailAlarmDto.builder()
-                    .address(user.getEmail()).clubName(club.getName()).build();
+                    .address(user.getStudentId()).clubName(club.getName()).build();
             emailService.sendAlarm(mailForm);
         }
 

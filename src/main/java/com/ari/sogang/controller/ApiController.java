@@ -78,18 +78,6 @@ public class ApiController {
         return apiService.checkStudentId(studentId);
     }
 
-    /* 이메일로 가입된 계정이 있는지 체크 */
-    @ApiResponses(value={
-            @ApiResponse(code = 200, message = "사용 가능한 이메일"),
-            @ApiResponse(code = 409, message = "해당 이메일로 가입된 계정이 존재")
-    })
-    @GetMapping("/check-email/{student_email}")
-    @ApiOperation(value = "이메일 체크",notes="이메일 중복 체크")
-    public ResponseEntity<?> checkEmail(@PathVariable("student_email")String email){
-        return apiService.checkEmail(email);
-    }
-
-
 
     @GetMapping("/addAdmin")
     public void addAdmin(){

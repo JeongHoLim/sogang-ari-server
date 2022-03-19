@@ -49,10 +49,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findByStudentId(studentId).isEmpty();
     }
 
-    protected boolean isValidEmail(String email) {
-        return userRepository.findByEmail(email+"@sogang.ac.kr").isEmpty();
-    }
-
 
     /* Wish List 추가 */
     @Transactional

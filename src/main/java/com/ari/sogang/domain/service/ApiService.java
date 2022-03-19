@@ -41,7 +41,7 @@ public class ApiService {
     @Transactional
     public ResponseEntity<?> save(UserDto userDto){
 
-        if(!userService.isValidStudentId(userDto.getStudentId()) || !userService.isValidEmail(userDto.getEmail())){
+        if(!userService.isValidStudentId(userDto.getStudentId()) || !userService.isValidStudentId(userDto.getStudentId())){
             return responseDto.fail("해당 정보로 가입된 계정이 존재합니다.",HttpStatus.CONFLICT);
         }
 
@@ -175,19 +175,14 @@ public class ApiService {
         return responseDto.success(tokens,"토큰 발행 성공",HttpStatus.CREATED);
     }
 
-    /* 학번 중복 확인 */
-    public ResponseEntity<?> checkStudentId(String studentId) {
-        if(userService.isValidStudentId(studentId)) return responseDto.success("사용 가능한 학번입니다.");
-        else return responseDto.fail("해당 학번으로 가입된 계정이 있습니다.",HttpStatus.CONFLICT);
-    }
-
-
     /* 이메일 중복 확인 */
-
-    public ResponseEntity<?> checkEmail(String email) {
-        if(userService.isValidEmail(email)) return responseDto.success("사용 가능한 이메일입니다.");
-        else return responseDto.fail("해당 이메일로 가입된 계정이 존재합니다.",HttpStatus.CONFLICT);
+    public ResponseEntity<?> checkStudentId(String studentId) {
+        if(userService.isValidStudentId(studentId)) return responseDto.success("사용 가능한 아이디입니다.");
+        else return responseDto.fail("해당 이메일로 가입된 계정이 있습니다.",HttpStatus.CONFLICT);
     }
+
+
+
 
 
 
