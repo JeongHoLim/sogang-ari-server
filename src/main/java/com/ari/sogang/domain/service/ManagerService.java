@@ -32,9 +32,9 @@ public class ManagerService {
     @Transactional
     public ResponseEntity<?> postJoinedClub(Long clubId,String managerId, String studentId){
 
-        var optionalUser = userRepository.findByStudentId(studentId);
+        var optionalUser = userRepository.findByUserId(studentId);
         var optionalClub = clubRepository.findById(clubId);
-        var optionalManager = userRepository.findByStudentId(managerId);
+        var optionalManager = userRepository.findByUserId(managerId);
 
         if(optionalUser.isEmpty()) return responseDto.fail("해당 유저가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
         if(optionalClub.isEmpty()) return responseDto.fail("등록되지 않은 동아리입니다.",HttpStatus.NOT_FOUND);
@@ -89,9 +89,9 @@ public class ManagerService {
     // 동아리장 위임
     @Transactional
     public ResponseEntity<?> delegateClub(Long clubId,String managerId, String studentId) {
-        var optionalManager =  userRepository.findByStudentId(managerId);
+        var optionalManager =  userRepository.findByUserId(managerId);
 
-        var optionalUser = userRepository.findByStudentId(studentId);
+        var optionalUser = userRepository.findByUserId(studentId);
 
         if (optionalUser.isEmpty()) return responseDto.fail("등록되지 않은 유저", HttpStatus.NOT_FOUND);
         if (optionalManager.isEmpty()) return responseDto.fail("등록되지 않은 동아리 장", HttpStatus.NOT_FOUND);
@@ -115,7 +115,7 @@ public class ManagerService {
     @Transactional
     public ResponseEntity<?> updateClub(Long clubId,String managerId,ClubUpdateDto clubUpdateInfo) {
         var optionalClub =  clubRepository.findById(clubId);
-        var optionalManager =  userRepository.findByStudentId(managerId);
+        var optionalManager =  userRepository.findByUserId(managerId);
 
         if(optionalClub.isEmpty()) return responseDto.fail("등록되지 않은 동아리",HttpStatus.NOT_FOUND);
         if(optionalManager.isEmpty()) return responseDto.fail("등록되지 않은 동아리 장",HttpStatus.NOT_FOUND);
@@ -168,7 +168,7 @@ public class ManagerService {
     public ResponseEntity<?> getCandidates(Long clubId, String managerId) {
 
 
-        var optionalUser = userRepository.findByStudentId(managerId);
+        var optionalUser = userRepository.findByUserId(managerId);
         var optionalClub = clubRepository.findById(clubId);
 
         if(optionalClub.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
@@ -190,7 +190,7 @@ public class ManagerService {
         var optionalClub = clubRepository.findById(clubId);
         if(optionalClub.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
 
-        var optionalManager= userRepository.findByStudentId(managerId);
+        var optionalManager= userRepository.findByUserId(managerId);
         if(optionalManager.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
 
         var manager = optionalManager.get();
@@ -212,7 +212,7 @@ public class ManagerService {
 
         for(var user : userList){
             var mailForm = MailAlarmDto.builder()
-                    .address(user.getStudentId()).clubName(club.getName()).build();
+                    .address(user.getUserId()).clubName(club.getName()).build();
             emailService.sendAlarm(mailForm);
         }
 

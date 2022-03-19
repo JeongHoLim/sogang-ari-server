@@ -11,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,12 +40,12 @@ public class DtoServiceHelper {
     public UserDto toDto(User user) {
         return UserDto.builder()
                 .name(user.getName())
-                .studentId(user.getStudentId())
+                .studentId(user.getUserId())
                 .build();
     }
     public User toEntity(UserDto userDto) {
         return User.builder()
-                .studentId(userDto.getStudentId())
+                .userId(userDto.getStudentId())
                 .name(userDto.getName())
                 .enabled(true)
                 .password(passwordEncoder.encode(userDto.getPassword()))
@@ -54,17 +53,5 @@ public class DtoServiceHelper {
                 })
                 .build();
     }
-    public Club toEntity(ClubDto clubDto) {
-        return Club.builder()
-                .id(clubDto.getId())
-                .name(clubDto.getName())
-                .introduction(clubDto.getIntroduction())
-                .detail(clubDto.getDetail())
-                .url(clubDto.getUrl())
-                .section(clubDto.getSection())
-                .recruiting(clubDto.isRecruiting())
-                .startDate(clubDto.getStartDate())
-                .endDate(clubDto.getEndDate())
-                .build();
-    }
+
 }

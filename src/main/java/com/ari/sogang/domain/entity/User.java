@@ -24,7 +24,7 @@ public class User extends BaseEntity implements UserDetails {
     private String name;
 
     @Column(name = "student_id") //email
-    private String studentId;
+    private String userId;
 
     @Column(nullable = false)
     private String password;
@@ -43,7 +43,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return studentId;
+        return userId;
     }
     @Override
     public boolean isAccountNonExpired() {

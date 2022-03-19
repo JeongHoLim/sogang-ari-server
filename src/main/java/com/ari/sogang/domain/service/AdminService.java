@@ -19,7 +19,7 @@ public class AdminService {
 
     public ResponseEntity<?> registerManager(String managerId,Long clubId){
 
-        var optionalUser = userRepository.findByStudentId(managerId);
+        var optionalUser = userRepository.findByUserId(managerId);
         var optionalClub = clubRepository.findById(clubId);
         if(optionalClub.isEmpty() || optionalUser.isEmpty())
             return responseDto.fail("존재하지 않는 동아리 혹은 유저",HttpStatus.NOT_FOUND);

@@ -59,7 +59,7 @@ public class ApiService {
         var authenticationToken = new UsernamePasswordAuthenticationToken(
                 loginRequestDto.getStudentId(), loginRequestDto.getPassword());
 
-        if(!userRepository.existsByStudentId(loginRequestDto.getStudentId()))
+        if(!userRepository.existsByUserId(loginRequestDto.getStudentId()))
             return responseDto.fail("USER_NOT_EXIST", HttpStatus.NOT_FOUND);
 
         // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
@@ -109,7 +109,7 @@ public class ApiService {
 
         // 5. RefreshToken Redis 저장 (expirationTime 설정을 통해 자동 삭제 처리)
         redisTemplate.opsForValue()
-                .set(user.getStudentId(), refreshToken,JwtTokenProvider.REFRESH_TIME
+                .set(user.getUserId(), refreshToken,JwtTokenProvider.REFRESH_TIME
                         , TimeUnit.SECONDS);
 
         return responseDto.success(loginResponseDto,"로그인 성공");

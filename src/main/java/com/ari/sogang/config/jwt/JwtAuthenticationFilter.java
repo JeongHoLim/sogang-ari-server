@@ -2,7 +2,6 @@ package com.ari.sogang.config.jwt;
 
 import com.ari.sogang.domain.entity.User;
 import com.ari.sogang.domain.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,7 +41,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                     var user = (User) userService.loadUserByUsername(result.getStudentId());
 
                     var usernamePasswordToken = new UsernamePasswordAuthenticationToken(
-                            user.getStudentId(), null, user.getAuthorities()
+                            user.getUserId(), null, user.getAuthorities()
                     );
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordToken);
                 }

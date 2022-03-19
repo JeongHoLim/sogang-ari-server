@@ -40,20 +40,20 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String studentId) throws UsernameNotFoundException {
-        return userRepository.findByStudentId(studentId)
+        return userRepository.findByUserId(studentId)
                 .orElseThrow(()->new UsernameNotFoundException(studentId));
     }
 
 
     protected boolean isValidStudentId(String studentId){
-        return userRepository.findByStudentId(studentId).isEmpty();
+        return userRepository.findByUserId(studentId).isEmpty();
     }
 
 
     /* Wish List 추가 */
     @Transactional
     public ResponseEntity<?> postWishList(String studentId, Long clubId) {
-        var optionalUser = userRepository.findByStudentId(studentId);
+        var optionalUser = userRepository.findByUserId(studentId);
         if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
         List<UserWishClub> userWishClubs = user.getUserWishClubs();
@@ -96,7 +96,7 @@ public class UserService implements UserDetailsService {
     /* Wish List 조회 */
     @Transactional
     public ResponseEntity<?> getWishList(String studentId){
-        var optionalUser = userRepository.findByStudentId(studentId);
+        var optionalUser = userRepository.findByUserId(studentId);
         if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
 
@@ -131,7 +131,7 @@ public class UserService implements UserDetailsService {
     /* 가입 동아리 조회 */
     @Transactional
     public ResponseEntity<?> getJoinedClub(String studentId){
-        var optionalUser = userRepository.findByStudentId(studentId);
+        var optionalUser = userRepository.findByUserId(studentId);
         if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
 
@@ -181,7 +181,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public ResponseEntity<?> signOut(String studentId) {
 
-        var optionalUser = userRepository.findByStudentId(studentId);
+        var optionalUser = userRepository.findByUserId(studentId);
 
         if(optionalUser.isEmpty()){
             return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
@@ -205,7 +205,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public ResponseEntity<?> resetPassword(String studentId) {
 
-        var optionalUser = userRepository.findByStudentId(studentId);
+        var optionalUser = userRepository.findByUserId(studentId);
         if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
 
         var user = optionalUser.get();
@@ -225,7 +225,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public ResponseEntity<?> changePassword(String studentId, PasswordDto passwordDto) {
-        var optionalUser = userRepository.findByStudentId(studentId);
+        var optionalUser = userRepository.findByUserId(studentId);
         if(optionalUser.isEmpty())
             return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
 
@@ -259,7 +259,7 @@ public class UserService implements UserDetailsService {
     /* Wish List 삭제 */
     public ResponseEntity<?> updateWishList(String studentId, Long clubId) {
 
-        var optionalUser = userRepository.findByStudentId(studentId);
+        var optionalUser = userRepository.findByUserId(studentId);
 
         if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         User user = optionalUser.get();
@@ -287,7 +287,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void addAdmin(){
-        var user = userRepository.findByStudentId("17").get();
+        var user = userRepository.findByUserId("17").get();
         addAuthority(user.getId(),"ROLE_ADMIN", 0L);
         removeAuthority(user.getId(),"ROLE_USER",-1L);
     }
@@ -295,7 +295,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public ResponseEntity<?> joinClub(String studentId, Long clubId) {
 
-        var optionalUser = userRepository.findByStudentId(studentId);
+        var optionalUser = userRepository.findByUserId(studentId);
         var optionalClub = clubRepository.findById(clubId);
 
         if(optionalUser.isEmpty())

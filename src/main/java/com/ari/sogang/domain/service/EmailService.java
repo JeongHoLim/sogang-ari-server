@@ -76,7 +76,7 @@ public class EmailService {
     public ResponseEntity<?> sendPassword(User user,String newPassword) {
         SimpleMailMessage message = new SimpleMailMessage();
 
-        message.setTo(user.getStudentId());
+        message.setTo(user.getUserId());
         message.setSubject("서강아리 비밀번호 변경");
         message.setText("변경된 비밀번호 : " + newPassword);
 
