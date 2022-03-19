@@ -36,7 +36,6 @@ public class EmailController {
     @PostMapping("/verify")
     @ApiOperation(value = "인증 코드 검사",notes="발송한 인증 코드 검사")
     public ResponseEntity<?> verifyMailCode(@RequestBody MailDto mailDto){
-
         return emailService.verifyMailCode(mailDto);
     }
 

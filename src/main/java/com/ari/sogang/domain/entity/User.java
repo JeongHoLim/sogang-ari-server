@@ -23,7 +23,7 @@ public class User extends BaseEntity implements UserDetails {
 
     private String name;
 
-    @Column(name = "student_id") //email
+    @Column(name = "user_id") //email
     private String userId;
 
     @Column(nullable = false)

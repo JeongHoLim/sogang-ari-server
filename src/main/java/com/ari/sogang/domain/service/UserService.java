@@ -39,30 +39,30 @@ public class UserService implements UserDetailsService {
 
 
     @Override
-    public UserDetails loadUserByUsername(String studentId) throws UsernameNotFoundException {
-        return userRepository.findByUserId(studentId)
-                .orElseThrow(()->new UsernameNotFoundException(studentId));
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+        return userRepository.findByUserId(userId)
+                .orElseThrow(()->new UsernameNotFoundException(userId));
     }
 
 
-    protected boolean isValidStudentId(String studentId){
-        return userRepository.findByUserId(studentId).isEmpty();
+    protected boolean isValidUserId(String userId){
+        return userRepository.findByUserId(userId).isEmpty();
     }
 
 
     /* Wish List 추가 */
     @Transactional
-    public ResponseEntity<?> postWishList(String studentId, Long clubId) {
-        var optionalUser = userRepository.findByUserId(studentId);
+    public ResponseEntity<?> postWishList(String userId, Long clubId) {
+        var optionalUser = userRepository.findByUserId(userId);
         if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
         List<UserWishClub> userWishClubs = user.getUserWishClubs();
-        Long userId = user.getId();
+        Long id = user.getId();
 
         var optionalClub = clubRepository.findById(clubId);
         if(optionalClub.isEmpty()) return responseDto.fail("CLUB_NOT_EXIST",HttpStatus.NOT_FOUND);
         var club = optionalClub.get();
-        var newClub = new UserWishClub(userId,clubId);
+        var newClub = new UserWishClub(id,clubId);
 
         if(user.getUserWishClubs().contains(newClub))
             return responseDto.fail("이미 담아놓은 동아리입니다.",HttpStatus.CONFLICT);
@@ -95,8 +95,8 @@ public class UserService implements UserDetailsService {
     }
     /* Wish List 조회 */
     @Transactional
-    public ResponseEntity<?> getWishList(String studentId){
-        var optionalUser = userRepository.findByUserId(studentId);
+    public ResponseEntity<?> getWishList(String userId){
+        var optionalUser = userRepository.findByUserId(userId);
         if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
 
@@ -130,8 +130,8 @@ public class UserService implements UserDetailsService {
 
     /* 가입 동아리 조회 */
     @Transactional
-    public ResponseEntity<?> getJoinedClub(String studentId){
-        var optionalUser = userRepository.findByUserId(studentId);
+    public ResponseEntity<?> getJoinedClub(String userId){
+        var optionalUser = userRepository.findByUserId(userId);
         if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
         var user = optionalUser.get();
 
@@ -179,9 +179,9 @@ public class UserService implements UserDetailsService {
 
     /* 회원 탈퇴 */
     @Transactional
-    public ResponseEntity<?> signOut(String studentId) {
+    public ResponseEntity<?> signOut(String userId) {
 
-        var optionalUser = userRepository.findByUserId(studentId);
+        var optionalUser = userRepository.findByUserId(userId);
 
         if(optionalUser.isEmpty()){
             return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
@@ -193,19 +193,12 @@ public class UserService implements UserDetailsService {
         return responseDto.success("탈퇴 성공");
     }
 
-
-
-
-
-
-
-
     /* 비밀번호 리셋 */
 
     @Transactional
-    public ResponseEntity<?> resetPassword(String studentId) {
+    public ResponseEntity<?> resetPassword(String userId) {
 
-        var optionalUser = userRepository.findByUserId(studentId);
+        var optionalUser = userRepository.findByUserId(userId);
         if(optionalUser.isEmpty()) return responseDto.fail("USER_NOT_EXIST",HttpStatus.NOT_FOUND);
 
         var user = optionalUser.get();
@@ -215,7 +208,7 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
-        emailService.sendPassword(user,newPassword);
+        emailService.sendPassword(user.getUserId(),newPassword);
 
         return responseDto.success("비밀번호 변경 성공");
     }

@@ -26,7 +26,7 @@ public class ApiController {
             @ApiResponse(code = 201, message = "회원가입 성공"),
             @ApiResponse(code = 409, message = "중복된 이메일 혹은 중복된 학번")
     })
-    @PostMapping(value = "/sign-in")
+    @PostMapping(value = "/sign-up")
     @ApiOperation(value = "회원 가입",notes="신규 유저 회원 가입")
     public ResponseEntity<?> signUp(@RequestBody UserDto userDto){
         return apiService.save(userDto);
@@ -40,7 +40,6 @@ public class ApiController {
     @PostMapping("/login")
     @ApiOperation(value = "로그인",notes="유저 로그인")
     public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto){
-//        return userService.login(loginRequestDto);
         return apiService.login(loginRequestDto);
     }
 
@@ -69,13 +68,13 @@ public class ApiController {
 
     /* 중복된 학번 체크 */
     @ApiResponses(value={
-            @ApiResponse(code = 200, message = "사용 가능한 학번"),
-            @ApiResponse(code = 409, message = "해당 학번으로 가입된 계정이 존재")
+            @ApiResponse(code = 200, message = "사용 가능한 이메일"),
+            @ApiResponse(code = 409, message = "해당 이메일로 가입된 계정이 존재")
     })
-    @GetMapping("/check-student-id/{student_id}")
-    @ApiOperation(value = "학번 체크",notes="중복된 학번 체크")
-    public ResponseEntity<?> checkStudentId(@PathVariable("student_id") String studentId){
-        return apiService.checkStudentId(studentId);
+    @GetMapping("/check-id/{user_id}")
+    @ApiOperation(value = "이메일 검사",notes="중복된 이메일 검사")
+    public ResponseEntity<?> checkUserId(@PathVariable("user_id") String userId){
+        return apiService.checkUserId(userId);
     }
 
 

@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class UserDto {
-    private String studentId;
+    private String userId;
     private String password;
     private String name;
 

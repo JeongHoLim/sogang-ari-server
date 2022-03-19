@@ -24,11 +24,11 @@ public class UserController {
             @ApiResponse(code = 403, message = "권한 없음"),
             @ApiResponse(code = 404, message = "존재하지 않는 유저이거나, 존재하지 않는 동아리"),
     })
-    @PostMapping("/{student_id}/wish/{club_id}")
+    @PostMapping("/{user_id}/wish/{club_id}")
     @ApiOperation(value = "담아놓기",notes="유저의 담아놓기에 동아리 추가")
-    @PreAuthorize("#studentId == authentication.principal")
-    public ResponseEntity<?> postWishList(@PathVariable("student_id") String studentId, @PathVariable("club_id") Long clubId){
-        return userService.postWishList(studentId,clubId);
+    @PreAuthorize("#userId == authentication.principal")
+    public ResponseEntity<?> postWishList(@PathVariable("user_id") String userId, @PathVariable("club_id") Long clubId){
+        return userService.postWishList(userId,clubId);
     }
 
     @ApiResponses(value={
@@ -37,11 +37,11 @@ public class UserController {
             @ApiResponse(code = 403, message = "권한 없음"),
             @ApiResponse(code = 404, message = "존재하지 않는 유저이거나, 존재하지 않는 동아리"),
     })
-    @PostMapping("/{student_id}/join/{club_id}")
+    @PostMapping("/{user_id}/join/{club_id}")
     @ApiOperation(value = "가입 신청 ",notes="동아리 가입 신청")
-    @PreAuthorize("#studentId == authentication.principal")
-    public ResponseEntity<?> joinClub(@PathVariable("student_id") String studentId, @PathVariable("club_id") Long clubId){
-        return userService.joinClub(studentId,clubId);
+    @PreAuthorize("#userId == authentication.principal")
+    public ResponseEntity<?> joinClub(@PathVariable("user_id") String userId, @PathVariable("club_id") Long clubId){
+        return userService.joinClub(userId,clubId);
     }
 
     /* 담아놓기 조회*/
@@ -51,11 +51,11 @@ public class UserController {
             @ApiResponse(code = 403, message = "권한 없음"),
             @ApiResponse(code = 404, message = "존재하지 않는 유저"),
     })
-    @GetMapping("/{student_id}/wish")
+    @GetMapping("/{user_id}/wish")
     @ApiOperation(value = "담아놓기 조회",notes="유저의 담아 놓은 동아리 조회")
-    @PreAuthorize("#studentId == authentication.principal")
-    public ResponseEntity<?> getWishList(@PathVariable("student_id") String studentId){
-        return userService.getWishList(studentId);
+    @PreAuthorize("#userId == authentication.principal")
+    public ResponseEntity<?> getWishList(@PathVariable("user_id") String userId){
+        return userService.getWishList(userId);
     }
 
     /* 가입한 동아리 조회 */
@@ -65,11 +65,11 @@ public class UserController {
             @ApiResponse(code = 403, message = "권한 없음"),
             @ApiResponse(code = 404, message = "존재하지 않는 유저"),
     })
-    @GetMapping("/{student_id}/join")
+    @GetMapping("/{user_id}/join")
     @ApiOperation(value = "가입된 동아리 조회",notes="유저의 가입된 동아리 조회")
-    @PreAuthorize("#studentId == authentication.principal")
-    public ResponseEntity<?> getJoinedClub(@PathVariable("student_id") String studentId) {
-        return userService.getJoinedClub(studentId);
+    @PreAuthorize("#userId == authentication.principal")
+    public ResponseEntity<?> getJoinedClub(@PathVariable("user_id") String userId) {
+        return userService.getJoinedClub(userId);
     }
 
     /* 담아 놓기 삭제 ~ delete*/
@@ -79,11 +79,11 @@ public class UserController {
             @ApiResponse(code = 403, message = "권한 없음"),
             @ApiResponse(code = 404, message = "존재하지 않는 유저이거나, 존재하지 않는 동아리"),
     })
-    @DeleteMapping("/{student_id}/wish/{club_id}")
+    @DeleteMapping("/{user_id}/wish/{club_id}")
     @ApiOperation(value = "담아 놓은 동아리 삭제",notes="유저의 담아 놓은 동아리 삭제")
-    @PreAuthorize("#studentId == authentication.principal")
-    public ResponseEntity<?> updateWishList(@PathVariable("student_id")String studentId, @PathVariable("club_id") Long clubId){
-        return userService.updateWishList(studentId,clubId);
+    @PreAuthorize("#userId == authentication.principal")
+    public ResponseEntity<?> updateWishList(@PathVariable("user_id")String userId, @PathVariable("club_id") Long clubId){
+        return userService.updateWishList(userId,clubId);
     }
 
 
@@ -92,12 +92,12 @@ public class UserController {
             @ApiResponse(code = 200, message = "비밀번호 변경 성공"),
             @ApiResponse(code = 404, message = "존재하지 않는 유저")
     })
-    @PostMapping("/change-pwd/{student_id}")
+    @PutMapping("/{user_id}/pwd/change")
     @ApiOperation(value = "비밀번호 변경",notes="유저 비밀번호 변경")
-    @PreAuthorize("#studentId == authentication.principal")
-    public ResponseEntity<?> changePassword(@PathVariable(name = "student_id")String studentId,
+    @PreAuthorize("#userId == authentication.principal")
+    public ResponseEntity<?> changePassword(@PathVariable(name = "user_id")String userId,
                                             @RequestBody PasswordDto passwordDto){
-        return userService.changePassword(studentId,passwordDto);
+        return userService.changePassword(userId,passwordDto);
     }
 
 
@@ -106,11 +106,11 @@ public class UserController {
             @ApiResponse(code = 200, message = "새로운 비밀번호 전송 성공"),
             @ApiResponse(code = 404, message = "존재하지 않는 유저")
     })
-    @GetMapping("/reset-pwd/{student_id}")
-    @PreAuthorize("#studentId == authentication.principal")
+    @PutMapping("/{user_id}/pwd/reset")
+    @PreAuthorize("#userId == authentication.principal")
     @ApiOperation(value = "비밀번호 초기화",notes="유저 비밀번호 유실시, 초기화")
-    public ResponseEntity<?> resetPassword(@PathVariable(name = "student_id")String studentId){
-        return userService.resetPassword(studentId);
+    public ResponseEntity<?> resetPassword(@PathVariable(name = "user_id")String userId){
+        return userService.resetPassword(userId);
     }
 
 
@@ -119,11 +119,11 @@ public class UserController {
             @ApiResponse(code = 200, message = "회원 탈퇴 성공"),
             @ApiResponse(code = 404, message = "존재하지 않는 유저"),
     })
-    @GetMapping("/sign-out/{student_id}")
+    @DeleteMapping("/{user_id}")
     @ApiOperation(value = "회원 탈퇴",notes="유저 회원 탈퇴")
-    @PreAuthorize("#studentId == authentication.principal")
-    public ResponseEntity<?> signOut(@PathVariable("student_id") String studentId){
-        return userService.signOut(studentId);
+    @PreAuthorize("#userId == authentication.principal")
+    public ResponseEntity<?> signOut(@PathVariable("user_id") String userId){
+        return userService.signOut(userId);
     }
 
 

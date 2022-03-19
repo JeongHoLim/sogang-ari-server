@@ -40,12 +40,12 @@ public class DtoServiceHelper {
     public UserDto toDto(User user) {
         return UserDto.builder()
                 .name(user.getName())
-                .studentId(user.getUserId())
+                .userId(user.getUserId())
                 .build();
     }
     public User toEntity(UserDto userDto) {
         return User.builder()
-                .userId(userDto.getStudentId())
+                .userId(userDto.getUserId())
                 .name(userDto.getName())
                 .enabled(true)
                 .password(passwordEncoder.encode(userDto.getPassword()))

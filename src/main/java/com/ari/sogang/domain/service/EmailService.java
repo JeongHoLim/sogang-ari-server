@@ -52,7 +52,7 @@ public class EmailService {
 
         SimpleMailMessage message = new SimpleMailMessage();
 
-        message.setTo(mailFormDto.getAddress());
+        message.setTo(mailFormDto.getUserId());
         message.setSubject("서강아리 본인 확인 메일");
 
         var codeToken = createCode();
@@ -73,10 +73,10 @@ public class EmailService {
     }
 
     @Transactional
-    public ResponseEntity<?> sendPassword(User user,String newPassword) {
+    public ResponseEntity<?> sendPassword(String userId,String newPassword) {
         SimpleMailMessage message = new SimpleMailMessage();
 
-        message.setTo(user.getUserId());
+        message.setTo(userId);
         message.setSubject("서강아리 비밀번호 변경");
         message.setText("변경된 비밀번호 : " + newPassword);
 

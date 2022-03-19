@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MailDto {
     private String token;
-    private String studentId;
 }

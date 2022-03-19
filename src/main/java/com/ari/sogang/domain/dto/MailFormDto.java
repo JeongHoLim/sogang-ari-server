@@ -10,6 +10,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class MailFormDto {
-    private String address;
     private String userId;
 }

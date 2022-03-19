@@ -41,7 +41,7 @@ public class ApiService {
     @Transactional
     public ResponseEntity<?> save(UserDto userDto){
 
-        if(!userService.isValidStudentId(userDto.getStudentId()) || !userService.isValidStudentId(userDto.getStudentId())){
+        if(!userService.isValidUserId(userDto.getUserId())){
             return responseDto.fail("해당 정보로 가입된 계정이 존재합니다.",HttpStatus.CONFLICT);
         }
 
@@ -57,9 +57,9 @@ public class ApiService {
     public ResponseEntity<?> login(LoginRequestDto loginRequestDto) {
 
         var authenticationToken = new UsernamePasswordAuthenticationToken(
-                loginRequestDto.getStudentId(), loginRequestDto.getPassword());
+                loginRequestDto.getUserId(), loginRequestDto.getPassword());
 
-        if(!userRepository.existsByUserId(loginRequestDto.getStudentId()))
+        if(!userRepository.existsByUserId(loginRequestDto.getUserId()))
             return responseDto.fail("USER_NOT_EXIST", HttpStatus.NOT_FOUND);
 
         // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
@@ -81,20 +81,6 @@ public class ApiService {
             clubNames.add(joined.getName());
         }
         userInfo.setJoinedClubs(clubNames);
-
-        // 4-1-2. 담아놓은 동아리  front가 필요없다고 함
-//        var wishClub = findWishClubs(user);
-//        List<WishClubDto> wishClubDtos = new ArrayList<>();
-//        for(ClubDto wished : wishClub){
-//            wishClubDtos.add(
-//                    WishClubDto.builder()
-//                            .name(wished.getName())
-//                            .section(wished.getSection())
-//                            .recruiting(wished.isRecruiting())
-//                            .build()
-//            );
-//        }
-//        userInfo.setWishClubs(wishClubDtos);
 
         // 4-2. tokenInfo
         TokenDto tokens = TokenDto.builder()
@@ -176,15 +162,10 @@ public class ApiService {
     }
 
     /* 이메일 중복 확인 */
-    public ResponseEntity<?> checkStudentId(String studentId) {
-        if(userService.isValidStudentId(studentId)) return responseDto.success("사용 가능한 아이디입니다.");
+    public ResponseEntity<?> checkUserId(String userId) {
+        if(userService.isValidUserId(userId)) return responseDto.success("사용 가능한 아이디입니다.");
         else return responseDto.fail("해당 이메일로 가입된 계정이 있습니다.",HttpStatus.CONFLICT);
     }
-
-
-
-
-
 
 
 }
